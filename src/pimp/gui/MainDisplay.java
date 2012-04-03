@@ -11,21 +11,29 @@ import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 
-
+/**
+ * The main user interface window.
+ * 
+ * @author Daniel Schramm, Joel Harrison, Ellie Rasmus
+ *
+ */
 public class MainDisplay extends JFrame {
 	private JTable productTable;
-	public JScrollPane dynamicPanel;
+	public JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
 	
-	//Needs to be passed list of objects from database
+	// New Product Dialog
+	private NewProductDialog npd = new NewProductDialog(this);
+	
+	/** Constructor 
+	 * 
+	 * Needs to be passed list of objects from database
+	 */
 	public MainDisplay() {
-		setResizable(false);
-		initComponents();		
-	}
-	
-	void initComponents(){
-		this.setBounds(new Rectangle(0, 0, 800, 550));
+		setResizable(false); // We currently use absolute positioning.
+		setBounds(new Rectangle(0, 0, 800, 550));
+		
 		getContentPane().setBounds(new Rectangle(0, 0, 800, 550));
-		getContentPane().setLayout(null);
+		getContentPane().setLayout(null);	
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBounds(0, 0, 786, 516);
@@ -36,31 +44,6 @@ public class MainDisplay extends JFrame {
 		tablePanel.setBounds(12, 66, 300, 450);
 		mainPanel.add(tablePanel);
 		
-		productTable = new JTable();
-		productTable.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"Type", "Name"
-			}
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, true
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		productTable.getColumnModel().getColumn(0).setResizable(false);
-		productTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-		productTable.getColumnModel().getColumn(0).setMinWidth(100);
-		productTable.getColumnModel().getColumn(1).setPreferredWidth(190);
-		productTable.getColumnModel().getColumn(1).setMinWidth(190);
-		tablePanel.add(productTable);
-		
 		/* BUTTONS */
 		
 		// New Product Button
@@ -68,10 +51,9 @@ public class MainDisplay extends JFrame {
 		btnNewProduct.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				/* NewProductDialog npd = new NewProductDialog(
-						getContentPane()); */
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
+				if (!npd.isVisible()) {
+	               npd.setVisible(true);
+	            }
 			}
 		});
 		btnNewProduct.setBounds(12, 17, 144, 25);
@@ -126,12 +108,42 @@ public class MainDisplay extends JFrame {
 		btnDelete.setBounds(621, 17, 117, 25);
 		mainPanel.add(btnDelete);
 		
-		// ?? - not sure what this does.
+		// ??
 		dynamicPanel = new JScrollPane();
 		dynamicPanel.setBounds(343, 66, 416, 450);
 		mainPanel.add(dynamicPanel);
+		
+		/* PRODUCT TABLE */
+		
+		productTable = new JTable();
+		productTable.setModel(new DefaultTableModel(
+			new Object[][] {
+				{null, null},
+				{null, null},
+				{null, null},
+			},
+			new String[] {
+				"Type", "Name"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, true
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		productTable.getColumnModel().getColumn(0).setResizable(false);
+		productTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+		productTable.getColumnModel().getColumn(0).setMinWidth(100);
+		productTable.getColumnModel().getColumn(1).setPreferredWidth(190);
+		productTable.getColumnModel().getColumn(1).setMinWidth(190);
+		tablePanel.add(productTable);
 	}
 	
+	/**
+	 * 
+	 */
 	void populateProductTable(){
 		
 	}
