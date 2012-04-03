@@ -1,4 +1,4 @@
-package productdefs;
+package pimp.productdefs;
 
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.

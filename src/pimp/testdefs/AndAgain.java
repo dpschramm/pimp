@@ -1,4 +1,4 @@
-package testdefs;
+package pimp.testdefs;
 
 import java.awt.Color;
 import java.util.Date;

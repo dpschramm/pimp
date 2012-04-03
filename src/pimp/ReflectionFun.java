@@ -1,10 +1,15 @@
+package pimp;
+
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Date;
 
 import javax.swing.JPanel;
 
-import testdefs.*;
+import pimp.gui.MainDisplay;
+import pimp.testdefs.*;
+
 
 public class ReflectionFun {
 

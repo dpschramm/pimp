@@ -1,6 +1,8 @@
+package pimp.gui;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import java.awt.Rectangle;
@@ -59,51 +61,72 @@ public class MainDisplay extends JFrame {
 		productTable.getColumnModel().getColumn(1).setMinWidth(190);
 		tablePanel.add(productTable);
 		
+		/* BUTTONS */
+		
+		// New Product Button
 		JButton btnNewProduct = new JButton("New Product");
 		btnNewProduct.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				/* NewProductDialog npd = new NewProductDialog(
+						getContentPane()); */
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 			}
 		});
 		btnNewProduct.setBounds(12, 17, 144, 25);
 		mainPanel.add(btnNewProduct);
 		
+		
+		// Load Product Button
 		JButton btnLoadProducts = new JButton("Load Products");
 		btnLoadProducts.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 			}
 		});
 		btnLoadProducts.setBounds(168, 17, 144, 25);
 		mainPanel.add(btnLoadProducts);
 		
+		// Edit Product Button
 		JButton btnEdit = new JButton("Edit");
 		btnEdit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 			}
 		});
 		btnEdit.setBounds(363, 17, 117, 25);
 		mainPanel.add(btnEdit);
 		
+		// Copy Product Button
 		JButton btnCopy = new JButton("Copy");
 		btnCopy.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 			}
 		});
 		btnCopy.setBounds(492, 17, 117, 25);
 		mainPanel.add(btnCopy);
 		
+		// Delete Product Button
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 			}
 		});
 		btnDelete.setBounds(621, 17, 117, 25);
 		mainPanel.add(btnDelete);
 		
+		// ?? - not sure what this does.
 		dynamicPanel = new JScrollPane();
 		dynamicPanel.setBounds(343, 66, 416, 450);
 		mainPanel.add(dynamicPanel);

@@ -1,3 +1,4 @@
+package pimp;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;

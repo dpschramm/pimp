@@ -1,4 +1,4 @@
-package productdefs;
+package pimp.productdefs;
 
 /** An example of a specific product that could be instantiated.
  * 
