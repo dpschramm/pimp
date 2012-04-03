@@ -122,7 +122,7 @@ public class ReflectionFun {
 		display.dynamicPanel.removeAll();
 		display.dynamicPanel.add(form);
 		form.setVisible(true);
-		display.revalidate();
+		display.validate();
 		display.setVisible(true);
 		display.repaint();
 	}
