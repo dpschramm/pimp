@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,8 @@ public class ReflectionFun {
 	 * @param
 	 *  args
 	 */
+	
+	public static MainDisplay display;
 	public static void main(String[] args) {
 
 		/***
@@ -49,8 +52,34 @@ public class ReflectionFun {
 			return;
 		}
 		***/
-
-		JFrame mainInterface = new JFrame();
+		
+		//Ellie's test code ------------------------------------------------------------------------
+		display = new MainDisplay();
+		display.setVisible(true);
+		FormBuilder fb = new FormBuilder(TestClass.class);
+		@SuppressWarnings("deprecation")
+		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
+		JPanel newForm;
+		try {
+			newForm = (JPanel) fb.fillForm(tc1);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			newForm = new JPanel();
+			newForm.setBackground(Color.RED);
+			newForm.setSize(new Dimension(200, 200));
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			newForm = new JPanel();
+			newForm.setBackground(Color.RED);
+			newForm.setSize(new Dimension(200, 200));
+			//e.printStackTrace();
+		}
+		setDynamicProductForm(newForm);
+		
+		
+		//Joel's test code ------------------------------------------------------------------------
+		/*JFrame mainInterface = new JFrame();
 		FormBuilder fb = new FormBuilder(TestClass.class);
 
 		@SuppressWarnings("deprecation")
@@ -75,6 +104,27 @@ public class ReflectionFun {
 
 
 		mainInterface.pack();
-		mainInterface.setVisible(true);
+		mainInterface.setVisible(true);*/
 	}
+	
+	/*
+	 * I don't know where this should happen - probably where ever our controller
+	 * ends up being. Too much code in the gui classes could end up being disastrous.
+	 * */
+	public void setProductList(){
+		//display.
+	} 
+	
+	/* See comment above
+	 * */
+	public static void setDynamicProductForm(JPanel form){
+		form.setBounds(0, 0, display.dynamicPanel.getWidth(), display.dynamicPanel.getHeight());//display.dynamicPanel.getBounds());
+		display.dynamicPanel.removeAll();
+		display.dynamicPanel.add(form);
+		form.setVisible(true);
+		display.revalidate();
+		display.setVisible(true);
+		display.repaint();
+	}
+	
 }
