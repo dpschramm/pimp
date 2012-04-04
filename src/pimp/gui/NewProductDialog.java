@@ -29,9 +29,6 @@ public class NewProductDialog extends JDialog {
 		add(panel);
 		pack();
 	}
-	
-	public void showDialog() {
-		setVisible(true);
-	}
+
 	
 }
