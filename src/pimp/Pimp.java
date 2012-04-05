@@ -6,6 +6,8 @@ package pimp;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import pimp.gui.MainDisplay;
+import pimp.gui.NewProductDialog;
 import pimp.productdefs.Car;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -22,33 +25,28 @@ import pimp.testdefs.TestClass;
  */
 public class Pimp {
 	
-	private static MainDisplay gui; // Why is this static, can we change? -DS
+	public MainDisplay gui; // Why is this static, can we change? -DS
 	private List<Product> products;
-	
-	// Program entry point.
-	public static void main(String[] args) {
-		new Pimp();
-	}
+	private ProductLoader loader;
 	
 	/** 
-	 * Constructor creates and shows GUI.
+	 * Pimp is essentially the Controller
+	 * This involves applying appropriate ActionListeners to the given View
 	 */
-	public Pimp() {
-		
+	public Pimp(MainDisplay gui) {
 		// Create empty product list.
 		products = new ArrayList<Product>();
+		loader = new ProductLoader("directory"); //perhaps directory will have to be a cmd argument
+		this.gui = gui;
+		gui.setVisible(true);
+		gui.addNewProductListener(new newProductListener());
 		
 		/** TODO add code to automatically load previous product list. */
-		loadProducts();
+		//loadProducts();
 		
 		/**
 		 * The code below needs to be commented and refactored -DS
 		 */
-		
-		// Create GUI
-		gui = new MainDisplay();
-		gui.setVisible(true);
-		
 		FormBuilder fb = new FormBuilder(TestClass.class);
 		@SuppressWarnings("deprecation")
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
@@ -72,8 +70,9 @@ public class Pimp {
 		
 	}
 
-	public static void setDynamicProductForm(JPanel form){
-		form.setBounds(0, 0, gui.dynamicPanel.getWidth(), gui.dynamicPanel.getHeight());//display.dynamicPanel.getBounds());
+	public void setDynamicProductForm(JPanel form){
+		//Where should this kind of logic be? Oh this is terribly confusing.
+		form.setBounds(0, 0, gui.dynamicPanel.getWidth(), gui.dynamicPanel.getHeight());
 		gui.dynamicPanel.removeAll();
 		gui.dynamicPanel.add(form);
 		form.setVisible(true);
@@ -83,24 +82,44 @@ public class Pimp {
 	}
 	
 	/**
-	 * This method should be called when new products need to be created (i.e.
-	 * when the "New" button is clicked).
+	 * This ActionListener is applied to the New button on the main gui. 
+	 * When clicked it needs to launch a NewProductDialog, retrieve the input
+	 * from that and create a product of the returned type
 	 */
-	public void createProduct() {
-		
+	class newProductListener implements ActionListener {	
+		NewProductDialog npd = null;
 		Product newProduct;
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(npd == null){
+				//The action has been triggered by the main gui
+				// create new product dialog.
+				npd = new NewProductDialog(gui, loader.getClassList());
+				//Adds a listener to the 'Create' button on the NewProductDialog to 
+				//return the selected list item/class
+				npd.addNewProductListener(this); //please work please work
+			}
+			else{
+				//The event has been triggered by the new product dialog. 
+				//This means we can go ahead and create the product now.
+				Class<? extends Product> c = npd.getList().getSelectedValue();
+				try {
+					/*Currently crashing here, but I think this is because all I've
+					  had to test with so far is the abstract Product class.
+					*/
+					newProduct = c.newInstance();
+					products.add(newProduct);
+					//TODO Other things that will need to happen here
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
 		
-		// create new product dialog.
-		
-		// get the class of the new product to be created.
-		
-		// create the class
-		newProduct = new Car(); // REPLACE this with whatever class was
-								// returned by the previous dialog.
-		
-		products.add(newProduct);
-		
-		// update gui to reflect change in the product list.
 	}
 	
 	/**
@@ -108,21 +127,39 @@ public class Pimp {
 	 * 
 	 * @param p
 	 */
-	public void deleteProduct(Product p) {
+	class deleteButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
 	/** 
 	 * Save products to file.
 	 */
-	public void saveProducts() {
+	class saveButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
 	/**
 	 * Load products from file.
 	 */
-	public void loadProducts() {
+	class loadButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 }

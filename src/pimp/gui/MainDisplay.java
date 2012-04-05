@@ -5,11 +5,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JButton;
+import javax.swing.JTree;
+
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JScrollPane;
+
+import pimp.Main;
+import pimp.Pimp;
+import pimp.ProductEditor;
 
 /**
  * The main user interface window.
@@ -18,19 +26,19 @@ import javax.swing.JScrollPane;
  *
  */
 public class MainDisplay extends JFrame {
-	private JTable productTable;
+	public JTree productTree;
 	public JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
 	private JPanel mainPanel;
-	
-	// New Product Dialog
-	private NewProductDialog npd = new NewProductDialog(this);
+	private NewProductDialog npd;
+	private Pimp p;
+	private JButton btnNewProduct;
 	
 	/** Constructor 
 	 * 
 	 * Needs to be passed list of objects from database
 	 */
 	public MainDisplay() {
-		
+		this.p = p;
 		// Frame settings.
 		setResizable(false); // We currently use absolute positioning.
 		setBounds(new Rectangle(0, 0, 800, 550));	
@@ -62,40 +70,18 @@ public class MainDisplay extends JFrame {
 	 */
 	private void createProductTable() {
 		
-		// Create table.
-		productTable = new JTable();
-		productTable.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"Type", "Name"
-			}
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, true
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		
-		// Settings
-		productTable.getColumnModel().getColumn(0).setResizable(false);
-		productTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-		productTable.getColumnModel().getColumn(0).setMinWidth(100);
-		productTable.getColumnModel().getColumn(1).setPreferredWidth(190);
-		productTable.getColumnModel().getColumn(1).setMinWidth(190);
+		// Create tree.
+		productTree = new JTree();
 		
 		// Create table panel
-		JPanel tablePanel = new JPanel();
-		tablePanel.setBounds(12, 66, 300, 450);
-		tablePanel.add(productTable);
-		
+		/*DefaultMutableTreeNode top =
+        new DefaultMutableTreeNode("The Java Series");
+    createNodes(top);
+    tree = new JTree(top);*/
+		JScrollPane treeScrollPanel = new JScrollPane(productTree);
+		treeScrollPanel.setBounds(12, 66, 300, 450);
 		// Add to main panel.
-		mainPanel.add(tablePanel);
+		mainPanel.add(treeScrollPanel);
 	}
 	
 	/**
@@ -111,15 +97,9 @@ public class MainDisplay extends JFrame {
 	private void createButtons() {	
 		
 		// Create New Product Button
-		JButton btnNewProduct = new JButton("New Product");
-		btnNewProduct.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (!npd.isVisible()) {
-	               npd.setVisible(true);
-	            }
-			}
-		});
+		btnNewProduct = new JButton("New Product");
+		////////////////////////////////////////////////////////////npd = new NewProductDialog(this);
+		
 		btnNewProduct.setBounds(12, 17, 144, 25);
 		
 		// Create Load Product Button
@@ -127,8 +107,9 @@ public class MainDisplay extends JFrame {
 		btnLoadProducts.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
+				/*JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");*/
+				//Needs to bring up dialog for xml file selection
 			}
 		});
 		btnLoadProducts.setBounds(168, 17, 144, 25);
@@ -172,6 +153,10 @@ public class MainDisplay extends JFrame {
 		mainPanel.add(btnEdit);
 		mainPanel.add(btnCopy);
 		mainPanel.add(btnDelete);
+	}
+	
+	public void addNewProductListener(ActionListener npl){
+		btnNewProduct.addActionListener(npl);
 	}
 
 }
