@@ -11,13 +11,16 @@ import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JScrollPane;
 
 import pimp.Main;
 import pimp.Pimp;
-import pimp.ProductEditor;
+import pimp.productdefs.Product;
+
 
 /**
  * The main user interface window.
@@ -30,15 +33,14 @@ public class MainDisplay extends JFrame {
 	public JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
 	private JPanel mainPanel;
 	private NewProductDialog npd;
-	private Pimp p;
 	private JButton btnNewProduct;
+	private JScrollPane treeScrollPanel;
 	
 	/** Constructor 
 	 * 
 	 * Needs to be passed list of objects from database
 	 */
 	public MainDisplay() {
-		this.p = p;
 		// Frame settings.
 		setResizable(false); // We currently use absolute positioning.
 		setBounds(new Rectangle(0, 0, 800, 550));	
@@ -56,8 +58,7 @@ public class MainDisplay extends JFrame {
 		// Button Setup
 		createButtons();
 		
-		// Product Table Setup
-		createProductTable();
+		
 		
 		// Add main panel to frame.
 		getContentPane().setBounds(new Rectangle(0, 0, 800, 550));
@@ -68,28 +69,26 @@ public class MainDisplay extends JFrame {
 	/**
 	 * This method creates the product table.
 	 */
-	private void createProductTable() {
+	public void createProductTable(List<Product> products) {
 		
-		// Create tree.
-		productTree = new JTree();
 		
-		// Create table panel
-		/*DefaultMutableTreeNode top =
-        new DefaultMutableTreeNode("The Java Series");
-    createNodes(top);
-    tree = new JTree(top);*/
-		JScrollPane treeScrollPanel = new JScrollPane(productTree);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Products");
+		for(Product product: products){
+			DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(product.getName());
+			root.add(leaf);
+		}
+		productTree = new JTree(root);
+		// Product Table ScrollPane Setup
+		treeScrollPanel = new JScrollPane(productTree);
 		treeScrollPanel.setBounds(12, 66, 300, 450);
 		// Add to main panel.
 		mainPanel.add(treeScrollPanel);
-	}
-	
-	/**
-	 * 
-	 */
-	private void populateProductTable(){
+		productTree.setVisible(true);
+		treeScrollPanel.revalidate();
+		repaint();
 		
 	}
+
 	
 	/**
 	 * This method contains all the button setup code.
@@ -98,8 +97,7 @@ public class MainDisplay extends JFrame {
 		
 		// Create New Product Button
 		btnNewProduct = new JButton("New Product");
-		////////////////////////////////////////////////////////////npd = new NewProductDialog(this);
-		
+	
 		btnNewProduct.setBounds(12, 17, 144, 25);
 		
 		// Create Load Product Button

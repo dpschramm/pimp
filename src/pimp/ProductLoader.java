@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pimp.productdefs.Car;
+import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 
 /**
@@ -48,6 +49,7 @@ public class ProductLoader {
 		// Temporary test classes.
 		classList.add(Car.class);
 		classList.add(Product.class);
+		classList.add(Jacket.class);
 	}
 	
 	/**

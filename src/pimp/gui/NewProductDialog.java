@@ -30,7 +30,7 @@ public class NewProductDialog extends JDialog {
 	
 	private static String title = "Create new product";
 	public JButton btnCreate;
-	private JList<Class <? extends Product>> list;
+	private JList list;
 	
 	public NewProductDialog(JFrame frame, List<Class <? extends Product>> classList) {
 		super(frame, title);
@@ -41,6 +41,7 @@ public class NewProductDialog extends JDialog {
 		int i = 0;
 		for(Class<? extends Product> c: classList){
 			jListValues[i] = c;
+			i++;
 		}
 		
 		setPreferredSize(new Dimension(300, 400));
@@ -50,7 +51,7 @@ public class NewProductDialog extends JDialog {
 		
 		getContentPane().add(panel);
 		
-		list = new JList<Class <? extends Product>>(jListValues);
+		list = new JList(jListValues);
 		list.setPreferredSize(new Dimension(250, 300));
 		panel.add(list);
 		
@@ -61,7 +62,7 @@ public class NewProductDialog extends JDialog {
 		this.setVisible(true);
 	}
 
-	public JList<Class<? extends Product>> getList(){
+	public JList getList(){
 		return list;
 	}
 	
