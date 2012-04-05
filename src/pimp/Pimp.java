@@ -15,7 +15,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import pimp.gui.MainDisplay;
-import pimp.gui.NewProductDialog;
+import pimp.gui.SelectProductDialog;
 import pimp.productdefs.Car;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -27,6 +27,8 @@ public class Pimp {
 	
 	public MainDisplay gui; // Why is this static, can we change? -DS
 	private List<Product> products;
+	
+	// Maintain class list.
 	private ProductLoader loader;
 	
 	/** 
@@ -86,37 +88,35 @@ public class Pimp {
 	 * When clicked it needs to launch a NewProductDialog, retrieve the input
 	 * from that and create a product of the returned type
 	 */
-	class newProductListener implements ActionListener {	
-		NewProductDialog npd = null;
-		Product newProduct;
+	class newProductListener implements ActionListener {
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(npd == null){
-				//The action has been triggered by the main gui
-				// create new product dialog.
-				npd = new NewProductDialog(gui, loader.getClassList());
-				//Adds a listener to the 'Create' button on the NewProductDialog to 
-				//return the selected list item/class
-				npd.addNewProductListener(this); //please work please work
+			//The action has been triggered by the main gui
+			// create new product dialog.
+			SelectProductDialog selectDialog = new SelectProductDialog(gui, loader.getClassList());
+				
+			//The event has been triggered by the new product dialog. 
+			//This means we can go ahead and create the product now.
+			Class<? extends Product> c = selectDialog.getSelectedClass();
+			if (c != null) {
+				System.out.println("You selected: " + c.getName());
 			}
-			else{
-				//The event has been triggered by the new product dialog. 
-				//This means we can go ahead and create the product now.
-				Class<? extends Product> c = npd.getList().getSelectedValue();
-				try {
-					/*Currently crashing here, but I think this is because all I've
-					  had to test with so far is the abstract Product class.
-					*/
-					newProduct = c.newInstance();
-					products.add(newProduct);
-					//TODO Other things that will need to happen here
-				} catch (InstantiationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			else System.out.println("No selection.");
+			
+			try {
+				/*Currently crashing here, but I think this is because all I've
+				  had to test with so far is the abstract Product class.
+				*/
+				products.add(c.newInstance());
+				
+				//TODO Other things that will need to happen here
+			} catch (InstantiationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 		
