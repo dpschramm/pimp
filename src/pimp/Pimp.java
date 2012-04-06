@@ -54,6 +54,13 @@ public class Pimp {
 		 * The code below needs to be commented and refactored -DS
 		 */
 		FormBuilder fb = new FormBuilder(TestClass.class);
+		fb.addFormElement(new StringFormElement());
+		fb.addFormElement(new DoubleFormElement());
+		fb.addFormElement(new IntFormElement());
+		fb.addFormElement(new DateFormElement());
+		fb.addFormElement(new ColorFormElement());
+		fb.createForm();
+		
 		@SuppressWarnings("deprecation")
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
 		JPanel newForm;
