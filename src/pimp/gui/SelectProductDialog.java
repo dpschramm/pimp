@@ -123,14 +123,12 @@ public class SelectProductDialog {
 	 */
 	public Class<? extends Product> getSelectedClass() {
 		
-		System.out.println("toString: " + list.getSelectedValue().toString());
-		System.out.println("getClass: " + list.getSelectedValue().getClass().getName());
-		
 		Object selection = list.getSelectedValue();
+		
 		if (selection == null) {
 			return null;
 		}
 		
-		return (Class<? extends Product>) list.getSelectedValue().getClass();
+		return (Class<? extends Product>) selection;
 	}
 }

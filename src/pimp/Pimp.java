@@ -99,16 +99,18 @@ public class Pimp {
 			//The event has been triggered by the new product dialog. 
 			//This means we can go ahead and create the product now.
 			Class<? extends Product> c = selectDialog.getSelectedClass();
-			if (c != null) {
-				System.out.println("You selected: " + c.getName());
-			}
-			else System.out.println("No selection.");
 			
 			try {
 				/*Currently crashing here, but I think this is because all I've
 				  had to test with so far is the abstract Product class.
 				*/
-				products.add(c.newInstance());
+				// Debug messages
+				if (c != null) {
+					Product p = c.newInstance();
+					System.out.println("You selected to create a " + p.getClass().getName());
+					products.add(p);
+				}
+				else System.out.println("No selection.");
 				
 				//TODO Other things that will need to happen here
 			} catch (InstantiationException e1) {
