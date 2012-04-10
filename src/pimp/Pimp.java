@@ -161,7 +161,7 @@ public class Pimp {
 				try {
 					newProduct = c.newInstance();
 					products.add(newProduct);
-					System.out.println("Created:" + newProduct.getClass().getName());
+					int i = 0;
 					//TODO Other things that will need to happen here
 				} catch (InstantiationException e1) {
 					// This gets fired when abstract classes are instantiated.
