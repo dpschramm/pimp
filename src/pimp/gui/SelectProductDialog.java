@@ -123,22 +123,10 @@ public class SelectProductDialog {
 	 */
 	public Class<? extends Product> getSelectedClass() {
 		
-		try {
-			Class<? extends Product> c = (Class<? extends Product>) list.getSelectedValue().getClass().newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error 1");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error 2");
-			e.printStackTrace();
-		}
-		
-		System.out.println("Selected:" + list.getSelectedValue().toString());
+		System.out.println("toString: " + list.getSelectedValue().toString());
+		System.out.println("getClass: " + list.getSelectedValue().getClass().getName());
 		
 		Object selection = list.getSelectedValue();
-		
 		if (selection == null) {
 			return null;
 		}
