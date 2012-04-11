@@ -53,7 +53,7 @@ public class MainDisplay extends JFrame {
 		
 		// ??
 		dynamicPanel = new JScrollPane();
-		dynamicPanel.setBounds(343, 66, 416, 450);
+		dynamicPanel.setBounds(205, 66, 571, 450);
 		mainPanel.add(dynamicPanel);
 		
 		// Button Setup
