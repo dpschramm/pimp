@@ -27,7 +27,11 @@ import pimp.persistence.*;
  */
 public class Pimp {
 	
-	public MainDisplay gui; // Why is this static, can we change? -DS
+	// Database stuff
+	private DataAccessorMock da;
+	private String databaseDir = "test.xml";
+	
+	private MainDisplay gui;
 	private List<Product> products;
 	
 	// Maintain class list.
@@ -40,7 +44,7 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp(MainDisplay gui) {
-		String dir = "test.xml";
+		
 		// Create empty product list.
 		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
 		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
@@ -56,6 +60,13 @@ public class Pimp {
 		 * The code below needs to be commented and refactored -DS
 		 */
 		FormBuilder fb = new FormBuilder(TestClass.class);
+		fb.addFormElement(new StringFormElement());
+		fb.addFormElement(new DoubleFormElement());
+		fb.addFormElement(new IntFormElement());
+		fb.addFormElement(new DateFormElement());
+		fb.addFormElement(new ColorFormElement());
+		fb.createForm();
+
 		@SuppressWarnings("deprecation")
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
 		JPanel newForm;
@@ -69,50 +80,11 @@ public class Pimp {
 	}
 
 	public void loadProducts(){	
-		//String dir = "src/test.xml";
-		//products = xmlLoader.loadAllProducts(dir);
 		
-		//Code to manually create a set of products, because
-		//the xml loader is being a bit weird atm
-		
-		products = new ArrayList<Product>();
-		//create products
-		Car honda = new Car();
-		honda.setColour("grey");
-		honda.setMake("Honda");
-		honda.setModel("Civic");
-		honda.setYear(1992);
-		honda.setName("Ellie's Honda is boring");
-		honda.setQuantity(1);
-		//save
-		products.add(honda);
-		
-		Car nissan = new Car();
-		nissan.setColour("red");
-		nissan.setMake("Nissan");
-		nissan.setModel("Primera");
-		nissan.setYear(1998);
-		nissan.setName("Nissan Primera");
-		nissan.setQuantity(5);
-		products.add(nissan);
-			
-		Jacket orangeJacket = new Jacket();
-		orangeJacket.setBrand("Generic Brand");
-		orangeJacket.setColour("orange");
-		orangeJacket.setIsWaterproof(true);
-		orangeJacket.setName("Orange Jacket");
-		orangeJacket.setSize("L");
-		orangeJacket.setQuantity(7);
-		products.add(orangeJacket);
-				
-		Jacket purpleJacket = new Jacket();
-		purpleJacket.setBrand("Generic Brand");
-		purpleJacket.setColour("purple");
-		purpleJacket.setIsWaterproof(false);
-		purpleJacket.setName("Purple Jacket");
-		purpleJacket.setSize("M");
-		purpleJacket.setQuantity(9);
-		products.add(purpleJacket);
+		// Load products from databaseDir.
+		da = new DataAccessorMock();
+		da.initialize(databaseDir);
+		products = da.load();
 		
 		//do stuff to init list in gui
 		gui.createProductTable(products);
