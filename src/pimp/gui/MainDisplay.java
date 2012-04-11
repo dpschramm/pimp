@@ -21,7 +21,6 @@ import pimp.Main;
 import pimp.Pimp;
 import pimp.productdefs.Product;
 
-
 /**
  * The main user interface window.
  * 
@@ -32,7 +31,6 @@ public class MainDisplay extends JFrame {
 	public JTree productTree;
 	public JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
 	private JPanel mainPanel;
-	private NewProductDialog npd;
 	private JButton btnNewProduct;
 	private JScrollPane treeScrollPanel;
 	

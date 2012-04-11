@@ -15,7 +15,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import pimp.gui.MainDisplay;
-import pimp.gui.NewProductDialog;
+import pimp.gui.SelectProductDialog;
 import pimp.productdefs.Car;
 import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
@@ -29,7 +29,9 @@ public class Pimp {
 	
 	public MainDisplay gui; // Why is this static, can we change? -DS
 	private List<Product> products;
-	private ProductLoader loader;
+	
+	// Maintain class list.
+	private ProductClassFinder loader;
 	private XmlProductLoader xmlLoader;//It would be nice if this was declared as the abstract ProductLoader, 
 									   //but that will have to wait until we don't have two ProductLoaders
 	
@@ -41,7 +43,7 @@ public class Pimp {
 		String dir = "test.xml";
 		// Create empty product list.
 		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
-		loader = new ProductLoader("directory"); //perhaps directory will have to be a cmd argument
+		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
 		xmlLoader = new XmlProductLoader();
 		this.gui = gui;
 		gui.setVisible(true);
@@ -54,13 +56,6 @@ public class Pimp {
 		 * The code below needs to be commented and refactored -DS
 		 */
 		FormBuilder fb = new FormBuilder(TestClass.class);
-		fb.addFormElement(new StringFormElement());
-		fb.addFormElement(new DoubleFormElement());
-		fb.addFormElement(new IntFormElement());
-		fb.addFormElement(new DateFormElement());
-		fb.addFormElement(new ColorFormElement());
-		fb.createForm();
-		
 		@SuppressWarnings("deprecation")
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
 		JPanel newForm;
@@ -140,36 +135,38 @@ public class Pimp {
 	 * When clicked it needs to launch a NewProductDialog, retrieve the input
 	 * from that and create a product of the returned type
 	 */
-	class newProductListener implements ActionListener {	
-		NewProductDialog npd = null;
-		Product newProduct;
+	class newProductListener implements ActionListener {
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(npd == null){
-				//The action has been triggered by the main gui
-				// create new product dialog.
-				List<Class<? extends Product>> cl = loader.getClassList();
-				npd = new NewProductDialog(gui, cl);
-				//Adds a listener to the 'Create' button on the NewProductDialog to 
-				//return the selected list item/class
-				npd.addNewProductListener(this); //please work please work
-			}
-			else{
-				//The event has been triggered by the new product dialog. 
-				//This means we can go ahead and create the product now.
-				Class<? extends Product> c = (Class<? extends Product>) npd.getList().getSelectedValue();
-				try {
-					newProduct = c.newInstance();
-					products.add(newProduct);
-					int i = 0;
-					//TODO Other things that will need to happen here
-				} catch (InstantiationException e1) {
-					// This gets fired when abstract classes are instantiated.
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+
+			//The action has been triggered by the main gui
+			// create new product dialog.
+			SelectProductDialog selectDialog = new SelectProductDialog(gui, loader.getClassList());
+				
+			//The event has been triggered by the new product dialog. 
+			//This means we can go ahead and create the product now.
+			Class<? extends Product> c = selectDialog.getSelectedClass();
+			
+			try {
+				/*Currently crashing here, but I think this is because all I've
+				  had to test with so far is the abstract Product class.
+				*/
+				// Debug messages
+				if (c != null) {
+					Product p = c.newInstance();
+					System.out.println("You selected to create a " + p.getClass().getName());
+					products.add(p);
 				}
+				else System.out.println("No selection.");
+				
+				//TODO Other things that will need to happen here
+			} catch (InstantiationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 		
