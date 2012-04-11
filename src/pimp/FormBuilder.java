@@ -1,20 +1,19 @@
 package pimp;
 
+<<<<<<< HEAD
 import java.awt.Color;
+=======
+>>>>>>> 2a56ab565dd0927cea019f955c65a74a75987448
 import java.awt.GridLayout;
-import java.awt.List;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+<<<<<<< HEAD
 import javax.swing.JTextField;
 
 import pimp.gui.ColorButton;
@@ -29,6 +28,9 @@ import com.toedter.calendar.JDateChooser;
 
 import pimp.Pimp.newProductListener;
 
+=======
+
+>>>>>>> 2a56ab565dd0927cea019f955c65a74a75987448
 public class FormBuilder {
 
 	private JPanel jp;
