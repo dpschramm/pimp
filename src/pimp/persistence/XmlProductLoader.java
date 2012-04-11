@@ -58,7 +58,7 @@ public class XmlProductLoader extends ProductLoader {
 		
 		Element root = xmlDoc.getDocumentElement();
 		
-		NodeList nodes = root.getElementsByTagName("Products");
+		NodeList nodes = root.getElementsByTagName("Product");
 		for (int i = 0; i < nodes.getLength(); i++) { //Could implement an iterator for NodeLists?
 			Element element = (Element)nodes.item(i);
 			
