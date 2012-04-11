@@ -1,6 +1,5 @@
 package pimp;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -14,6 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import pimp.gui.ColorButton;
+
+import com.toedter.calendar.JDateChooser;
+/**
+ * The form builder that processes the class and generates a form.
+ * 
+ * @author Joel Harrison, Joel Mason
+ *
+ */
 public class FormBuilder {
 
 	private JPanel jp;
@@ -165,12 +173,12 @@ public class FormBuilder {
 		}
 
 		if (t.equals(Date.class)) {
-			input = new JTextField();
+			//input = new JTextField();
+			input = new JDateChooser();
 		}
 
 		if (t.equals(Color.class)) {
-			// input = new JColorChooser();
-			input = new JTextField();
+			input = new ColorButton("Color");
 		}
 
 		return input;
@@ -208,11 +216,13 @@ public class FormBuilder {
 		}
 
 		if (t.equals(Date.class)) {
-			((JTextField) input).setText(f.get(o).toString());
+			//((JTextField) input).setText(f.get(o).toString());
+			((JDateChooser) input).setDate(new Date(112,2,2));
 		}
 
 		if (t.equals(Color.class)) {
-			((JTextField) input).setText(f.get(o).toString());
+			
+			((ColorButton) input).setBackground(Color.PINK);
 		}
 
 		return input;
@@ -248,14 +258,15 @@ public class FormBuilder {
 			// Hack until there is a date component that will return a date
 			// instead of text
 
-			o = new Date(2012, 2, 2);
+			o = ((JDateChooser) input).getDate(); 
 		}
 
 		if (t.equals(Color.class)) {
 			// Hack until there is a color component that will return a color
 			// instead of text
-			o = Color.PINK;
+			//o = Color.PINK;
 			// o = ((JTextField) input).getText();
+			o = ((ColorButton) input).getBackground();
 		}
 
 		return o;
