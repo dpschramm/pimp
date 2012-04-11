@@ -2,10 +2,8 @@ package pimp;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.List;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,14 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import pimp.Pimp.newProductListener;
-
 public class FormBuilder {
 
 	private JPanel jp;
 	private Class c;
-	private Map<String, JComponent> fieldToComponentMapping;
-	private Map<Type, FormElement> typeToFormElementMapping;
+	Map<String, JComponent> fieldToComponentMapping;
 
 	/**
 	 * Constructor takes a Class for which it can build forms for
@@ -33,13 +28,7 @@ public class FormBuilder {
 	public FormBuilder(Class c) {
 		this.c = c;
 		fieldToComponentMapping = new HashMap<String, JComponent>();
-		typeToFormElementMapping = new HashMap<Type, FormElement>();
-		addFormElement(new StringFormElement()); // Default to string if form builder type added
-		//jp = createForm();
-	}
-	
-	public void addFormElement(FormElement fe){
-		typeToFormElementMapping.put(fe.getInputType(), fe);
+		jp = (JPanel) createForm();
 	}
 
 	/**
@@ -47,7 +36,7 @@ public class FormBuilder {
 	 * 
 	 * @return a JPanel form that represents the class
 	 */
-	public void createForm() {
+	private JComponent createForm() {
 
 		Field[] fields = c.getFields();
 
@@ -57,17 +46,12 @@ public class FormBuilder {
 
 		for (Field f : fields) {
 			panel.add(createFieldFormNameComponent(f));
-			FormElement fe  = typeToFormElementMapping.get(f.getType());
-			if(fe == null){
-				// Default to String Input
-				fe = typeToFormElementMapping.get(String.class);
-			}
-			JComponent input = fe.createComponent();
+			JComponent input = createInputComponent(f);
 			fieldToComponentMapping.put(f.getName(), input);
 			panel.add(input);
 		}
 
-		jp = panel;
+		return panel;
 	}
 
 	/**
@@ -76,8 +60,8 @@ public class FormBuilder {
 	 * @return a cleared form
 	 */
 	public JComponent getBlankForm() {
-		createForm();
-		return jp; 
+
+		return createForm();
 	}
 
 	/**
@@ -102,9 +86,9 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			fe.setValue(input, f.get(o));
+			setInputComponent(input, f, o);
 		}
+
 		return jp;
 	}
 
@@ -128,8 +112,7 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			f.set(o, fe.getValue(input));
+			f.set(o, getInputComponentValue(input, f));
 		}
 	}
 
@@ -150,14 +133,134 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			f.set(o, fe.getValue(input));
+			f.set(o, getInputComponentValue(input, f));
 		}
 
 		return o;
 	}
 
-	
+	/**
+	 * Called when creating the input field, is used to determine what kind of
+	 * Component is used for the classes given field type
+	 * 
+	 * @param f
+	 *            the field for which the Component is needed
+	 * @return input component that will be used for the given field
+	 */
+	public JComponent createInputComponent(Field f) {
+
+		JComponent input = null;
+		Type t = f.getType();
+
+		if (t.equals(String.class)) {
+			input = new JTextField();
+		}
+
+		if (t.equals(int.class)) {
+			input = new JTextField();
+		}
+
+		if (t.equals(double.class)) {
+			input = new JTextField();
+		}
+
+		if (t.equals(Date.class)) {
+			input = new JTextField();
+		}
+
+		if (t.equals(Color.class)) {
+			// input = new JColorChooser();
+			input = new JTextField();
+		}
+
+		return input;
+	}
+
+	/**
+	 * Used for updating the form based on an object. Will set the given input
+	 * field to be consistent with the given field in the given object
+	 * 
+	 * @param input
+	 *            the input component on the form to update
+	 * @param f
+	 *            the field of the object
+	 * @param o
+	 *            the object to update the form with
+	 * @return the updated input component
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public JComponent setInputComponent(JComponent input, Field f, Object o)
+			throws IllegalArgumentException, IllegalAccessException {
+
+		Type t = f.getType();
+
+		if (t.equals(String.class)) {
+			((JTextField) input).setText((String) f.get(o));
+		}
+
+		if (t.equals(int.class)) {
+			((JTextField) input).setText(f.get(o).toString());
+		}
+
+		if (t.equals(double.class)) {
+			((JTextField) input).setText(f.get(o).toString());
+		}
+
+		if (t.equals(Date.class)) {
+			((JTextField) input).setText(f.get(o).toString());
+		}
+
+		if (t.equals(Color.class)) {
+			((JTextField) input).setText(f.get(o).toString());
+		}
+
+		return input;
+	}
+
+	/**
+	 * Returns the value of the given input component
+	 * 
+	 * @param input
+	 *            the input component to get the value from
+	 * @param f
+	 *            the field that this input component corresponds to
+	 * @return the value of the input component
+	 */
+	public Object getInputComponentValue(JComponent input, Field f) {
+
+		Type t = f.getType();
+		Object o = null;
+
+		if (t.equals(String.class)) {
+			o = ((JTextField) input).getText();
+		}
+
+		if (t.equals(int.class)) {
+			o = Integer.parseInt(((JTextField) input).getText());
+		}
+
+		if (t.equals(double.class)) {
+			o = Double.parseDouble(((JTextField) input).getText());
+		}
+
+		if (t.equals(Date.class)) {
+			// Hack until there is a date component that will return a date
+			// instead of text
+
+			o = new Date(2012, 2, 2);
+		}
+
+		if (t.equals(Color.class)) {
+			// Hack until there is a color component that will return a color
+			// instead of text
+			o = Color.PINK;
+			// o = ((JTextField) input).getText();
+		}
+
+		return o;
+	}
+
 	/**
 	 * Given a field will return the input component that will represent that
 	 * field
