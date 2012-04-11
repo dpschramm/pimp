@@ -60,6 +60,7 @@ public class DataAccessor {
 			return null;
 		}
 		
+		
 		List<Product> products = new ArrayList<Product>();
 		
 		Element root = instance.xml.getDocumentElement();
