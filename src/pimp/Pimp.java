@@ -28,7 +28,7 @@ import pimp.persistence.*;
 public class Pimp {
 	
 	// Database stuff
-	private DataAccessor da;
+	private DataAccessorMock da;
 	private String databaseDir = "test.xml";
 	
 	private MainDisplay gui;
