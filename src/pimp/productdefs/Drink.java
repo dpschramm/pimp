@@ -5,5 +5,4 @@ public class Drink extends Product {
 	public String name;
 	public int quantity;
 	public String flavour;
-	
 }
