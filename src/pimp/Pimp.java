@@ -37,16 +37,15 @@ import pimp.persistence.*;
 public class Pimp {
 	
 	// Database stuff
-	private DataAccessorMock da;
 	private String databaseDir = "test.xml";
+	
+	// Product classes.
+	private ProductClassFinder pcf;
+	private String classDir = "products/"; /* Not sure what format this should take
+												may need to be a cmd argument. */ 
 	
 	private MainDisplay gui;
 	private List<Product> products;
-	
-	// Maintain class list.
-	private ProductClassFinder loader;
-	private XmlProductLoader xmlLoader;//It would be nice if this was declared as the abstract ProductLoader, 
-									   //but that will have to wait until we don't have two ProductLoaders
 	
 	/** 
 	 * Pimp is essentially the Controller
@@ -54,10 +53,9 @@ public class Pimp {
 	 */
 	public Pimp(MainDisplay gui) {
 		
-		// Create empty product list.
-		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
-		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
-		xmlLoader = new XmlProductLoader();
+		// Could change this to be a static singleton, like the DataAccessor -DS.
+		pcf = new ProductClassFinder(classDir);
+
 		this.gui = gui;
 		gui.setVisible(true);
 		gui.addNewProductListener(new newProductListener());
@@ -90,9 +88,8 @@ public class Pimp {
 
 	public void loadProducts(){	
 		// Load products from databaseDir.
-		da = new DataAccessorMock();
-		da.initialize(databaseDir);
-		products = da.load();
+		DataAccessorMock.initialize(databaseDir);
+		products = DataAccessorMock.load();
 		
 		//has public attributes so that field builder will work
 		Drink liftPlus = new Drink();
@@ -129,7 +126,7 @@ public class Pimp {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Create and show product dialog.
-			SelectProductDialog selectDialog = new SelectProductDialog(gui, loader.getClassList());
+			SelectProductDialog selectDialog = new SelectProductDialog(gui, pcf.getClassList());
 			
 			// Get selected class (will be null if they clicked cancel).
 			Class<? extends Product> c = selectDialog.getSelectedClass();
