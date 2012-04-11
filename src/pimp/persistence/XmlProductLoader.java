@@ -40,7 +40,7 @@ public class XmlProductLoader extends ProductLoader {
 			File xmlFile = new File(xmlFilePath);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			
+
 			
 			if (xmlFile.exists()) {
 				Document xmlDoc = db.parse(xmlFile);

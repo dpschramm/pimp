@@ -8,15 +8,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import pimp.gui.MainDisplay;
 import pimp.gui.NewProductDialog;
 import pimp.productdefs.Car;
+import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -67,11 +76,11 @@ public class Pimp {
 	}
 
 	public void loadProducts(){	
-		//String dir = "src/test.xml";
+		//String dir = "/local/test.xml";
 		//products = xmlLoader.loadAllProducts(dir);
 		
 		//Code to manually create a set of products, because
-		//the xml loader is being a bit weird atm
+		//xml is acting weird
 		
 		products = new ArrayList<Product>();
 		//create products
@@ -112,9 +121,18 @@ public class Pimp {
 		purpleJacket.setQuantity(9);
 		products.add(purpleJacket);
 		
+		//has public attributes so that field builder will work
+		Drink liftPlus = new Drink();
+		liftPlus.name = "Lift Plus";
+		liftPlus.capacity = "440ml";
+		liftPlus.flavour = "Fizzy Lemony Tang";
+		liftPlus.quantity = 4;
+		liftPlus.setName("Lift Plus");
+		products.add(liftPlus);
+		
 		//do stuff to init list in gui
 		gui.createProductTable(products);
-		//gui.validate();
+		gui.addTreeSelectionListener(new productTreeListener());
 	}
 	
 	public void setDynamicProductForm(JPanel form){
@@ -150,23 +168,29 @@ public class Pimp {
 			else{
 				//The event has been triggered by the new product dialog. 
 				//This means we can go ahead and create the product now.
+				//TODO this is terrible we probably shouldn't do this
 				Class<? extends Product> c = (Class<? extends Product>) npd.getList().getSelectedValue();
 				try {
 					newProduct = c.newInstance();
+					newProduct.setName("New " + c.getSimpleName());
 					products.add(newProduct);
-					int i = 0;
-					//TODO Other things that will need to happen here
+					//refresh product table
+					//gui.createProductTable(products);
+					gui.addToProductTable(newProduct);
+					npd.dispose();
+					npd = null;
+					//TODO save product to db
 				} catch (InstantiationException e1) {
 					// This gets fired when abstract classes are instantiated.
 					e1.printStackTrace();
 				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		}
 		
 	}
+
 	
 	/**
 	 * Delete the specified product.
@@ -207,5 +231,41 @@ public class Pimp {
 			
 		}
 		
+	}
+	
+	
+	class productTreeListener implements TreeSelectionListener{
+
+		/* This is triggered when a product is selected in the product tree.
+		 * It retrieves the selected object and creates a new dynamic form to
+		 * display the product's attributes.
+		 * 
+		 * Currently these product forms will only work with public class attributes
+		 */
+		@Override
+		public void valueChanged(TreeSelectionEvent arg0) {
+			TreePath path = gui.productTree.getSelectionPath();
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+                    path.getLastPathComponent();
+			Object selectedObject = selectedNode.getUserObject();
+			Class c = selectedObject.getClass();
+			//Checking that selected class isn't abstract and isn't just a String
+			//(the "Product" root node is currently a string.
+			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+				try {
+					Product selectedProduct = (Product)selectedObject;
+					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
+					setDynamicProductForm(newForm);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
+		}
 	}
 }
