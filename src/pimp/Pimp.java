@@ -31,7 +31,7 @@ public class Pimp {
 	private List<Product> products;
 	
 	// Maintain class list.
-	private ProductLoader loader;
+	private ProductClassFinder loader;
 	private XmlProductLoader xmlLoader;//It would be nice if this was declared as the abstract ProductLoader, 
 									   //but that will have to wait until we don't have two ProductLoaders
 	
@@ -43,7 +43,7 @@ public class Pimp {
 		String dir = "test.xml";
 		// Create empty product list.
 		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
-		loader = new ProductLoader("directory"); //perhaps directory will have to be a cmd argument
+		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
 		xmlLoader = new XmlProductLoader();
 		this.gui = gui;
 		gui.setVisible(true);
