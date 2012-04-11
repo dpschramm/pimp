@@ -97,7 +97,7 @@ public class Pimp {
 		liftPlus.capacity = "440ml";
 		liftPlus.flavour = "Fizzy Lemony Tang";
 		liftPlus.quantity = 4;
-		liftPlus.setName("Lift Plus");
+		liftPlus.name  = "Lift Plus";
 		products.add(liftPlus);
 		
 		//do stuff to init list in gui
