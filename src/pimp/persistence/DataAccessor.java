@@ -1,12 +1,13 @@
 package pimp.persistence;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -55,6 +56,10 @@ public class DataAccessor {
 	}
 	
 	public static List<Product> load() {
+		if (instance == null) {
+			return null;
+		}
+		
 		List<Product> products = new ArrayList<Product>();
 		
 		Element root = instance.xml.getDocumentElement();
@@ -76,7 +81,7 @@ public class DataAccessor {
 		return products;
 	}
 	
-	private static Product createProductFromXmlElement(Element element) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	private static Product createProductFromXmlElement(Element element) throws Exception {
 		Product product = null;
 		
 		NodeList nodes = element.getChildNodes();
@@ -87,28 +92,50 @@ public class DataAccessor {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element attributeElement = (Element)nodes.item(i);
 			String attributeName = attributeElement.getNodeName();
+			String attributeType = attributeElement.getAttribute("type");
 			
-			Method getter = getAttributeGetter(className, attributeName);
-			getter.invoke(product);
+			if (!attributeType.equals("Class")) {
+				String rawValue = attributeElement.getTextContent();
+				Object value = getValue(attributeType, rawValue);
+				
+				Method setter = getSetter(className, attributeName);
+				setter.invoke(product, new Object[] {value});
+			}
 		}
 		
 		return product;
 	}
 	
+	//Must be a better way to do this. Switching on strings is available in java 7, but I don't have that...
+	private static Object getValue(String attributeType, String rawValue) throws Exception {
+		if (attributeType.equals("String")) {
+			return new String(rawValue);
+		} else if (attributeType.equals("int")) {
+			return new Integer(rawValue);
+		} else if (attributeType.equals("double")) {
+			return new Double(rawValue);
+		} else if (attributeType.equals("Date")) {
+			return new Date(rawValue);
+		} else if (attributeType.equals("Color")) {
+			return new Color(new Integer(rawValue));
+		}
+		throw new Exception("Unknown attribute type!");
+	}
+
 	private static Class<?> getClassName(Element element) throws ClassNotFoundException {
 		Element classNameAttribute = (Element)element.getElementsByTagName("Class").item(0);
-		String className = classNameAttribute.getTextContent();
+		String className = classNameAttribute.getTextContent().substring(6);	//Text will be of form "class ClassName". Need to remove the first word.
 		
 		Class<?> c = Class.forName(className);
 		
 		return c;
 	}
 	
-	private static Method getAttributeGetter(Class<?> className, String attributeName) {
+	private static Method getSetter(Class<?> className, String attributeName) {
 		Method[] methods = className.getMethods();
 		
 		for (Method method : methods) {
-			if (method.getName().substring(3).equals(attributeName)) {
+			if (isSetter(method) && method.getName().substring(3).equals(attributeName)) {
 				return method;
 			}
 		}
@@ -130,6 +157,7 @@ public class DataAccessor {
 		
 		for (Method method : getters) {
 			Element objectAttributeElement = instance.xml.createElement(method.getName().substring(3));
+			objectAttributeElement.setAttribute("type", method.getReturnType().getSimpleName());
 			String value = "";
 			try {
 				value = method.invoke(product, new Object[]{}).toString();
@@ -170,6 +198,16 @@ public class DataAccessor {
 			return false;
 		}
 		
+		return true;
+	}
+	
+	private static boolean isSetter(Method method) {
+		if (!method.getName().startsWith("set")) {
+			return false;
+		}
+		if (method.getParameterTypes().length != 1) {
+			return false;
+		}
 		return true;
 	}
 	
