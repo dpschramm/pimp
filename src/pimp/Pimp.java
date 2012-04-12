@@ -8,15 +8,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.productdefs.Car;
+import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -27,11 +36,15 @@ import pimp.persistence.*;
  */
 public class Pimp {
 	
-	public MainDisplay gui; // Why is this static, can we change? -DS
+	// Database stuff
+	private DataAccessorMock da;
+	private String databaseDir = "test.xml";
+	
+	private MainDisplay gui;
 	private List<Product> products;
 	
 	// Maintain class list.
-	private ProductLoader loader;
+	private ProductClassFinder loader;
 	private XmlProductLoader xmlLoader;//It would be nice if this was declared as the abstract ProductLoader, 
 									   //but that will have to wait until we don't have two ProductLoaders
 	
@@ -40,10 +53,10 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp(MainDisplay gui) {
-		String dir = "test.xml";
+		
 		// Create empty product list.
 		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
-		loader = new ProductLoader("directory"); //perhaps directory will have to be a cmd argument
+		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
 		xmlLoader = new XmlProductLoader();
 		this.gui = gui;
 		gui.setVisible(true);
@@ -56,6 +69,13 @@ public class Pimp {
 		 * The code below needs to be commented and refactored -DS
 		 */
 		FormBuilder fb = new FormBuilder(TestClass.class);
+		fb.addFormElement(new StringFormElement());
+		fb.addFormElement(new DoubleFormElement());
+		fb.addFormElement(new IntFormElement());
+		fb.addFormElement(new DateFormElement());
+		fb.addFormElement(new ColorFormElement());
+		fb.createForm();
+
 		@SuppressWarnings("deprecation")
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
 		JPanel newForm;
@@ -69,54 +89,23 @@ public class Pimp {
 	}
 
 	public void loadProducts(){	
-		//String dir = "src/test.xml";
-		//products = xmlLoader.loadAllProducts(dir);
+		// Load products from databaseDir.
+		da = new DataAccessorMock();
+		da.initialize(databaseDir);
+		products = da.load();
 		
-		//Code to manually create a set of products, because
-		//the xml loader is being a bit weird atm
-		
-		products = new ArrayList<Product>();
-		//create products
-		Car honda = new Car();
-		honda.setColour("grey");
-		honda.setMake("Honda");
-		honda.setModel("Civic");
-		honda.setYear(1992);
-		honda.setName("Ellie's Honda is boring");
-		honda.setQuantity(1);
-		//save
-		products.add(honda);
-		
-		Car nissan = new Car();
-		nissan.setColour("red");
-		nissan.setMake("Nissan");
-		nissan.setModel("Primera");
-		nissan.setYear(1998);
-		nissan.setName("Nissan Primera");
-		nissan.setQuantity(5);
-		products.add(nissan);
-			
-		Jacket orangeJacket = new Jacket();
-		orangeJacket.setBrand("Generic Brand");
-		orangeJacket.setColour("orange");
-		orangeJacket.setIsWaterproof(true);
-		orangeJacket.setName("Orange Jacket");
-		orangeJacket.setSize("L");
-		orangeJacket.setQuantity(7);
-		products.add(orangeJacket);
-				
-		Jacket purpleJacket = new Jacket();
-		purpleJacket.setBrand("Generic Brand");
-		purpleJacket.setColour("purple");
-		purpleJacket.setIsWaterproof(false);
-		purpleJacket.setName("Purple Jacket");
-		purpleJacket.setSize("M");
-		purpleJacket.setQuantity(9);
-		products.add(purpleJacket);
+		//has public attributes so that field builder will work
+		Drink liftPlus = new Drink();
+		liftPlus.name = "Lift Plus";
+		liftPlus.capacity = "440ml";
+		liftPlus.flavour = "Fizzy Lemony Tang";
+		liftPlus.quantity = 4;
+		liftPlus.setName("Lift Plus");
+		products.add(liftPlus);
 		
 		//do stuff to init list in gui
 		gui.createProductTable(products);
-		//gui.validate();
+		gui.addTreeSelectionListener(new productTreeListener());
 	}
 	
 	public void setDynamicProductForm(JPanel form){
@@ -139,24 +128,21 @@ public class Pimp {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-			//The action has been triggered by the main gui
-			// create new product dialog.
+			// Create and show product dialog.
 			SelectProductDialog selectDialog = new SelectProductDialog(gui, loader.getClassList());
-				
-			//The event has been triggered by the new product dialog. 
-			//This means we can go ahead and create the product now.
+			
+			// Get selected class (will be null if they clicked cancel).
 			Class<? extends Product> c = selectDialog.getSelectedClass();
 			
 			try {
-				/*Currently crashing here, but I think this is because all I've
-				  had to test with so far is the abstract Product class.
-				*/
-				// Debug messages
+				// Check to make sure user made a selection.
 				if (c != null) {
 					Product p = c.newInstance();
-					System.out.println("You selected to create a " + p.getClass().getName());
 					products.add(p);
+					gui.addToProductTable(p);
+					
+					// Debug.
+					System.out.println("You selected to create a " + p.getClass().getName());
 				}
 				else System.out.println("No selection.");
 				
@@ -171,6 +157,7 @@ public class Pimp {
 		}
 		
 	}
+
 	
 	/**
 	 * Delete the specified product.
@@ -211,5 +198,41 @@ public class Pimp {
 			
 		}
 		
+	}
+	
+	
+	class productTreeListener implements TreeSelectionListener{
+
+		/* This is triggered when a product is selected in the product tree.
+		 * It retrieves the selected object and creates a new dynamic form to
+		 * display the product's attributes.
+		 * 
+		 * Currently these product forms will only work with public class attributes
+		 */
+		@Override
+		public void valueChanged(TreeSelectionEvent arg0) {
+			TreePath path = gui.productTree.getSelectionPath();
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+                    path.getLastPathComponent();
+			Object selectedObject = selectedNode.getUserObject();
+			Class c = selectedObject.getClass();
+			//Checking that selected class isn't abstract and isn't just a String
+			//(the "Product" root node is currently a string.
+			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+				try {
+					Product selectedProduct = (Product)selectedObject;
+					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
+					setDynamicProductForm(newForm);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
+		}
 	}
 }

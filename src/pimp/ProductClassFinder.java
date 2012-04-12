@@ -14,7 +14,7 @@ import pimp.productdefs.Product;
  * @author Daniel Schramm
  *
  */
-public class ProductLoader {
+public class ProductClassFinder {
 	
 	private String directory;
 	private List<Class <? extends Product>> classList;
@@ -25,7 +25,7 @@ public class ProductLoader {
 	 * 
 	 * @param directory	the directory to monitor.
 	 */
-	public ProductLoader(String directory) {
+	public ProductClassFinder(String directory) {
 		
 		this.directory = directory;
 		

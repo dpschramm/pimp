@@ -1,8 +1,10 @@
 package pimp;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.List;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +24,15 @@ import com.toedter.calendar.JDateChooser;
  * @author Joel Harrison, Joel Mason
  *
  */
+
+import pimp.Pimp.newProductListener;
+
 public class FormBuilder {
 
 	private JPanel jp;
 	private Class c;
-	Map<String, JComponent> fieldToComponentMapping;
+	private Map<String, JComponent> fieldToComponentMapping;
+	private Map<Type, FormElement> typeToFormElementMapping;
 
 	/**
 	 * Constructor takes a Class for which it can build forms for
@@ -36,7 +42,13 @@ public class FormBuilder {
 	public FormBuilder(Class c) {
 		this.c = c;
 		fieldToComponentMapping = new HashMap<String, JComponent>();
-		jp = (JPanel) createForm();
+		typeToFormElementMapping = new HashMap<Type, FormElement>();
+		addFormElement(new StringFormElement()); // Default to string if form builder type added
+		//jp = createForm();
+	}
+	
+	public void addFormElement(FormElement fe){
+		typeToFormElementMapping.put(fe.getInputType(), fe);
 	}
 
 	/**
@@ -44,7 +56,7 @@ public class FormBuilder {
 	 * 
 	 * @return a JPanel form that represents the class
 	 */
-	private JComponent createForm() {
+	public void createForm() {
 
 		Field[] fields = c.getFields();
 
@@ -54,12 +66,17 @@ public class FormBuilder {
 
 		for (Field f : fields) {
 			panel.add(createFieldFormNameComponent(f));
-			JComponent input = createInputComponent(f);
+			FormElement fe  = typeToFormElementMapping.get(f.getType());
+			if(fe == null){
+				// Default to String Input
+				fe = typeToFormElementMapping.get(String.class);
+			}
+			JComponent input = fe.createComponent();
 			fieldToComponentMapping.put(f.getName(), input);
 			panel.add(input);
 		}
 
-		return panel;
+		jp = panel;
 	}
 
 	/**
@@ -68,8 +85,8 @@ public class FormBuilder {
 	 * @return a cleared form
 	 */
 	public JComponent getBlankForm() {
-
-		return createForm();
+		createForm();
+		return jp; 
 	}
 
 	/**
@@ -94,9 +111,9 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			setInputComponent(input, f, o);
+			FormElement fe = typeToFormElementMapping.get(f.getType());
+			fe.setValue(input, f.get(o));
 		}
-
 		return jp;
 	}
 
@@ -120,7 +137,8 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			f.set(o, getInputComponentValue(input, f));
+			FormElement fe = typeToFormElementMapping.get(f.getType());
+			f.set(o, fe.getValue(input));
 		}
 	}
 
@@ -141,11 +159,13 @@ public class FormBuilder {
 
 		for (Field f : o.getClass().getFields()) {
 			JComponent input = fieldToComponentMapping.get(f.getName());
-			f.set(o, getInputComponentValue(input, f));
+			FormElement fe = typeToFormElementMapping.get(f.getType());
+			f.set(o, fe.getValue(input));
 		}
 
 		return o;
 	}
+
 
 	/**
 	 * Called when creating the input field, is used to determine what kind of
@@ -271,6 +291,7 @@ public class FormBuilder {
 
 		return o;
 	}
+
 
 	/**
 	 * Given a field will return the input component that will represent that

@@ -13,8 +13,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import javax.swing.JScrollPane;
 
 import pimp.Main;
@@ -72,7 +75,7 @@ public class MainDisplay extends JFrame {
 		
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Products");
 		for(Product product: products){
-			DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(product.getName());
+			DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(product/*.getName()*/);
 			root.add(leaf);
 		}
 		productTree = new JTree(root);
@@ -84,9 +87,16 @@ public class MainDisplay extends JFrame {
 		productTree.setVisible(true);
 		treeScrollPanel.revalidate();
 		repaint();
-		
 	}
 
+	public void addToProductTable(Product product){
+		DefaultTreeModel model = (DefaultTreeModel) productTree.getModel();
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(product/*.getName()*/);
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+		model.insertNodeInto(newNode, root, model.getChildCount(root));
+		treeScrollPanel.revalidate();
+		repaint();
+	}
 	
 	/**
 	 * This method contains all the button setup code.
@@ -154,5 +164,8 @@ public class MainDisplay extends JFrame {
 	public void addNewProductListener(ActionListener npl){
 		btnNewProduct.addActionListener(npl);
 	}
-
+	
+	public void addTreeSelectionListener(TreeSelectionListener tsl){
+		productTree.addTreeSelectionListener(tsl);
+	}
 }
