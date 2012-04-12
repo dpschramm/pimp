@@ -28,12 +28,9 @@ import com.toedter.calendar.JDateChooser;
  */
 
 import pimp.Pimp.newProductListener;
-<<<<<<< HEAD
 
-=======
 import pimp.testdefs.AnotherTestClass;
 
->>>>>>> e1bcc4323d2645459a5432e5717e59dd38574cc8
 public class FormBuilder {
 
 	private JPanel jp;
