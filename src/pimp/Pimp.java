@@ -5,14 +5,9 @@
 package pimp;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,8 +35,9 @@ public class Pimp {
 	private String databaseDir = "test.xml";
 	
 	// Product classes.
-	private ProductClassFinder pcf;
-	private String classDir = "products"; /* Not sure what format this should take
+	private DirectoryClassLoader pcf;
+	private String productPackage = "pimp.productdefs";
+	private String productDir = "products1"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
 	private MainDisplay gui;
@@ -54,7 +50,7 @@ public class Pimp {
 	public Pimp(MainDisplay gui) {
 		
 		// Could change this to be a static singleton, like the DataAccessor -DS.
-		pcf = new ProductClassFinder(classDir);
+		pcf = new DirectoryClassLoader(productDir, productPackage);
 
 		this.gui = gui;
 		gui.setVisible(true);
@@ -126,7 +122,8 @@ public class Pimp {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Create and show product dialog.
-			SelectProductDialog selectDialog = new SelectProductDialog(gui, pcf.getClassList());
+			SelectProductDialog selectDialog = new SelectProductDialog(gui, 
+					pcf.getClassList());
 			
 			// Get selected class (will be null if they clicked cancel).
 			Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -212,7 +209,8 @@ public class Pimp {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
                     path.getLastPathComponent();
 			Object selectedObject = selectedNode.getUserObject();
-			Class c = selectedObject.getClass();
+			Class<?> c = selectedObject.getClass();
+			
 			//Checking that selected class isn't abstract and isn't just a String
 			//(the "Product" root node is currently a string.
 			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){

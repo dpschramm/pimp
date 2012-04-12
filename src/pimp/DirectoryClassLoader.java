@@ -1,52 +1,41 @@
 package pimp;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import pimp.productdefs.Product;
-
 /**
- * This class monitors a folder and return a list of classes that can
- * be created.
+ * This class examines a specified folder and loads the classes inside it.
+ * The list of these classes can be retrieved using getClassList.
  * 
  * @author Daniel Schramm
- *
  */
-public class ProductClassFinder {
+public class DirectoryClassLoader {
 	
-	private List<Class <? extends Product>> classList;
+	private List<Class<?>> classList;
 	
 	/**
-	 * Each ProductLoader is only setup to monitor a single directory. This
-	 * could be an example where we could use the Singleton design pattern.
+	 * A DirectoryClassLoader loads all classes in a directory.
 	 * 
-	 * @param directory	the directory to monitor.
-	 */
-	public ProductClassFinder(String directoryString) {
-		
-		// Build the initial class list.
-		readDirectory(directoryString);
-	}
-	
-	/** 
-	 * This method extracts the classes from the specified directory. Call
-	 * it whenever you want to update the class list.
+	 * The package name is required in order to load the class, however 
+	 * this should not cause issues as a folder should theoretically 
+	 * only contain classes from a single package.
 	 * 
-	 * See this Stack Overflow question for possible solutions:
-	 * http://stackoverflow.com/questions/1456930/how-do-i-read-all-classes-from-a-java-package-in-the-classpath
+	 * We could potentially use the Singleton pattern for this class.
+	 * 
+	 * @param directoryName	the directory to monitor.
+	 * @param packageName the package that the classes belong to.
 	 */
-	private void readDirectory(String directoryString) {
+	public DirectoryClassLoader(String directoryName, String packageName) {
 		// Clear the previous class list.
-		classList = new ArrayList<Class <? extends Product>>();
+		classList = new ArrayList<Class<?>>();
 		
 		// Create a string pointing to the product folder.
-		URL directoryUrl = ClassLoader.getSystemResource(directoryString);
+		URL directoryUrl = ClassLoader.getSystemResource(directoryName);
 		if (directoryUrl == null) {
-			System.out.println("Could not find the '" + directoryString + 
+			System.out.println("Could not find the '" + directoryName + 
 					"' folder in " + System.getProperty("user.dir"));
 			return; // Could not find the product directory.
 		}
@@ -56,19 +45,19 @@ public class ProductClassFinder {
 		URLClassLoader ucl = new URLClassLoader(classUrls);
 		
 		// Get a list of files in the directory.
-		File productFolder = new File(directoryUrl.getPath());
-		File[] productFiles = productFolder.listFiles();
+		File classFolder = new File(directoryUrl.getPath());
+		File[] classFiles = classFolder.listFiles();
 		
 		// Loop through each file, adding it to the list of classes.
 		System.out.println("Searching in: " + directoryUrl.getPath());
-        for(File file: productFiles){
+        for(File file: classFiles){
         	// Get the class name without the .class at the end.
         	String className = file.getName();
         	className = className.substring(0, className.lastIndexOf('.'));
         	
         	// Load the classes.
     		try {
-    			Class c = ucl.loadClass("pimp.productdefs." + className);
+    			Class<?> c = ucl.loadClass(packageName + "." + className);
     	        classList.add(c);
     	        System.out.println("Class found: " + className);
     		} catch (ClassNotFoundException e) {
@@ -79,13 +68,11 @@ public class ProductClassFinder {
 	}
 	
 	/**
-	 * Returns the list of product classes that are defined in the specified
-	 * directory. Generics are used to ensure all classes extend the Product 
-	 * class, although they are not guaranteed to be concrete.
+	 * Returns a list of the classes loaded.
 	 * 
-	 * @return a List of class types in the directory.
+	 * @return the list of classes found in the directory.
 	 */
-	public List<Class <? extends Product>> getClassList() {
+	public List<Class<?>> getClassList() {
 		return classList;
 	}
 }

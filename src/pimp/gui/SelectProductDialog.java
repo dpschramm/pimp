@@ -37,7 +37,7 @@ public class SelectProductDialog {
 	 * @param classArray an array of product classes.
 	 */
 	public SelectProductDialog(JFrame frame, 
-			List<Class <? extends Product>> classList) {
+			List<Class<?>> classList) {
 		// Create dialog.
 		dialog = new JDialog(frame, "Create new product", true);
 		
@@ -65,11 +65,11 @@ public class SelectProductDialog {
 	 * @return a JList containing the different types of classes that can be 
 	 * selected.
 	 */
-	private JList createList(List<Class <? extends Product>> classList) {
+	private JList createList(List<?> classList) {
 		/* The following line gives a warning, see this link for details:
 		 * http://stackoverflow.com/questions/749425/how-do-i-use-generics-with-an-array-of-classes
 		 */
-		Class<? extends Product>[] classArray = 
+		Class<?>[] classArray = 
 			classList.toArray(new Class[0]);
 		return new JList(classArray);
 	}
