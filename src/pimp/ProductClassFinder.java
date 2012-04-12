@@ -1,6 +1,7 @@
 package pimp;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -44,7 +45,11 @@ public class ProductClassFinder {
 		
 		// Create a string pointing to the product folder.
 		URL directoryUrl = ClassLoader.getSystemResource(directoryString);
-		System.out.println("Searching for products in: " + directoryUrl.getPath());
+		if (directoryUrl == null) {
+			System.out.println("Could not find the '" + directoryString + 
+					"' folder in " + System.getProperty("user.dir"));
+			return; // Could not find the product directory.
+		}
 		
 		// Create the Class Loader which will read from the directory.
 		URL[] classUrls = { directoryUrl };
@@ -55,16 +60,17 @@ public class ProductClassFinder {
 		File[] productFiles = productFolder.listFiles();
 		
 		// Loop through each file, adding it to the list of classes.
-		String className;
+		System.out.println("Searching in: " + directoryUrl.getPath());
         for(File file: productFiles){
         	// Get the class name without the .class at the end.
-        	className = file.getName();
+        	String className = file.getName();
         	className = className.substring(0, className.lastIndexOf('.'));
         	
         	// Load the classes.
     		try {
     			Class c = ucl.loadClass("pimp.productdefs." + className);
     	        classList.add(c);
+    	        System.out.println("Class found: " + className);
     		} catch (ClassNotFoundException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();

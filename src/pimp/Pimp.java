@@ -41,7 +41,7 @@ public class Pimp {
 	
 	// Product classes.
 	private ProductClassFinder pcf;
-	private String classDir = "products/"; /* Not sure what format this should take
+	private String classDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
 	private MainDisplay gui;
