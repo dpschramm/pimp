@@ -18,9 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import pimp.Pimp.newProductListener;
-import pimp.testdefs.AnotherTestClass;
-
 public class FormBuilder {
 
 	private JPanel jp;

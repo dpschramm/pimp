@@ -24,6 +24,7 @@ public class DataAccessorMock {
 		
 		List<Product> productList = new ArrayList();
 		
+		/*
 		//create products
 		Car honda = new Car();
 		honda.setColour("grey");
@@ -52,14 +53,15 @@ public class DataAccessorMock {
 		orangeJacket.setSize("L");
 		orangeJacket.setQuantity(7);
 		productList.add(orangeJacket);
-				
+		*/
+			
 		Jacket purpleJacket = new Jacket();
-		purpleJacket.setBrand("Generic Brand");
-		purpleJacket.setColour("purple");
-		purpleJacket.setIsWaterproof(false);
-		purpleJacket.setName("Purple Jacket");
-		purpleJacket.setSize("M");
-		purpleJacket.setQuantity(9);
+		purpleJacket.brand = "Generic Brand";
+		purpleJacket.colour = "purple";
+		purpleJacket.isWaterproof = false;
+		purpleJacket.name = "Purple Jacket";
+		purpleJacket.size = "M";
+		purpleJacket.quantity = 9;
 		productList.add(purpleJacket);
 		
 		return productList;
