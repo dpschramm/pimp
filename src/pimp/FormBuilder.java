@@ -1,8 +1,10 @@
 package pimp;
+
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.List;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +28,12 @@ import com.toedter.calendar.JDateChooser;
  */
 
 import pimp.Pimp.newProductListener;
+<<<<<<< HEAD
 
+=======
+import pimp.testdefs.AnotherTestClass;
+
+>>>>>>> e1bcc4323d2645459a5432e5717e59dd38574cc8
 public class FormBuilder {
 
 	private JPanel jp;
@@ -43,11 +50,13 @@ public class FormBuilder {
 		this.c = c;
 		fieldToComponentMapping = new HashMap<String, JComponent>();
 		typeToFormElementMapping = new HashMap<Type, FormElement>();
-		addFormElement(new StringFormElement()); // Default to string if form builder type added
-		//jp = createForm();
+
+		addFormElement(new StringFormElement()); // Default to string if form
+													// builder type added
+		// jp = createForm();
 	}
-	
-	public void addFormElement(FormElement fe){
+
+	public void addFormElement(FormElement fe) {
 		typeToFormElementMapping.put(fe.getInputType(), fe);
 	}
 
@@ -64,16 +73,20 @@ public class FormBuilder {
 		GridLayout gl = new GridLayout(fields.length, 2);
 		panel.setLayout(gl);
 
+		// For Public Fields just need to check if the Form Field Annotation is
+		// present
 		for (Field f : fields) {
-			panel.add(createFieldFormNameComponent(f));
-			FormElement fe  = typeToFormElementMapping.get(f.getType());
-			if(fe == null){
-				// Default to String Input
-				fe = typeToFormElementMapping.get(String.class);
+			if (f.isAnnotationPresent(FormField.class)) {
+				panel.add(createFieldFormNameComponent(f));
+				FormElement fe = typeToFormElementMapping.get(f.getType());
+				if (fe == null) {
+					// Default to String Input
+					fe = typeToFormElementMapping.get(String.class);
+				}
+				JComponent input = fe.createComponent();
+				fieldToComponentMapping.put(f.getName(), input);
+				panel.add(input);
 			}
-			JComponent input = fe.createComponent();
-			fieldToComponentMapping.put(f.getName(), input);
-			panel.add(input);
 		}
 
 		jp = panel;
@@ -86,7 +99,7 @@ public class FormBuilder {
 	 */
 	public JComponent getBlankForm() {
 		createForm();
-		return jp; 
+		return jp;
 	}
 
 	/**
@@ -110,9 +123,11 @@ public class FormBuilder {
 		}
 
 		for (Field f : o.getClass().getFields()) {
-			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			fe.setValue(input, f.get(o));
+			if (f.isAnnotationPresent(FormField.class)) {
+				JComponent input = fieldToComponentMapping.get(f.getName());
+				FormElement fe = typeToFormElementMapping.get(f.getType());
+				fe.setValue(input, f.get(o));
+			}
 		}
 		return jp;
 	}
@@ -136,9 +151,11 @@ public class FormBuilder {
 		}
 
 		for (Field f : o.getClass().getFields()) {
-			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			f.set(o, fe.getValue(input));
+			if (f.isAnnotationPresent(FormField.class)) {
+				JComponent input = fieldToComponentMapping.get(f.getName());
+				FormElement fe = typeToFormElementMapping.get(f.getType());
+				f.set(o, fe.getValue(input));
+			}
 		}
 	}
 
@@ -158,14 +175,15 @@ public class FormBuilder {
 		o = c.newInstance();
 
 		for (Field f : o.getClass().getFields()) {
-			JComponent input = fieldToComponentMapping.get(f.getName());
-			FormElement fe = typeToFormElementMapping.get(f.getType());
-			f.set(o, fe.getValue(input));
+			if (f.isAnnotationPresent(FormField.class)) {
+				JComponent input = fieldToComponentMapping.get(f.getName());
+				FormElement fe = typeToFormElementMapping.get(f.getType());
+				f.set(o, fe.getValue(input));
+			}
 		}
 
 		return o;
 	}
-
 
 	/**
 	 * Called when creating the input field, is used to determine what kind of
@@ -292,7 +310,6 @@ public class FormBuilder {
 		return o;
 	}
 
-
 	/**
 	 * Given a field will return the input component that will represent that
 	 * field
@@ -300,7 +317,7 @@ public class FormBuilder {
 	 * @param f
 	 * @return
 	 */
-	public JComponent createFieldFormNameComponent(Field f) {
+	private JComponent createFieldFormNameComponent(Field f) {
 
 		JLabel name = new JLabel();
 		name.setText(f.getName());
