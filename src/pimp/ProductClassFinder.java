@@ -1,15 +1,11 @@
 package pimp;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import pimp.productdefs.Car;
-import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 
 /**
@@ -43,40 +39,36 @@ public class ProductClassFinder {
 	 * http://stackoverflow.com/questions/1456930/how-do-i-read-all-classes-from-a-java-package-in-the-classpath
 	 */
 	private void readDirectory(String directoryString) {
-		// Create the new empty list of classes.
+		// Clear the previous class list.
 		classList = new ArrayList<Class <? extends Product>>();
 		
-		// Create a file pointer to the specified product folder.
-		File productFolder = 
-			new File(ClassLoader.getSystemResource(directoryString).getPath());
-		System.out.println("Searching product folder: " + productFolder.getAbsolutePath());
+		// Create a string pointing to the product folder.
+		URL directoryUrl = ClassLoader.getSystemResource(directoryString);
+		System.out.println("Searching for products in: " + directoryUrl.getPath());
 		
-		// Get the list of files in that folder.
+		// Create the Class Loader which will read from the directory.
+		URL[] classUrls = { directoryUrl };
+		URLClassLoader ucl = new URLClassLoader(classUrls);
+		
+		// Get a list of files in the directory.
+		File productFolder = new File(directoryUrl.getPath());
 		File[] productFiles = productFolder.listFiles();
 		
-		// Loop through each file, adding it to the list of class names.
+		// Loop through each file, adding it to the list of classes.
 		String className;
         for(File file: productFiles){
+        	// Get the class name without the .class at the end.
         	className = file.getName();
-        	
-        	// Remove .class from file name.
         	className = className.substring(0, className.lastIndexOf('.'));
         	
         	// Load the classes.
     		try {
-    			// Add the trailing '/' so that URLClassLoader knows this is a directory.
-    			URL classUrl = new URL(productFolder.toURI().toURL().toString() + "/");
-    			URL[] classUrls = { classUrl };
-    	        URLClassLoader ucl = new URLClassLoader(classUrls);
-    	        Class c = ucl.loadClass("pimp.productdefs." + className);
+    			Class c = ucl.loadClass("pimp.productdefs." + className);
     	        classList.add(c);
-    		} catch (MalformedURLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
     		} catch (ClassNotFoundException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
-    		} 		
+    		}	
         }
 	}
 	
