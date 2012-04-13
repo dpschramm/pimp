@@ -71,7 +71,6 @@ public class DataAccessorMock {
 		liftPlus.capacity = "440ml";
 		liftPlus.flavour = "Fizzy Lemony Tang";
 		liftPlus.quantity = 4;
-		liftPlus.name  = "Lift Plus";
 		productList.add(liftPlus);
 		
 		return productList;
