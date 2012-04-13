@@ -67,6 +67,15 @@ public class MainDisplay extends JFrame {
 	}
 	
 	/**
+	 * Show the gui.
+	 */
+	public void display() {
+		//pack();							// Size the window to fit contents.
+		setLocationRelativeTo(null); 	// Center frame on screen.
+		setVisible(true); 				// Show the gui.
+	}
+	
+	/**
 	 * This method creates the product table.
 	 */
 	public void createProductTable(List<Product> products) {

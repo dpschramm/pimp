@@ -72,7 +72,6 @@ public class Pimp {
 		
 		// Initialize Gui
 		gui = new MainDisplay();
-		gui.setVisible(true);
 		gui.addNewProductListener(new newProductListener());
 		
 		// Load extisting products.
@@ -97,6 +96,8 @@ public class Pimp {
 			gui.updateProductForm(newForm);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {}
+
+		gui.display();
 	}
 
 	public void loadProducts(){	
