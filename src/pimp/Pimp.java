@@ -37,6 +37,8 @@ import pimp.testdefs.TestClass;
 
 /**
  * The Pimp class acts as the controller for our inventory management program.
+ * 
+ * @author Daniel Schramm, Ellie Rasmus
  */
 public class Pimp {
 	
@@ -77,9 +79,23 @@ public class Pimp {
 		// Load extisting products.
 		loadProducts();
 		
-		/**
-		 * The code below needs to be commented and refactored -DS
-		 */
+		// Make form.
+		createForm();
+
+		gui.display();
+	}
+
+	private void loadProducts(){	
+		// Load products from databaseDir.
+		DataAccessorMock.initialize(databaseDir);
+		products = DataAccessorMock.load();
+		
+		//do stuff to init list in gui
+		gui.createProductTable(products);
+		gui.addTreeSelectionListener(new productTreeListener());
+	}
+	
+	private void createForm() {
 		FormBuilder fb = new FormBuilder(TestClass.class);
 		fb.addFormElement(new StringFormElement());
 		fb.addFormElement(new DoubleFormElement());
@@ -96,18 +112,6 @@ public class Pimp {
 			gui.updateProductForm(newForm);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {}
-
-		gui.display();
-	}
-
-	public void loadProducts(){	
-		// Load products from databaseDir.
-		DataAccessorMock.initialize(databaseDir);
-		products = DataAccessorMock.load();
-		
-		//do stuff to init list in gui
-		gui.createProductTable(products);
-		gui.addTreeSelectionListener(new productTreeListener());
 	}
 	
 	/**
