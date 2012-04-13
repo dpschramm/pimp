@@ -20,7 +20,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.JScrollPane;
 
-import pimp.Main;
 import pimp.Pimp;
 import pimp.productdefs.Product;
 
@@ -167,5 +166,16 @@ public class MainDisplay extends JFrame {
 	
 	public void addTreeSelectionListener(TreeSelectionListener tsl){
 		productTree.addTreeSelectionListener(tsl);
+	}
+	
+	public void updateProductForm(JPanel form) {
+		//Where should this kind of logic be? Oh this is terribly confusing.
+		form.setBounds(0, 0, dynamicPanel.getWidth(), dynamicPanel.getHeight());
+		dynamicPanel.removeAll();
+		dynamicPanel.add(form);
+		form.setVisible(true);
+		validate();
+		setVisible(true);
+		repaint();
 	}
 }

@@ -44,7 +44,7 @@ public class Pimp {
 	private String databaseDir = "test.xml";
 	
 	// Product classes.
-	private DirectoryClassLoader pcf;
+	private DirectoryClassLoader dcl;
 	private String productPackage = "pimp.productdefs";
 	private String productDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
@@ -52,20 +52,30 @@ public class Pimp {
 	private MainDisplay gui;
 	private List<Product> products;
 	
+	/**
+	 * Main method just creates a new Pimp object.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new Pimp();
+	}
+	
 	/** 
 	 * Pimp is essentially the Controller
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
-	public Pimp(MainDisplay gui) {
+	public Pimp() {
 		
-		// Could change this to be a static singleton, like the DataAccessor -DS.
-		pcf = new DirectoryClassLoader(productDir, productPackage);
-
-		this.gui = gui;
+		// Load class definitions.
+		dcl = new DirectoryClassLoader(productDir, productPackage);
+		
+		// Initialize Gui
+		gui = new MainDisplay();
 		gui.setVisible(true);
 		gui.addNewProductListener(new newProductListener());
 		
-		/** TODO add code to automatically load previous product list. */
+		// Load extisting products.
 		loadProducts();
 		
 		/**
@@ -84,11 +94,9 @@ public class Pimp {
 		JPanel newForm;
 		try {
 			newForm = (JPanel) fb.fillForm(tc1);
-			setDynamicProductForm(newForm);
+			gui.updateProductForm(newForm);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {}
-		
-		
 	}
 
 	public void loadProducts(){	
@@ -99,17 +107,6 @@ public class Pimp {
 		//do stuff to init list in gui
 		gui.createProductTable(products);
 		gui.addTreeSelectionListener(new productTreeListener());
-	}
-	
-	public void setDynamicProductForm(JPanel form){
-		//Where should this kind of logic be? Oh this is terribly confusing.
-		form.setBounds(0, 0, gui.dynamicPanel.getWidth(), gui.dynamicPanel.getHeight());
-		gui.dynamicPanel.removeAll();
-		gui.dynamicPanel.add(form);
-		form.setVisible(true);
-		gui.validate();
-		gui.setVisible(true);
-		gui.repaint();
 	}
 	
 	/**
@@ -123,7 +120,7 @@ public class Pimp {
 		public void actionPerformed(ActionEvent e) {
 			// Create and show product dialog.
 			SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-					pcf.getClassList());
+					dcl.getClassList());
 			
 			// Get selected class (will be null if they clicked cancel).
 			Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -218,7 +215,7 @@ public class Pimp {
 					Product selectedProduct = (Product)selectedObject;
 					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
 					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
-					setDynamicProductForm(newForm);
+					gui.updateProductForm(newForm);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
