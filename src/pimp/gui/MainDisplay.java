@@ -41,6 +41,9 @@ public class MainDisplay extends JFrame {
 	 * Needs to be passed list of objects from database
 	 */
 	public MainDisplay() {
+		// Exit application when close button clicked.
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		// Frame settings.
 		setResizable(false); // We currently use absolute positioning.
 		setBounds(new Rectangle(0, 0, 800, 550));	
