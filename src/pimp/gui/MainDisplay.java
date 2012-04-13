@@ -3,7 +3,6 @@ package pimp.gui;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JTree;
 
@@ -14,13 +13,10 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.JScrollPane;
 
-import pimp.Pimp;
 import pimp.productdefs.Product;
 
 /**
@@ -30,8 +26,8 @@ import pimp.productdefs.Product;
  *
  */
 public class MainDisplay extends JFrame {
-	public JTree productTree;
-	public JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
+	private JTree productTree;
+	private JScrollPane dynamicPanel; // I don't think this should be public, we need getters/setters.
 	private JPanel mainPanel;
 	private JButton btnNewProduct;
 	private JScrollPane treeScrollPanel;
