@@ -37,7 +37,7 @@ public class Pimp {
 	// Product classes.
 	private DirectoryClassLoader pcf;
 	private String productPackage = "pimp.productdefs";
-	private String productDir = "products1"; /* Not sure what format this should take
+	private String productDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
 	private MainDisplay gui;

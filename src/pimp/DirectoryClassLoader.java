@@ -1,8 +1,10 @@
 package pimp;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,25 +47,37 @@ public class DirectoryClassLoader {
 		URLClassLoader ucl = new URLClassLoader(classUrls);
 		
 		// Get a list of files in the directory.
-		File classFolder = new File(directoryUrl.getPath());
-		File[] classFiles = classFolder.listFiles();
+		File[] classFiles = new File[0];
+		String decodedUrl = "";
+		try {
+			decodedUrl = URLDecoder.decode(directoryUrl.getFile(), "UTF-8");
+			File classFolder = new File(decodedUrl);
+			classFiles = classFolder.listFiles();
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		// Loop through each file, adding it to the list of classes.
-		System.out.println("Searching in: " + directoryUrl.getPath());
+		System.out.println("Searching in: '" + decodedUrl + "'");
         for(File file: classFiles){
-        	// Get the class name without the .class at the end.
-        	String className = file.getName();
-        	className = className.substring(0, className.lastIndexOf('.'));
         	
-        	// Load the classes.
-    		try {
-    			Class<?> c = ucl.loadClass(packageName + "." + className);
-    	        classList.add(c);
-    	        System.out.println("Class found: " + className);
-    		} catch (ClassNotFoundException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}	
+        	// Check to make sure it is a .class file.
+        	String className = file.getName();
+        	if (className.endsWith(".class")) {
+        		// Get the class name without the .class at the end.
+	        	className = className.substring(0, className.lastIndexOf('.'));
+	        	
+	        	// Load the classes.
+	    		try {
+	    			Class<?> c = ucl.loadClass(packageName + "." + className);
+	    	        classList.add(c);
+	    	        System.out.println("Class found: " + className);
+	    		} catch (ClassNotFoundException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+        	}
         }
 	}
 	
