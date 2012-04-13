@@ -25,36 +25,32 @@ public class DataAccessorMock {
 		
 		List<Product> productList = new ArrayList();
 		
-		/*
-		//create products
 		Car honda = new Car();
-		honda.setColour("grey");
-		honda.setMake("Honda");
-		honda.setModel("Civic");
-		honda.setYear(1992);
-		honda.setName("Ellie's Honda is boring");
-		honda.setQuantity(1);
-		//save
+		honda.colour = "grey";
+		honda.make = "Honda";
+		honda.model = "Civic";
+		honda.year = 1992;
+		honda.name = "Ellie's Honda is boring";
+		honda.quantity = 1;
 		productList.add(honda);
 		
 		Car nissan = new Car();
-		nissan.setColour("red");
-		nissan.setMake("Nissan");
-		nissan.setModel("Primera");
-		nissan.setYear(1998);
-		nissan.setName("Nissan Primera");
-		nissan.setQuantity(5);
+		nissan.colour = "red";
+		nissan.make = "Nissan";
+		nissan.model = "Primera";
+		nissan.year = 1998;
+		nissan.name = "Nissan Primera";
+		nissan.quantity = 5;
 		productList.add(nissan);
 			
 		Jacket orangeJacket = new Jacket();
-		orangeJacket.setBrand("Generic Brand");
-		orangeJacket.setColour("orange");
-		orangeJacket.setIsWaterproof(true);
-		orangeJacket.setName("Orange Jacket");
-		orangeJacket.setSize("L");
-		orangeJacket.setQuantity(7);
+		orangeJacket.brand = "Generic Brand";
+		orangeJacket.colour = "orange";
+		orangeJacket.isWaterproof = true;
+		orangeJacket.name = "Orange Jacket";
+		orangeJacket.size = "L";
+		orangeJacket.quantity = 7;
 		productList.add(orangeJacket);
-		*/
 			
 		Jacket purpleJacket = new Jacket();
 		purpleJacket.brand = "Generic Brand";
