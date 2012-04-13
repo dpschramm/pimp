@@ -17,6 +17,12 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import pimp.form.ColorFormElement;
+import pimp.form.DateFormElement;
+import pimp.form.DoubleFormElement;
+import pimp.form.FormBuilder;
+import pimp.form.IntFormElement;
+import pimp.form.StringFormElement;
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.productdefs.Car;
