@@ -204,8 +204,8 @@ public class Pimp {
 		 * Currently these product forms will only work with public class attributes
 		 */
 		@Override
-		public void valueChanged(TreeSelectionEvent arg0) {
-			TreePath path = gui.productTree.getSelectionPath();
+		public void valueChanged(TreeSelectionEvent event) {
+			TreePath path = event.getNewLeadSelectionPath();
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
                     path.getLastPathComponent();
 			Object selectedObject = selectedNode.getUserObject();
