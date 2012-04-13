@@ -1,5 +1,6 @@
 package pimp.gui;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,6 +17,8 @@ import java.util.List;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import javax.swing.JScrollPane;
 
 import pimp.productdefs.Product;
@@ -31,19 +34,23 @@ import pimp.productdefs.Product;
  */
 public class MainDisplay extends JFrame {
 	
+	// Product tree.
+	private DefaultMutableTreeNode rootNode;
+	private DefaultTreeModel treeModel;
 	private JTree productTree;
-	private JButton btnNewProduct;
-	private JScrollPane treeScrollPanel;
 	
-	/** Constructor 
-	 * 
-	 * Needs to be passed list of objects from database
+	// Buttons.
+	private JButton btnNewProduct;
+	
+	/** 
+	 * Constructor
 	 */
 	public MainDisplay() {
 		// Exit application when close button clicked.
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		// Add panels.
+		getContentPane().add(createProductTreePanel(), BorderLayout.WEST);
 		getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
 	}
 	
@@ -56,38 +63,27 @@ public class MainDisplay extends JFrame {
 		setVisible(true); 				// Show the gui.
 	}
 	
-	/**
-	 * This method creates the product table.
-	 */
-	public void createProductTable(List<Product> products) {
+	private JComponent createProductTreePanel() {
 		
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Products");
-		for(Product product: products){
-			DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(product/*.getName()*/);
-			root.add(leaf);
-		}
-		productTree = new JTree(root);
+		// Create the model.
+		rootNode = new DefaultMutableTreeNode("Products");
+		treeModel = new DefaultTreeModel(rootNode);
 		
-		// Product Table ScrollPane Setup
-		treeScrollPanel = new JScrollPane(productTree);
+		// Create the GUI.
+		productTree = new JTree(treeModel);
+		productTree.getSelectionModel().setSelectionMode
+			(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		productTree.setShowsRootHandles(false);
 		
-		// Add to main panel.
-		getContentPane().add(treeScrollPanel, BorderLayout.WEST);
-	}
-
-	public void addToProductTable(Product product){
-		DefaultTreeModel model = (DefaultTreeModel) productTree.getModel();
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(product/*.getName()*/);
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-		model.insertNodeInto(newNode, root, model.getChildCount(root));
-		treeScrollPanel.revalidate();
-		repaint();
+		// Return containing Scroll Panel.
+		JScrollPane treeScrollPanel = new JScrollPane(productTree);
+		return treeScrollPanel;
 	}
 	
 	/**
 	 * This method creates and returns the button panel.
 	 */
-	private JPanel createButtonPanel() {
+	private JPanel createButtonPanel() {	
 		
 		// Create New Product Button
 		btnNewProduct = new JButton("New Product");
@@ -97,8 +93,8 @@ public class MainDisplay extends JFrame {
 		btnLoadProducts.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				/*JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");*/
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
 				//Needs to bring up dialog for xml file selection
 			}
 		});
@@ -150,14 +146,47 @@ public class MainDisplay extends JFrame {
 		return buttonPanel;
 	}
 	
+	/**
+	 * 
+	 * @param products
+	 */
+	public void addToProductTable(List<Product> products) {
+		for (Product p : products) {
+			addToProductTable(p);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param product
+	 */
+	public void addToProductTable(Product product){
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);
+		treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
+		productTree.scrollPathToVisible(new TreePath(node.getPath()));
+		System.out.println("Added product: '" + product + "'");
+	}
+	
+	/**
+	 * 
+	 * @param form
+	 */
 	public void updateProductForm(JPanel form) {
 		getContentPane().add(form, BorderLayout.EAST);
 	}
 	
+	/**
+	 * 
+	 * @param npl
+	 */
 	public void addNewProductListener(ActionListener npl){
 		btnNewProduct.addActionListener(npl);
 	}
 	
+	/**
+	 * 
+	 * @param tsl
+	 */
 	public void addTreeSelectionListener(TreeSelectionListener tsl){
 		productTree.addTreeSelectionListener(tsl);
 	}

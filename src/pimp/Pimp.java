@@ -8,7 +8,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -75,6 +75,7 @@ public class Pimp {
 		// Initialize Gui
 		gui = new MainDisplay();
 		gui.addNewProductListener(new newProductListener());
+		gui.addTreeSelectionListener(new productTreeListener());
 		
 		// Load extisting products.
 		loadProducts();
@@ -91,11 +92,11 @@ public class Pimp {
 		products = DataAccessorMock.load();
 		
 		//do stuff to init list in gui
-		gui.createProductTable(products);
-		gui.addTreeSelectionListener(new productTreeListener());
+		gui.addToProductTable(products);
 	}
 	
 	private void createForm() {
+		// A dummy form.
 		FormBuilder fb = new FormBuilder(TestClass.class);
 		fb.addFormElement(new StringFormElement());
 		fb.addFormElement(new DoubleFormElement());
@@ -103,15 +104,22 @@ public class Pimp {
 		fb.addFormElement(new DateFormElement());
 		fb.addFormElement(new ColorFormElement());
 		fb.createForm();
-
-		@SuppressWarnings("deprecation")
-		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
-		JPanel newForm;
+		
+		// Fill the form.
+		TestClass tc1 = new TestClass(10, 12.0, "PIMP", Date.valueOf("2012-04-03"), Color.BLUE);
+		JPanel form = null;
 		try {
-			newForm = (JPanel) fb.fillForm(tc1);
-			gui.updateProductForm(newForm);
+			form = (JPanel) fb.fillForm(tc1);
 		} catch (IllegalArgumentException e) {
-		} catch (IllegalAccessException e) {}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Update the form displayed by the GUI.
+		if (form != null) gui.updateProductForm(form);
 	}
 	
 	/**
