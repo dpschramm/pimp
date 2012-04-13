@@ -17,20 +17,23 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+// Form
 import pimp.form.ColorFormElement;
 import pimp.form.DateFormElement;
 import pimp.form.DoubleFormElement;
 import pimp.form.FormBuilder;
 import pimp.form.IntFormElement;
 import pimp.form.StringFormElement;
+
+// Gui
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
-import pimp.productdefs.Car;
-import pimp.productdefs.Drink;
-import pimp.productdefs.Jacket;
+
+// Other
+import pimp.persistence.DataAccessorMock;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
-import pimp.persistence.*;
+
 
 /**
  * The Pimp class acts as the controller for our inventory management program.
@@ -92,15 +95,6 @@ public class Pimp {
 		// Load products from databaseDir.
 		DataAccessorMock.initialize(databaseDir);
 		products = DataAccessorMock.load();
-		
-		//has public attributes so that field builder will work
-		Drink liftPlus = new Drink();
-		liftPlus.name = "Lift Plus";
-		liftPlus.capacity = "440ml";
-		liftPlus.flavour = "Fizzy Lemony Tang";
-		liftPlus.quantity = 4;
-		liftPlus.name  = "Lift Plus";
-		products.add(liftPlus);
 		
 		//do stuff to init list in gui
 		gui.createProductTable(products);

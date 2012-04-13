@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pimp.productdefs.Car;
+import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 
@@ -63,6 +64,15 @@ public class DataAccessorMock {
 		purpleJacket.size = "M";
 		purpleJacket.quantity = 9;
 		productList.add(purpleJacket);
+		
+		//has public attributes so that field builder will work
+		Drink liftPlus = new Drink();
+		liftPlus.name = "Lift Plus";
+		liftPlus.capacity = "440ml";
+		liftPlus.flavour = "Fizzy Lemony Tang";
+		liftPlus.quantity = 4;
+		liftPlus.name  = "Lift Plus";
+		productList.add(liftPlus);
 		
 		return productList;
 	}
