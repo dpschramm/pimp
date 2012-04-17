@@ -99,23 +99,12 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
-		// Create Edit Product Button
-		JButton btnEdit = new JButton("Edit");
-		btnEdit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-			}
-		});
-		
 		// Create Copy Product Button
 		JButton btnCopy = new JButton("Copy");
 		btnCopy.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
+				
 			}
 		});
 		
@@ -135,7 +124,6 @@ public class MainDisplay extends JFrame {
 		leftPanel.add(btnLoadProducts);
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
-		rightPanel.add(btnEdit);
 		rightPanel.add(btnCopy);
 		rightPanel.add(btnDelete);
 		
@@ -163,7 +151,7 @@ public class MainDisplay extends JFrame {
 	public void addToProductTable(Product product){
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);
 		treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
-		productTree.scrollPathToVisible(new TreePath(node.getPath()));
+		productTree.setSelectionPath(new TreePath(node.getPath()));
 		System.out.println("Added product: '" + product + "'");
 	}
 	
