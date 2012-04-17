@@ -30,6 +30,7 @@ import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 
 // Other
+import pimp.persistence.DataAccessor;
 import pimp.persistence.DataAccessorMock;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -43,7 +44,7 @@ import pimp.testdefs.TestClass;
 public class Pimp {
 	
 	// Database stuff
-	private String databaseDir = "test.xml";
+	private String databaseDir = "products.xml";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -88,8 +89,8 @@ public class Pimp {
 
 	private void loadProducts(){	
 		// Load products from databaseDir.
-		DataAccessorMock.initialize(databaseDir);
-		products = DataAccessorMock.load();
+		DataAccessor.initialise(databaseDir);
+		products = DataAccessor.load();
 		
 		//do stuff to init list in gui
 		gui.addToProductTable(products);
