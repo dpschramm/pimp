@@ -46,7 +46,7 @@ public class DataAccessorMock {
 		Jacket orangeJacket = new Jacket();
 		orangeJacket.brand = "Generic Brand";
 		orangeJacket.colour = "orange";
-		orangeJacket.isWaterproof = true;
+		orangeJacket.isWaterproof = "Yes";
 		orangeJacket.name = "Orange Jacket";
 		orangeJacket.size = "L";
 		orangeJacket.quantity = 7;
@@ -55,7 +55,7 @@ public class DataAccessorMock {
 		Jacket purpleJacket = new Jacket();
 		purpleJacket.brand = "Generic Brand";
 		purpleJacket.colour = "purple";
-		purpleJacket.isWaterproof = false;
+		purpleJacket.isWaterproof = "No";
 		purpleJacket.name = "Purple Jacket";
 		purpleJacket.size = "M";
 		purpleJacket.quantity = 9;

@@ -1,8 +1,12 @@
 package pimp.productdefs;
 
-public class Jacket extends Clothing {
+import pimp.form.FormField;
 
+public class Jacket extends Clothing {
+	@FormField
 	public String size;
+	@FormField
 	public String brand;
-	public boolean isWaterproof;
+	@FormField
+	public String isWaterproof;
 }

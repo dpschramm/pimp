@@ -113,9 +113,6 @@ public class Pimp {
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		// Update the form displayed by the GUI.
@@ -227,12 +224,10 @@ public class Pimp {
 				try {
 					Product selectedProduct = (Product)selectedObject;
 					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					fb.createForm();
 					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
 					gui.updateProductForm(newForm);
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

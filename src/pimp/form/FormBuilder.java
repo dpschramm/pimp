@@ -91,8 +91,8 @@ public class FormBuilder {
 	 *             form builder was created with
 	 * @throws IllegalAccessException
 	 */
-	public JComponent fillForm(Object o) throws IllegalArgumentException,
-			IllegalAccessException {
+	public JComponent fillForm(Object o) /*throws IllegalArgumentException,
+			IllegalAccessException */{
 
 		if (!o.getClass().equals(c)) {
 			throw new IllegalArgumentException("Incompatiable object");
@@ -102,7 +102,15 @@ public class FormBuilder {
 			if (f.isAnnotationPresent(FormField.class)) {
 				JComponent input = fieldToComponentMapping.get(f.getName());
 				FormElement fe = typeToFormElementMapping.get(f.getType());
-				fe.setValue(input, f.get(o));
+				try {
+					fe.setValue(input, f.get(o));
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		return jp;
