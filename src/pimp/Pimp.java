@@ -77,8 +77,9 @@ public class Pimp {
 		gui = new MainDisplay();
 		gui.addNewProductListener(new newProductListener());
 		gui.addTreeSelectionListener(new productTreeListener());
+		gui.addDeleteButtonListener(new deleteButtonListener());
 		
-		// Load extisting products.
+		// Load existing products.
 		loadProducts();
 		
 		// Make form.
@@ -118,6 +119,18 @@ public class Pimp {
 		
 		// Update the form displayed by the GUI.
 		if (form != null) gui.updateProductForm(form);
+	}
+	
+	private Product getProductFromTree(){
+		// Get id from tree
+		
+		// Get product from id
+		return null;
+	}
+	
+	private Product getProductFromId(String id){
+		
+		return null;
 	}
 	
 	/**
@@ -160,6 +173,18 @@ public class Pimp {
 		
 	}
 
+	class copyButtonListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Get selected product from tree
+			
+			// Create new copy of product, with different name
+			
+		}
+		
+	}
+	
 	
 	/**
 	 * Delete the specified product.
@@ -170,7 +195,22 @@ public class Pimp {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			// Get selected product from tree
+			TreePath selectionPath = gui.getSelectedTreePath();
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+					selectionPath.getLastPathComponent();
+			Object selectedObject = selectedNode.getUserObject();
+			Class<?> c = selectedObject.getClass();
+			//if the selected object is not an abstract class
+			if(!Modifier.isAbstract(c.getModifiers())){
+				gui.removeTreeItem(selectedNode);
+			}
+			// Remove object from collection in memory
+			products.remove((Product)selectedObject);
+			
+			// Erase from xml
+			// This is done by overwriting the file with the new, smaller list of products
+			
 			
 		}
 		
@@ -214,33 +254,34 @@ public class Pimp {
 		@Override
 		public void valueChanged(TreeSelectionEvent event) {
 			TreePath path = event.getNewLeadSelectionPath();
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-                    path.getLastPathComponent();
-			Object selectedObject = selectedNode.getUserObject();
-			Class<?> c = selectedObject.getClass();
-			
-			//Checking that selected class isn't abstract and isn't just a String
-			//(the "Product" root node is currently a string.
-			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
-				try {
-					Product selectedProduct = (Product)selectedObject;
-					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
-					fb.addFormElement(new StringFormElement());
-					fb.addFormElement(new DoubleFormElement());
-					fb.addFormElement(new IntFormElement());
-					fb.addFormElement(new DateFormElement());
-					fb.addFormElement(new ColorFormElement());
-					fb.createForm();
-					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
-					if(newForm != null){
-						gui.updateProductForm(newForm);
+			if(path != null){
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+	                    path.getLastPathComponent();
+				Object selectedObject = selectedNode.getUserObject();
+				Class<?> c = selectedObject.getClass();
+				
+				//Checking that selected class isn't abstract and isn't just a String
+				//(the "Product" root node is currently a string.
+				if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+					try {
+						Product selectedProduct = (Product)selectedObject;
+						FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+						fb.addFormElement(new StringFormElement());
+						fb.addFormElement(new DoubleFormElement());
+						fb.addFormElement(new IntFormElement());
+						fb.addFormElement(new DateFormElement());
+						fb.addFormElement(new ColorFormElement());
+						fb.createForm();
+						JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
+						if(newForm != null){
+							gui.updateProductForm(newForm);
+						}
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
-		
 		}
 	}
 }

@@ -17,6 +17,8 @@ import java.util.List;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.JScrollPane;
@@ -42,6 +44,7 @@ public class MainDisplay extends JFrame {
 	private JPanel dynamicForm;
 	// Buttons.
 	private JButton btnNew;
+	private JButton btnDelete;
 	
 	/** 
 	 * Constructor
@@ -91,22 +94,10 @@ public class MainDisplay extends JFrame {
 		
 		// Create Copy Product Button
 		JButton btnCopy = new JButton("Copy");
-		btnCopy.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-		});
 		
 		// Create Delete Product Button
-		JButton btnDelete = new JButton("Delete");
-		btnDelete.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-			}
-		});
+		btnDelete = new JButton("Delete");
+		
 		
 		// Create Load Product Button
 		JButton btnLoadProducts = new JButton("Load Products");
@@ -133,6 +124,21 @@ public class MainDisplay extends JFrame {
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
 		return buttonPanel;
+	}
+	
+	public TreePath getSelectedTreePath(){
+		return productTree.getSelectionPath();
+	}
+	
+	public String getSelectedProductId(){
+		
+		return null;
+	}
+	
+	public void removeTreeItem(MutableTreeNode node){
+		DefaultTreeModel model = (DefaultTreeModel) productTree.getModel();
+		model.removeNodeFromParent(node);
+		repaint();
 	}
 	
 	/**
@@ -185,6 +191,10 @@ public class MainDisplay extends JFrame {
 	 */
 	public void addTreeSelectionListener(TreeSelectionListener tsl){
 		productTree.addTreeSelectionListener(tsl);
+	}
+	
+	public void addDeleteButtonListener(ActionListener dbl){
+		btnDelete.addActionListener(dbl);
 	}
 	
 }
