@@ -1,17 +1,17 @@
-package pimp;
+package pimp.form;
 
 import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class IntFormElement implements FormElement {
-	
-	public IntFormElement(){};
+public class StringFormElement implements FormElement {
 
+	public StringFormElement(){};
+	
 	@Override
-	public Integer getValue(JComponent jc) {
-		return Integer.parseInt(((JTextField)jc).getText());
+	public String getValue(JComponent jc) {
+		return ((JTextField)jc).getText();
 	}
 
 	@Override
@@ -26,7 +26,6 @@ public class IntFormElement implements FormElement {
 	
 	@Override
 	public Type getInputType() {
-		return int.class;
+		return String.class;
 	}
-
 }

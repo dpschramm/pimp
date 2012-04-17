@@ -5,15 +5,10 @@
 package pimp;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -22,52 +17,86 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+// Form
+import pimp.form.ColorFormElement;
+import pimp.form.DateFormElement;
+import pimp.form.DoubleFormElement;
+import pimp.form.FormBuilder;
+import pimp.form.IntFormElement;
+import pimp.form.StringFormElement;
+
+// Gui
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
-import pimp.productdefs.Car;
-import pimp.productdefs.Drink;
-import pimp.productdefs.Jacket;
+
+// Other
+import pimp.persistence.DataAccessorMock;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
-import pimp.persistence.*;
+
 
 /**
  * The Pimp class acts as the controller for our inventory management program.
+ * 
+ * @author Daniel Schramm, Ellie Rasmus
  */
 public class Pimp {
 	
 	// Database stuff
-	private DataAccessorMock da;
 	private String databaseDir = "test.xml";
+	
+	// Product classes.
+	private DirectoryClassLoader dcl;
+	private String productPackage = "pimp.productdefs";
+	private String productDir = "products"; /* Not sure what format this should take
+												may need to be a cmd argument. */ 
 	
 	private MainDisplay gui;
 	private List<Product> products;
 	
-	// Maintain class list.
-	private ProductClassFinder loader;
-	private XmlProductLoader xmlLoader;//It would be nice if this was declared as the abstract ProductLoader, 
-									   //but that will have to wait until we don't have two ProductLoaders
+	/**
+	 * Main method just creates a new Pimp object.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new Pimp();
+	}
 	
 	/** 
 	 * Pimp is essentially the Controller
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
-	public Pimp(MainDisplay gui) {
+	public Pimp() {
 		
-		// Create empty product list.
-		//products = new ArrayList<Product>(); //should be initialised in  loadProducts
-		loader = new ProductClassFinder("directory"); //perhaps directory will have to be a cmd argument
-		xmlLoader = new XmlProductLoader();
-		this.gui = gui;
-		gui.setVisible(true);
+		// Load class definitions.
+		dcl = new DirectoryClassLoader(productDir, productPackage);
+		
+		// Initialize Gui
+		gui = new MainDisplay();
 		gui.addNewProductListener(new newProductListener());
+		gui.addTreeSelectionListener(new productTreeListener());
 		
-		/** TODO add code to automatically load previous product list. */
+		// Load extisting products.
 		loadProducts();
 		
-		/**
-		 * The code below needs to be commented and refactored -DS
-		 */
+		// Make form.
+		createForm();
+
+		gui.display();
+	}
+
+	private void loadProducts(){	
+		// Load products from databaseDir.
+		DataAccessorMock.initialize(databaseDir);
+		products = DataAccessorMock.load();
+		
+		//do stuff to init list in gui
+		gui.addToProductTable(products);
+	}
+	
+	private void createForm() {
+		// A dummy form.
 		FormBuilder fb = new FormBuilder(TestClass.class);
 		fb.addFormElement(new StringFormElement());
 		fb.addFormElement(new DoubleFormElement());
@@ -75,48 +104,22 @@ public class Pimp {
 		fb.addFormElement(new DateFormElement());
 		fb.addFormElement(new ColorFormElement());
 		fb.createForm();
-
-		@SuppressWarnings("deprecation")
-		TestClass tc1 = new TestClass(10, 12.0, "PIMP", new Date(2012, 4, 3), Color.BLUE);
-		JPanel newForm;
+		
+		// Fill the form.
+		TestClass tc1 = new TestClass(10, 12.0, "PIMP", Date.valueOf("2012-04-03"), Color.BLUE);
+		JPanel form = null;
 		try {
-			newForm = (JPanel) fb.fillForm(tc1);
-			setDynamicProductForm(newForm);
+			form = (JPanel) fb.fillForm(tc1);
 		} catch (IllegalArgumentException e) {
-		} catch (IllegalAccessException e) {}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		
-	}
-
-	public void loadProducts(){	
-		// Load products from databaseDir.
-		da = new DataAccessorMock();
-		da.initialize(databaseDir);
-		products = da.load();
-		
-		//has public attributes so that field builder will work
-		Drink liftPlus = new Drink();
-		liftPlus.name = "Lift Plus";
-		liftPlus.capacity = "440ml";
-		liftPlus.flavour = "Fizzy Lemony Tang";
-		liftPlus.quantity = 4;
-		liftPlus.setName("Lift Plus");
-		products.add(liftPlus);
-		
-		//do stuff to init list in gui
-		gui.createProductTable(products);
-		gui.addTreeSelectionListener(new productTreeListener());
-	}
-	
-	public void setDynamicProductForm(JPanel form){
-		//Where should this kind of logic be? Oh this is terribly confusing.
-		form.setBounds(0, 0, gui.dynamicPanel.getWidth(), gui.dynamicPanel.getHeight());
-		gui.dynamicPanel.removeAll();
-		gui.dynamicPanel.add(form);
-		form.setVisible(true);
-		gui.validate();
-		gui.setVisible(true);
-		gui.repaint();
+		// Update the form displayed by the GUI.
+		if (form != null) gui.updateProductForm(form);
 	}
 	
 	/**
@@ -129,7 +132,8 @@ public class Pimp {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Create and show product dialog.
-			SelectProductDialog selectDialog = new SelectProductDialog(gui, loader.getClassList());
+			SelectProductDialog selectDialog = new SelectProductDialog(gui, 
+					dcl.getClassList());
 			
 			// Get selected class (will be null if they clicked cancel).
 			Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -210,12 +214,13 @@ public class Pimp {
 		 * Currently these product forms will only work with public class attributes
 		 */
 		@Override
-		public void valueChanged(TreeSelectionEvent arg0) {
-			TreePath path = gui.productTree.getSelectionPath();
+		public void valueChanged(TreeSelectionEvent event) {
+			TreePath path = event.getNewLeadSelectionPath();
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
                     path.getLastPathComponent();
 			Object selectedObject = selectedNode.getUserObject();
-			Class c = selectedObject.getClass();
+			Class<?> c = selectedObject.getClass();
+			
 			//Checking that selected class isn't abstract and isn't just a String
 			//(the "Product" root node is currently a string.
 			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
@@ -223,7 +228,7 @@ public class Pimp {
 					Product selectedProduct = (Product)selectedObject;
 					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
 					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
-					setDynamicProductForm(newForm);
+					gui.updateProductForm(newForm);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

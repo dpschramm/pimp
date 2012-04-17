@@ -1,5 +1,7 @@
 package pimp.productdefs;
 
+import pimp.form.CompanionForm;
+
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.
  * 
@@ -14,31 +16,16 @@ package pimp.productdefs;
 public abstract class Product {
 	
 	// Fields
-	private String name;
-	private int quantity;
+	public String name;
+	public int quantity;
+	public CompanionForm displayForm;
 	
 	/** Default constructor - doesn't take parameters as these will be set 
 	 * later by the UI form. */
 	public Product() {
 		name = "";
 		quantity = 0;
-	}
-	
-	// Getters and setters.
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public int getQuantity() {
-		return quantity;
-	}
-	
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+		displayForm = null;
 	}
 	
 	@Override

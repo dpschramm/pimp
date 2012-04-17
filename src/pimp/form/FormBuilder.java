@@ -1,4 +1,4 @@
-package pimp;
+package pimp.form;
 
 import java.awt.GridLayout;
 import java.lang.reflect.Field;

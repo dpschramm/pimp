@@ -1,17 +1,24 @@
-package pimp;
+package pimp.form;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class DoubleFormElement implements FormElement {
+public class DateFormElement implements FormElement {
 	
-	public DoubleFormElement(){};
+	/**
+	 * 
+	 * TO-D0: Implement this properly when there is a Date JComponent
+	 * 
+	 */
+	
+	public DateFormElement(){};
 	
 	@Override
-	public Double getValue(JComponent jc) {
-		return Double.parseDouble(((JTextField)jc).getText());
+	public Date getValue(JComponent jc) {
+		return new Date();
 	}
 
 	@Override
@@ -26,7 +33,7 @@ public class DoubleFormElement implements FormElement {
 	
 	@Override
 	public Type getInputType() {
-		return double.class;
+		return Date.class;
 	}
 
 }
