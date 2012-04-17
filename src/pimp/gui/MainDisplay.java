@@ -171,7 +171,7 @@ public class MainDisplay extends JFrame {
 			getContentPane().remove(dynamicForm);
 		}
 		dynamicForm = form;
-		getContentPane().add(dynamicForm, BorderLayout.EAST);
+		getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		//We need both of these
 		validate();
 		repaint();
