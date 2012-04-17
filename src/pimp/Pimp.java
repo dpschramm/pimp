@@ -36,10 +36,6 @@ import pimp.persistence.ProductLoader;
 import pimp.persistence.ProductSaver;
 import pimp.persistence.XmlProductLoader;
 import pimp.persistence.XmlProductSaver;
-import pimp.productdefs.Car;
-import pimp.productdefs.Drink;
-import pimp.productdefs.Jacket;
-import pimp.productdefs.Jeans;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
 
@@ -86,6 +82,10 @@ public class Pimp {
 		gui.addNewProductListener(new newProductListener());
 		gui.addTreeSelectionListener(new productTreeListener());
 		gui.addDeleteButtonListener(new deleteButtonListener());
+		
+		ProductLoader loader = new XmlProductLoader(databaseDir);
+		ProductSaver saver = new XmlProductSaver(databaseDir);
+		DataAccessor.initialise(loader, saver);
 		
 		// Load existing products.
 		loadProducts();
