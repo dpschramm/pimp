@@ -1,11 +1,13 @@
 package pimp.form;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,14 +48,17 @@ public class FormBuilder {
 		Field[] fields = c.getFields();
 
 		JPanel panel = new JPanel();
-		GridLayout gl = new GridLayout(fields.length, 2);
-		panel.setLayout(gl);
+		//GridLayout gl = new GridLayout(fields.length, 2);
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		// For Public Fields just need to check if the Form Field Annotation is
 		// present
 		for (Field f : fields) {
 			if (f.isAnnotationPresent(FormField.class)) {
-				panel.add(createFieldFormNameComponent(f));
+				JPanel labelAndInput = new JPanel();
+				labelAndInput.setLayout(new BorderLayout());
+				labelAndInput.add(createFieldFormNameComponent(f), BorderLayout.WEST);
 				FormElement fe = typeToFormElementMapping.get(f.getType());
 				if (fe == null) {
 					// Default to String Input
@@ -61,7 +66,8 @@ public class FormBuilder {
 				}
 				JComponent input = fe.createComponent();
 				fieldToComponentMapping.put(f.getName(), input);
-				panel.add(input);
+				labelAndInput.add(input, BorderLayout.EAST);
+				panel.add(labelAndInput);
 			}
 		}
 
