@@ -32,7 +32,14 @@ import pimp.gui.SelectProductDialog;
 
 // Other
 import pimp.persistence.DataAccessor;
-import pimp.persistence.DataAccessorMock;
+import pimp.persistence.ProductLoader;
+import pimp.persistence.ProductSaver;
+import pimp.persistence.XmlProductLoader;
+import pimp.persistence.XmlProductSaver;
+import pimp.productdefs.Car;
+import pimp.productdefs.Drink;
+import pimp.productdefs.Jacket;
+import pimp.productdefs.Jeans;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
 
@@ -91,7 +98,7 @@ public class Pimp {
 
 	private void loadProducts(){	
 		// Load products from databaseDir.
-		DataAccessor.initialise(databaseDir);
+					
 		products = DataAccessor.load();
 		
 		//do stuff to init list in gui
