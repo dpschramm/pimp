@@ -40,7 +40,7 @@ public class MainDisplay extends JFrame {
 	private JTree productTree;
 	
 	// Buttons.
-	private JButton btnNewProduct;
+	private JButton btnNew;
 	
 	/** 
 	 * Constructor
@@ -86,36 +86,14 @@ public class MainDisplay extends JFrame {
 	private JPanel createButtonPanel() {	
 		
 		// Create New Product Button
-		btnNewProduct = new JButton("New Product");
-		
-		// Create Load Product Button
-		JButton btnLoadProducts = new JButton("Load Products");
-		btnLoadProducts.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-				//Needs to bring up dialog for xml file selection
-			}
-		});
-		
-		// Create Edit Product Button
-		JButton btnEdit = new JButton("Edit");
-		btnEdit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-			}
-		});
+		btnNew = new JButton("New");
 		
 		// Create Copy Product Button
 		JButton btnCopy = new JButton("Copy");
 		btnCopy.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
+				
 			}
 		});
 		
@@ -129,15 +107,25 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
+		// Create Load Product Button
+		JButton btnLoadProducts = new JButton("Load Products");
+		btnLoadProducts.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"Not yet implemented.");
+				//Needs to bring up dialog for xml file selection
+			}
+		});
+		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
-		leftPanel.add(btnNewProduct);
-		leftPanel.add(btnLoadProducts);
+		leftPanel.add(btnNew);
+		leftPanel.add(btnCopy);
+		leftPanel.add(btnDelete);
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
-		rightPanel.add(btnEdit);
-		rightPanel.add(btnCopy);
-		rightPanel.add(btnDelete);
+		rightPanel.add(btnLoadProducts);
 		
 		// Add panels to button panel.
 		JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -163,7 +151,7 @@ public class MainDisplay extends JFrame {
 	public void addToProductTable(Product product){
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);
 		treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
-		productTree.scrollPathToVisible(new TreePath(node.getPath()));
+		productTree.setSelectionPath(new TreePath(node.getPath()));
 		System.out.println("Added product: '" + product + "'");
 	}
 	
@@ -180,7 +168,7 @@ public class MainDisplay extends JFrame {
 	 * @param npl
 	 */
 	public void addNewProductListener(ActionListener npl){
-		btnNewProduct.addActionListener(npl);
+		btnNew.addActionListener(npl);
 	}
 	
 	/**
