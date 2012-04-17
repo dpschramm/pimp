@@ -1,4 +1,4 @@
-package pimp;
+package pimp.form;
 
 import java.awt.Color;
 import java.lang.reflect.Type;

@@ -1,4 +1,4 @@
-package pimp;
+package pimp.form;
 
 import javax.swing.JComponent;
 

@@ -4,7 +4,7 @@ package pimp.testdefs;
 import java.awt.Color;
 import java.util.Date;
 
-import pimp.FormField;
+import pimp.form.FormField;
 
 
 public class TestClass {

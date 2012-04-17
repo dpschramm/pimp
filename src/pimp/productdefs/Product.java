@@ -1,6 +1,6 @@
 package pimp.productdefs;
 
-import pimp.CompanionForm;
+import pimp.form.CompanionForm;
 
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.

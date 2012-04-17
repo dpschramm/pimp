@@ -1,4 +1,4 @@
-package pimp;
+package pimp.form;
 
 import java.lang.reflect.Type;
 import java.util.Date;
