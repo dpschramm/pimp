@@ -121,7 +121,7 @@ public class Pimp {
 	
 	/**
 	 * This ActionListener is applied to the New button on the main gui. 
-	 * When clicked it needs to launch a NewProductDialog, retrieve the input
+	 * When clicked it needs to launch a NewProductDialog, retriegui.updateProductForm(form);ve the input
 	 * from that and create a product of the returned type
 	 */
 	class newProductListener implements ActionListener {
@@ -224,9 +224,16 @@ public class Pimp {
 				try {
 					Product selectedProduct = (Product)selectedObject;
 					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					fb.addFormElement(new StringFormElement());
+					fb.addFormElement(new DoubleFormElement());
+					fb.addFormElement(new IntFormElement());
+					fb.addFormElement(new DateFormElement());
+					fb.addFormElement(new ColorFormElement());
 					fb.createForm();
 					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
-					gui.updateProductForm(newForm);
+					if(newForm != null){
+						gui.updateProductForm(newForm);
+					}
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

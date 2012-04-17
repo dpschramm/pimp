@@ -38,7 +38,8 @@ public class MainDisplay extends JFrame {
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel treeModel;
 	private JTree productTree;
-	
+	//Keeping this reference to the dynamic form means we can remove it before replacing it with a new one.
+	private JPanel dynamicForm;
 	// Buttons.
 	private JButton btnNew;
 	
@@ -160,7 +161,14 @@ public class MainDisplay extends JFrame {
 	 * @param form
 	 */
 	public void updateProductForm(JPanel form) {
-		getContentPane().add(form, BorderLayout.EAST);
+		if(dynamicForm != null){
+			getContentPane().remove(dynamicForm);
+		}
+		dynamicForm = form;
+		getContentPane().add(dynamicForm, BorderLayout.EAST);
+		//We need both of these
+		validate();
+		repaint();
 	}
 	
 	/**
