@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import pimp.productdefs.Product;
+import pimp.productdefs.*;
 
 public class DataAccessor {
 	private static DataAccessor instance = null;
@@ -65,7 +65,7 @@ public class DataAccessor {
 		
 		Element root = instance.xml.getDocumentElement();
 		
-		NodeList nodes = root.getElementsByTagName("Product");
+		NodeList nodes = root.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) { //Could implement an iterator for NodeLists?
 			Element element = (Element)nodes.item(i);
 			
@@ -87,7 +87,7 @@ public class DataAccessor {
 		
 		NodeList nodes = element.getChildNodes();
 		Class<?> className = getClassName(element);
-		Constructor constructor = className.getConstructor();
+		Constructor<?> constructor = className.getConstructor();
 		product = (Product)constructor.newInstance();
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -99,8 +99,8 @@ public class DataAccessor {
 				String rawValue = attributeElement.getTextContent();
 				Object value = getValue(attributeType, rawValue);
 				
-				Method setter = getSetter(className, attributeName);
-				setter.invoke(product, new Object[] {value});
+				Field field = className.getField(attributeName);
+				field.set(product, value);
 			}
 		}
 		
@@ -124,24 +124,11 @@ public class DataAccessor {
 	}
 
 	private static Class<?> getClassName(Element element) throws ClassNotFoundException {
-		Element classNameAttribute = (Element)element.getElementsByTagName("Class").item(0);
-		String className = classNameAttribute.getTextContent().substring(6);	//Text will be of form "class ClassName". Need to remove the first word.
+		String className = element.getNodeName();
 		
 		Class<?> c = Class.forName(className);
 		
 		return c;
-	}
-	
-	private static Method getSetter(Class<?> className, String attributeName) {
-		Method[] methods = className.getMethods();
-		
-		for (Method method : methods) {
-			if (isSetter(method) && method.getName().substring(3).equals(attributeName)) {
-				return method;
-			}
-		}
-		
-		return null;
 	}
 	
 	public static boolean save(Product product) {
@@ -150,18 +137,20 @@ public class DataAccessor {
 			return false;
 		}
 		
-		List<Method> getters = getGetters(product.getClass());
+		Class<?> c = product.getClass();
+		Field[] fields = c.getFields();
+		
 		Element root = instance.xml.getDocumentElement();
 		
-		Element productElement = instance.xml.createElement("Product");
+		Element productElement = instance.xml.createElement(c.getName());
 		root.appendChild(productElement);
 		
-		for (Method method : getters) {
-			Element objectAttributeElement = instance.xml.createElement(method.getName().substring(3));
-			objectAttributeElement.setAttribute("type", method.getReturnType().getSimpleName());
+		for (Field field : fields) {
+			Element objectAttributeElement = instance.xml.createElement(field.getName());
+			objectAttributeElement.setAttribute("type", field.getType().getSimpleName());
 			String value = "";
 			try {
-				value = method.invoke(product, new Object[]{}).toString();
+				value = field.get(product).toString();
 			} catch (Exception e) {
 				System.out.println("Error retrieving object field");
 				return false;
@@ -173,45 +162,6 @@ public class DataAccessor {
 		
 		return instance.writeXml();
 	}
-	
-	private static List<Method> getGetters(Class c) {
-		List<Method> getters = new ArrayList<Method>();
-		Method[] methods = c.getMethods();
-		
-		
-		for (Method method : methods) {
-			if (isGetter(method)) {
-				getters.add(method);
-			}
-		}
-		
-		return getters;
-	}
-	
-	private static boolean isGetter(Method method) {
-		if (!method.getName().startsWith("get")) {
-			return false;
-		}
-		if (method.getParameterTypes().length != 0) {
-			return false;
-		}
-		if (void.class.equals(method.getReturnType())) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private static boolean isSetter(Method method) {
-		if (!method.getName().startsWith("set")) {
-			return false;
-		}
-		if (method.getParameterTypes().length != 1) {
-			return false;
-		}
-		return true;
-	}
-	
 	
 	private boolean writeXml() {
 		try { 
