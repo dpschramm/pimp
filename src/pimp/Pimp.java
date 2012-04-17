@@ -27,6 +27,7 @@ import pimp.form.StringFormElement;
 
 // Gui
 import pimp.gui.MainDisplay;
+import pimp.gui.NodeItem;
 import pimp.gui.SelectProductDialog;
 
 // Other
@@ -94,6 +95,7 @@ public class Pimp {
 		products = DataAccessor.load();
 		
 		//do stuff to init list in gui
+		gui.addProductStructure(dcl.getClassList());
 		gui.addToProductTable(products);
 	}
 	
@@ -123,12 +125,17 @@ public class Pimp {
 	
 	private Product getProductFromTree(){
 		// Get id from tree
-		
-		// Get product from id
+		TreePath path = gui.getSelectedTreePath();
+		if(path != null){
+			NodeItem selectedNode = (NodeItem)path.getLastPathComponent();
+			int id = selectedNode.getID();
+			// Get product from id
+			return null;
+		}
 		return null;
 	}
 	
-	private Product getProductFromId(String id){
+	private Product getProductFromId(int id){
 		
 		return null;
 	}
@@ -255,14 +262,18 @@ public class Pimp {
 		public void valueChanged(TreeSelectionEvent event) {
 			TreePath path = event.getNewLeadSelectionPath();
 			if(path != null){
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+				NodeItem selectedNode = (NodeItem)
 	                    path.getLastPathComponent();
-				Object selectedObject = selectedNode.getUserObject();
-				Class<?> c = selectedObject.getClass();
+				int id = selectedNode.getID();
+				//Object selectedObject = selectedNode.getUserObject();
+				//Class<?> c = selectedObject.getClass();
+				
+				//Need to get object from id
+				
 				
 				//Checking that selected class isn't abstract and isn't just a String
 				//(the "Product" root node is currently a string.
-				if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+				/*if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
 					try {
 						Product selectedProduct = (Product)selectedObject;
 						FormBuilder fb = new FormBuilder(selectedProduct.getClass());
@@ -279,8 +290,31 @@ public class Pimp {
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-				}
+					}*/
+/*=======			
+			NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+			System.out.println(selectedNode.getID());
+			Object selectedObject = selectedNode.getUserObject();
+			Class<?> c = selectedObject.getClass();
+			
+			//Checking that selected class isn't abstract and isn't just a String
+			//(the "Product" root node is currently a string.
+			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+				try {
+					Product selectedProduct = (Product)selectedObject;
+					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					fb.addFormElement(new StringFormElement());
+					fb.addFormElement(new DoubleFormElement());
+					fb.addFormElement(new IntFormElement());
+					fb.addFormElement(new DateFormElement());
+					fb.addFormElement(new ColorFormElement());
+					fb.createForm();
+					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
+					if(newForm != null){
+						gui.updateProductForm(newForm);
+>>>>>>> branch 'master' of https://emr51@github.com/dpschramm/pimp.git*/
+					
+				
 			}
 		}
 	}

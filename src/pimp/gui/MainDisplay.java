@@ -1,27 +1,28 @@
 package pimp.gui;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JTree;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.JScrollPane;
 
 import pimp.productdefs.Product;
 
@@ -31,7 +32,7 @@ import pimp.productdefs.Product;
  * Q. Should this extend JFrame? We don't override any of JFrame's 
  * functionality so we could use a wrapper instead -DS.
  * 
- * @author Daniel Schramm, Joel Harrison, Ellie Rasmus
+ * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
  */
 public class MainDisplay extends JFrame {
@@ -40,6 +41,8 @@ public class MainDisplay extends JFrame {
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel treeModel;
 	private JTree productTree;
+	private HashMap<String, DefaultMutableTreeNode> nodeMap;
+	
 	//Keeping this reference to the dynamic form means we can remove it before replacing it with a new one.
 	private JPanel dynamicForm;
 	// Buttons.
@@ -72,9 +75,15 @@ public class MainDisplay extends JFrame {
 		// Create the model.
 		rootNode = new DefaultMutableTreeNode("Products");
 		treeModel = new DefaultTreeModel(rootNode);
+		nodeMap = new HashMap<String, DefaultMutableTreeNode>();
 		
 		// Create the GUI.
 		productTree = new JTree(treeModel);
+		productTree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				System.out.println("hello");
+			}
+		});
 		productTree.getSelectionModel().setSelectionMode
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		productTree.setShowsRootHandles(false);
@@ -156,10 +165,96 @@ public class MainDisplay extends JFrame {
 	 * @param product
 	 */
 	public void addToProductTable(Product product){
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);
-		treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
-		productTree.setSelectionPath(new TreePath(node.getPath()));
-		System.out.println("Added product: '" + product + "'");
+		//DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);	
+		NodeItem node = new NodeItem(product.toString(), 1);
+		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());
+		treeModel.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
+		productTree.scrollPathToVisible(new TreePath(node.getPath()));
+		if(Modifier.isAbstract(product.getClass().getSuperclass().getModifiers()))
+		{
+			//Product is abstract
+		}
+	}
+	
+	/**
+	 * Takes a classList and adds each class to the productTree
+	 * @param classList
+	 */
+	public void addProductStructure(List<Class<?>> classList){
+		for (Class<?> c : classList)
+		{
+			addProductStructure(c);
+		}
+	}
+	/**
+	 * Adds a class to the productTree. These are the abstract product types and
+	 * serve as parent nodes to product instances (e.g. Jacket XXL Red)
+	 * and also abstract product subtypes (e.g. Jackets)
+	 * @param c the class to add.
+	 */
+	public void addProductStructure(Class<?> c){
+		//if c has a superclass that isn't Product (i.e if it's a subcategory)
+		//yet the superclass hasn't been added yet, recursively call this method
+		//until we either get to a category that HAS been added, or start at the top
+		//category and recurse our way back down.
+		if (c.getSuperclass() != Product.class && !hasClassBeenAdded(c.getSuperclass()))
+		{
+			addProductStructure(c.getSuperclass());
+		}
+		//Due to the above statement, classes may have been added in a different order
+		//to how they are stored in the classList. This stops them re-adding themselves.
+		//You cannot put this check around the initial method call as it will not work.
+		if (!hasClassBeenAdded(c))
+		{
+			DefaultMutableTreeNode parent;
+			NodeItem node = new NodeItem(c.toString(), 1);
+			//Get the appropriate parent node for this category
+			parent = getNodeFromMap(c.getSuperclass().toString());
+			//Add it to the nodeMap for future subcategories to use
+			addToNodeMap(c.toString(), node);
+			//insert the node into the tree and scroll it
+			treeModel.insertNodeInto(node, parent, parent.getChildCount());
+			productTree.scrollPathToVisible(new TreePath(node.getPath()));
+		}
+	}
+	
+	/**
+	 * Method to determine whether the class has been added to the tree yet.
+	 * Not entiely necessary but tidies code a little.
+	 * @param c class name
+	 * @return true if the class has been added to the tree.
+	 */
+	public boolean hasClassBeenAdded(Class<?> c){
+		if (getNodeFromMap(c.toString()).equals(rootNode))
+		{
+			return false;
+		}
+		return true;	
+	}
+	
+	
+	/**
+	 * Insert item to the nodeMap
+	 * @param s the class's toString() value
+	 * @param n the node 
+	 */
+	public void addToNodeMap(String s, DefaultMutableTreeNode n){
+		nodeMap.put(s, n);		
+	}
+	
+	/**
+	 * Used to insert subcategories under the correct node.
+	 * @param s the class
+	 * @return n the node (insertion point). If there is no correlating
+	 * node it returns the rootNode - this happens when a tier 1 product type
+	 * calls this method.
+	 */
+	public DefaultMutableTreeNode getNodeFromMap(String s){
+		DefaultMutableTreeNode n = nodeMap.get(s);
+		if (n == null){
+			return rootNode;
+		}
+		return n;		
 	}
 	
 	/**
