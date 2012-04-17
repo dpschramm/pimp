@@ -18,6 +18,7 @@ public class TestClass {
 	@FormField
 	public String name;
 	
+	@FormField
 	public Date dob;
 	
 	@FormField

@@ -27,6 +27,7 @@ import pimp.form.StringFormElement;
 
 // Gui
 import pimp.gui.MainDisplay;
+import pimp.gui.NodeItem;
 import pimp.gui.SelectProductDialog;
 
 // Other
@@ -92,6 +93,7 @@ public class Pimp {
 		products = DataAccessorMock.load();
 		
 		//do stuff to init list in gui
+		gui.addProductStructure(dcl.getClassList());
 		gui.addToProductTable(products);
 	}
 	
@@ -216,8 +218,8 @@ public class Pimp {
 		@Override
 		public void valueChanged(TreeSelectionEvent event) {
 			TreePath path = event.getNewLeadSelectionPath();
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-                    path.getLastPathComponent();
+			NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+			System.out.println(selectedNode.getID());
 			Object selectedObject = selectedNode.getUserObject();
 			Class<?> c = selectedObject.getClass();
 			
