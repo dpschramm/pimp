@@ -33,11 +33,6 @@ public class ProductTree extends JTree {
 		
 		// Set model and settings.
 		setModel(model);
-		addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent e) {
-				System.out.println("hello");
-			}
-		});
 		getSelectionModel().setSelectionMode
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(false);
@@ -59,18 +54,39 @@ public class ProductTree extends JTree {
 		});
 	}
 	
-	public void removeTreeItem(MutableTreeNode node){
+	public void removeNode(MutableTreeNode node){
 		model.removeNodeFromParent(node);
 		repaint();
+	}
+	
+	/**
+	 * This should be re-written as two separate methods; one that gets the
+	 * currently selected product, and the other that removes a specified
+	 * product.
+	 * 
+	 * @return the product that was removed.
+	 */
+	public Product removeSelectedProduct() {
+		TreePath selectionPath = getSelectionPath();
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+				selectionPath.getLastPathComponent();
+		
+		Product product = (Product) selectedNode.getUserObject();
+		
+		Class<?> c = product.getClass();
+		if(!Modifier.isAbstract(c.getModifiers())){
+			removeNode(selectedNode);
+		}
+		return product;
 	}
 	
 	/**
 	 * 
 	 * @param products
 	 */
-	public void addToProductTable(List<Product> products) {
+	public void addProduct(List<Product> products) {
 		for (Product p : products) {
-			addToProductTable(p);
+			addProduct(p);
 		}
 	}
 	
@@ -78,7 +94,7 @@ public class ProductTree extends JTree {
 	 * 
 	 * @param product
 	 */
-	public void addToProductTable(Product product){
+	public void addProduct(Product product){
 		//DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);	
 		NodeItem node = new NodeItem(product.toString(), 1);
 		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());

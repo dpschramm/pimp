@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -12,8 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import pimp.Pimp;
 import pimp.productdefs.Product;
@@ -52,6 +50,9 @@ public class MainDisplay extends JFrame {
 		
 		// Exit application when close button clicked.
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		// Create product list.
+		products = new ArrayList<Product>();
 		
 		// Create product tree.
 		tree = new ProductTree();
@@ -125,7 +126,7 @@ public class MainDisplay extends JFrame {
 			Product p = controller.getProduct();
 			// Check to make sure user made a selection.
 			if (p != null) {
-				tree.addToProductTable(p);
+				tree.addProduct(p);
 				products.add(p);
 				// Debug.
 				System.out.println("You selected to create a " + p.getClass().getName());
@@ -143,21 +144,12 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// Get selected product from tree
-			TreePath selectionPath = tree.getSelectionPath();
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-					selectionPath.getLastPathComponent();
-			Object selectedObject = selectedNode.getUserObject();
-			Class<?> c = selectedObject.getClass();
-			//if the selected object is not an abstract class
-			if(!Modifier.isAbstract(c.getModifiers())){
-				tree.removeTreeItem(selectedNode);
-			}
-			// Remove object from collection in memory
-			products.remove((Product)selectedObject);
+			// Remove selected product from tree
+			Product product = tree.removeSelectedProduct();
+			products.remove(product);
 			
 			// Erase from xml
-			// This is done by overwriting the file with the new, smaller list of products	
+			// This is done by overwriting the file with the new, smaller list of products
 		}
 		
 	}	
@@ -215,12 +207,10 @@ public class MainDisplay extends JFrame {
 	}
 	
 	public void setClasses(List<Class<?>> classList) {
-		// TODO Auto-generated method stub
 		tree.addProductStructure(classList);
 	}
 
 	public void setProducts(List<Product> products) {
-		// TODO Auto-generated method stub
-		tree.addToProductTable(products);
+		tree.addProduct(products);
 	}
 }

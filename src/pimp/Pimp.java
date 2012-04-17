@@ -47,8 +47,7 @@ public class Pimp {
 	private String productDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
-	private MainDisplay gui;	// View.
-	
+	private MainDisplay gui;	// View.	
 	
 	/**
 	 * Main method just creates a new Pimp object.
@@ -76,7 +75,7 @@ public class Pimp {
 		DataAccessor.initialise(loader, saver);
 		
 		// Load existing products.
-		gui.setClasses(dcl.getClassList());
+		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
 		gui.setProducts(DataAccessor.load());
 		
 		// Make form.
