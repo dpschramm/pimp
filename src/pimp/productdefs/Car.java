@@ -1,5 +1,7 @@
 package pimp.productdefs;
 
+import pimp.form.FormField;
+
 /** An example of a specific product that could be instantiated.
  * 
  * @author Daniel Schramm
@@ -8,8 +10,12 @@ package pimp.productdefs;
 public class Car extends Product {
 	
 	// Fields
+	@FormField
 	public String colour;
+	@FormField
 	public String make;
+	@FormField
 	public String model;
+	@FormField
 	public int year;
 }

@@ -1,7 +1,10 @@
 package pimp.productdefs;
 
+import pimp.form.FormField;
+
 public class Drink extends Product {
+	@FormField
 	public String capacity;
-	public int quantity;
+	@FormField
 	public String flavour;
 }

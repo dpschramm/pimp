@@ -31,6 +31,7 @@ import pimp.gui.NodeItem;
 import pimp.gui.SelectProductDialog;
 
 // Other
+import pimp.persistence.DataAccessor;
 import pimp.persistence.DataAccessorMock;
 import pimp.productdefs.Product;
 import pimp.testdefs.TestClass;
@@ -44,7 +45,7 @@ import pimp.testdefs.TestClass;
 public class Pimp {
 	
 	// Database stuff
-	private String databaseDir = "test.xml";
+	private String databaseDir = "products.xml";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -89,8 +90,8 @@ public class Pimp {
 
 	private void loadProducts(){	
 		// Load products from databaseDir.
-		DataAccessorMock.initialize(databaseDir);
-		products = DataAccessorMock.load();
+		DataAccessor.initialise(databaseDir);
+		products = DataAccessor.load();
 		
 		//do stuff to init list in gui
 		gui.addProductStructure(dcl.getClassList());
@@ -115,9 +116,6 @@ public class Pimp {
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		// Update the form displayed by the GUI.
@@ -126,7 +124,7 @@ public class Pimp {
 	
 	/**
 	 * This ActionListener is applied to the New button on the main gui. 
-	 * When clicked it needs to launch a NewProductDialog, retrieve the input
+	 * When clicked it needs to launch a NewProductDialog, retriegui.updateProductForm(form);ve the input
 	 * from that and create a product of the returned type
 	 */
 	class newProductListener implements ActionListener {
@@ -229,12 +227,17 @@ public class Pimp {
 				try {
 					Product selectedProduct = (Product)selectedObject;
 					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
+					fb.addFormElement(new StringFormElement());
+					fb.addFormElement(new DoubleFormElement());
+					fb.addFormElement(new IntFormElement());
+					fb.addFormElement(new DateFormElement());
+					fb.addFormElement(new ColorFormElement());
+					fb.createForm();
 					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
-					gui.updateProductForm(newForm);
+					if(newForm != null){
+						gui.updateProductForm(newForm);
+					}
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
