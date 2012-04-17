@@ -4,9 +4,10 @@ import java.awt.Color;
 import java.lang.reflect.Type;
 import java.util.Date;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
+
+import pimp.gui.ColorButton;
 
 public class ColorFormElement implements FormElement {
 		
@@ -14,22 +15,22 @@ public class ColorFormElement implements FormElement {
 	
 	@Override
 	public Color getValue(JComponent jc) {
-		return ((JColorChooser)jc).getColor();
+		return ((ColorButton)jc).getBackground();
 	}
-
+	
 	@Override
 	public void setValue(JComponent jc, Object o) {
-		((JColorChooser)jc).setColor((Color)o);
+		((ColorButton)jc).setBackground((Color)o);
 	}
-
+	
 	@Override
 	public JComponent createComponent() {
-		return new JColorChooser();
+		return new ColorButton(null);
 	}
 	
 	@Override
 	public Type getInputType() {
 		return Color.class;
 	}
-
+	
 }
