@@ -14,7 +14,7 @@ public class Jacket extends Clothing {
 	public String toString() {
 		return "Jacket [size=" + size + ", brand=" + brand + ", isWaterproof="
 				+ isWaterproof + ", colour=" + colour + ", name=" + name
-				+ ", quantity=" + quantity + ", displayForm=" + displayForm
+				+ ", quantity=" + quantity + ", displayForm="
 				+ "]";
 	}
 

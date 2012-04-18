@@ -41,10 +41,22 @@ public class ColorButton extends JButton implements ActionListener {
 
     @Override
     public void setBackground(Color bg) {
-        super.setBackground( new Color(bg.getRed(), bg.getGreen(), bg.getBlue()) );
-        int r = bg.getRed();
+    	// Call super to change background.
+        super.setBackground( bg );
+    	
+    	// Break down colour components.
+    	int r = bg.getRed();
         int g = bg.getGreen();
         int b = bg.getBlue();
+        
+        // Set text.
         setText("Colour: (" + r + ", " + g + ", " + b + ")");
+        
+        // Set text colour based on background colour.
+        int averageColour = (r+b+g)/3;
+        if (averageColour < 120) {
+        	setForeground(Color.white);
+        }
+        else setForeground(Color.black);
     }
 }

@@ -1,6 +1,6 @@
 package pimp.testdefs;
 
-import pimp.CompanionForm;
+import pimp.form.CompanionForm;
 import pimp.ConctreteCompanionFormExample;
 
 public class CompanionFormTestClass {

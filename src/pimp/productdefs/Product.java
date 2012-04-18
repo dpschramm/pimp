@@ -22,7 +22,7 @@ public abstract class Product {
 	
 	@FormField(displayName="Quantity")
 	public int quantity;
-	public CompanionForm displayForm;
+	private CompanionForm displayForm;	//Private so this doesn't get saved to persistence layer.
 	
 	/** Default constructor - doesn't take parameters as these will be set 
 	 * later by the UI form. */
@@ -37,6 +37,8 @@ public abstract class Product {
 	    return this.name;
 	}
 	
-	
+	public CompanionForm getDisplayForm() {
+		return this.displayForm;
+	}
 
 }

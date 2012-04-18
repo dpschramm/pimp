@@ -12,11 +12,11 @@ import pimp.productdefs.Product;
 public class Form extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
-	Class c;
+	Class<?> c;
 	Map<String, JComponent> fieldToComponentMapping;
 	
 	
-	public Form(Class c) {
+	public Form(Class<?> c) {
 		super();
 		this.c = c;
 		System.out.println("In Form " + c);
@@ -33,7 +33,7 @@ public class Form extends JPanel {
 		fieldToComponentMapping.put(name, jc);
 	}
 	
-	public Class getFormClass(){
+	public Class<?> getFormClass(){
 		return c;
 	}
 	

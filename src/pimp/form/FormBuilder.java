@@ -1,13 +1,13 @@
 package pimp.form;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,34 +43,61 @@ public class FormBuilder {
 	 * 
 	 * @return a Form that represents the class
 	 */
-	public Form createForm(Class c) {
-
-		Field[] fields = c.getFields();
-
+	public Form createForm(Class<?> c) {
+		// Create form.
 		Form form = new Form(c);
-		//GridLayout gl = new GridLayout(fields.length, 2);
+		form.setLayout(new GridBagLayout());
+	
+		// Get all public fields for the class.
+		Field[] fields = c.getFields();
 		
-		form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
-
-		// For Public Fields just need to check if the Form Field Annotation is
-		// present
+		JPanel grid = new JPanel(new GridBagLayout());
+		
+		// Input constraints.
+		GridBagConstraints cInput = new GridBagConstraints();
+		cInput.weightx = 1.0;
+		cInput.insets = new Insets(5, 5, 5, 5); // T, L, B, R.
+		cInput.fill = GridBagConstraints.HORIZONTAL;
+		
+		// Label constraints.
+		GridBagConstraints cLabel = new GridBagConstraints();
+		cLabel.insets = new Insets(5, 5, 5, 5); // T, L, B, R.
+		cLabel.anchor = GridBagConstraints.WEST;
+		
+		int row = 0;
 		for (Field f : fields) {
+			// Only add fields with the Form Field Annotation.
 			if (f.isAnnotationPresent(FormField.class)) {
-				JPanel labelAndInput = new JPanel();
-				labelAndInput.setLayout(new BorderLayout());
-				labelAndInput.add(createFieldFormNameComponent(f), BorderLayout.WEST);
+				// Update constraints to next row.
+				cLabel.gridy = row;
+				cInput.gridy = row;
+				row++;
+				
+				// Create label.
+				grid.add(createFieldFormNameComponent(f), cLabel);
+				
+				// Create input.
 				FormElement fe = typeToFormElementMapping.get(f.getType());
-				JComponent input;
-				if (fe == null) {
-					// If type not supported then use the unsuported Type Form Element
+				if (fe == null) {	// Default to String Input.
 					fe = unsuportedTypeElement;
 				}
-				input = fe.createComponent();
+				JComponent input = fe.createComponent();
+				grid.add(input, cInput);
+				
+				// Set mapping to input field.
 				form.addFieldToComponentPair(f.getName(), input);
-				labelAndInput.add(input, BorderLayout.EAST);
-				form.add(labelAndInput);
 			}
 		}
+		
+		/* Set the form to expand horizontally and vertically, but only expands
+		 * it's contents horizontally. Anchor contents to the top leaving the 
+		 * area at the bottom empty. */
+		GridBagConstraints gbc = new GridBagConstraints();	
+		gbc.weighty = 1.0;
+		gbc.weightx = 1.0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.NORTH; 
+		form.add(grid, gbc);
 		
 		return form;
 	}
@@ -104,10 +131,7 @@ public class FormBuilder {
 	 */
 	public void fillForm(Form form, Object product) throws IllegalArgumentException,
 			IllegalAccessException {
-
 		System.out.println("In Fill Form");
-		
-		
 		if (!form.getFormClass().equals(product.getClass())) {
 			throw new IllegalArgumentException("Incompatiable object");
 		}

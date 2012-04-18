@@ -1,26 +1,20 @@
 package pimp.gui;
 
-import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JTree;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
-
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import javax.swing.JScrollPane;
 
+import pimp.Pimp;
+import pimp.form.FormBuilder;
 import pimp.productdefs.Product;
 
 /**
@@ -29,55 +23,54 @@ import pimp.productdefs.Product;
  * Q. Should this extend JFrame? We don't override any of JFrame's 
  * functionality so we could use a wrapper instead -DS.
  * 
- * @author Daniel Schramm, Joel Harrison, Ellie Rasmus
+ * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
  */
 public class MainDisplay extends JFrame {
 	
-	// Product tree.
-	private DefaultMutableTreeNode rootNode;
-	private DefaultTreeModel treeModel;
-	private JTree productTree;
+	// Views.
+	private JPanel dynamicForm; /* Keeping this reference to the dynamic form
+	means we can remove it before replacing it with a new one. */
+	private JFrame frame;
 	
-	// Buttons.
-	private JButton btnNew;
+	// Models.
+	private ProductTree tree;
+	private List<Product> products;
+	
+	// Controller.
+	private Pimp controller;
 	
 	/** 
 	 * Constructor
 	 */
-	public MainDisplay() {
+	public MainDisplay(Pimp controller) {
+		
+		this.controller = controller;
+		
+		frame = new JFrame();
+		
 		// Exit application when close button clicked.
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		// Create product list.
+		products = new ArrayList<Product>();
+		
+		// Create product tree.
+		tree = new ProductTree(this);
+		JScrollPane treeScrollPanel = new JScrollPane(tree);
 		
 		// Add panels.
-		getContentPane().add(createProductTreePanel(), BorderLayout.WEST);
-		getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
+		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
+		frame.getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
 	}
 	
 	/**
 	 * Show the gui.
 	 */
 	public void display() {
-		pack();							// Size the window to fit contents.
-		setLocationRelativeTo(null); 	// Center frame on screen.
-		setVisible(true); 				// Show the gui.
-	}
-	
-	private JComponent createProductTreePanel() {
-		
-		// Create the model.
-		rootNode = new DefaultMutableTreeNode("Products");
-		treeModel = new DefaultTreeModel(rootNode);
-		
-		// Create the GUI.
-		productTree = new JTree(treeModel);
-		productTree.getSelectionModel().setSelectionMode
-			(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		productTree.setShowsRootHandles(false);
-		
-		// Return containing Scroll Panel.
-		JScrollPane treeScrollPanel = new JScrollPane(productTree);
-		return treeScrollPanel;
+		frame.pack();							// Size the window to fit contents.
+		frame.setLocationRelativeTo(null); 		// Center frame on screen.
+		frame.setVisible(true); 				// Show the gui.
 	}
 	
 	/**
@@ -85,38 +78,25 @@ public class MainDisplay extends JFrame {
 	 */
 	private JPanel createButtonPanel() {	
 		
-		// Create New Product Button
-		btnNew = new JButton("New");
+		// Create New Button
+		JButton btnNew = new JButton("New");
+		btnNew.addActionListener(new newProductListener());
 		
-		// Create Copy Product Button
+		// Create Copy Button
 		JButton btnCopy = new JButton("Copy");
-		btnCopy.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-		});
+		btnCopy.addActionListener(new copyButtonListener());
 		
-		// Create Delete Product Button
+		// Create Delete Button
 		JButton btnDelete = new JButton("Delete");
-		btnDelete.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-			}
-		});
+		btnDelete.addActionListener(new deleteButtonListener());
+		
+		// Create Load Products Button
+		JButton btnLoadProducts = new JButton("Load Products");
+		btnLoadProducts.addActionListener(new loadButtonListener());
 		
 		// Create Load Product Button
-		JButton btnLoadProducts = new JButton("Load Products");
-		btnLoadProducts.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"Not yet implemented.");
-				//Needs to bring up dialog for xml file selection
-			}
-		});
+		JButton btnSaveProducts = new JButton("Save Products");
+		btnSaveProducts.addActionListener(new saveButtonListener());
 		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
@@ -126,6 +106,7 @@ public class MainDisplay extends JFrame {
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
 		rightPanel.add(btnLoadProducts);
+		rightPanel.add(btnSaveProducts);
 		
 		// Add panels to button panel.
 		JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -135,48 +116,112 @@ public class MainDisplay extends JFrame {
 	}
 	
 	/**
-	 * 
-	 * @param products
+	 * This ActionListener is applied to the New button on the main gui. 
+	 * When clicked it needs to launch a NewProductDialog, retriegui.updateProductForm(form);ve the input
+	 * from that and create a product of the returned type
 	 */
-	public void addToProductTable(List<Product> products) {
-		for (Product p : products) {
-			addToProductTable(p);
+	class newProductListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// Get selected class (will be null if they clicked cancel).
+			Product p = controller.getProduct();
+			// Check to make sure user made a selection.
+			if (p != null) {
+				tree.addProduct(p);
+				products.add(p);
+				// Debug.
+				System.out.println("You selected to create a " + p.getClass().getName());
+			}
+			else System.out.println("No selection.");
 		}
 	}
 	
 	/**
+	 * Delete the specified product.
 	 * 
-	 * @param product
+	 * @param p
 	 */
-	public void addToProductTable(Product product){
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);
-		treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
-		productTree.setSelectionPath(new TreePath(node.getPath()));
-		System.out.println("Added product: '" + product + "'");
+	class deleteButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// Remove selected product from tree
+			Product product = tree.removeSelectedProduct();
+			products.remove(product);
+			
+			// Erase from xml
+			// This is done by overwriting the file with the new, smaller list of products
+		}
+		
+	}	
+	
+	class copyButtonListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JOptionPane.showMessageDialog(getContentPane(), 
+			"Not yet implemented.");
+			
+			// Get selected product from tree
+			
+			// Create new copy of product, with different name	
+		}	
+	}
+	
+	/** 
+	 * Save products to file.
+	 */
+	class saveButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(getContentPane(), 
+					"Not yet implemented.");
+		}
+		
+	}
+	
+	/**
+	 * Load products from file.
+	 */
+	class loadButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(getContentPane(), 
+					"Not yet implemented.");
+			//Needs to bring up dialog for xml file selection
+		}
+		
 	}
 	
 	/**
 	 * 
 	 * @param form
 	 */
-	public void updateProductForm(JPanel form) {
-		getContentPane().add(form, BorderLayout.EAST);
+	public void updateProductForm(Product product) {
+		FormBuilder fb = new FormBuilder();
+		try {
+			if(dynamicForm != null){
+				frame.getContentPane().remove(dynamicForm);
+			}
+			JPanel form = (JPanel) fb.createForm(product);
+			dynamicForm = form;
+			frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//We need both of these
+		frame.validate();
+		frame.repaint();
 	}
 	
-	/**
-	 * 
-	 * @param npl
-	 */
-	public void addNewProductListener(ActionListener npl){
-		btnNew.addActionListener(npl);
+	public void setClasses(List<Class<?>> classList) {
+		tree.addProductStructure(classList);
 	}
-	
-	/**
-	 * 
-	 * @param tsl
-	 */
-	public void addTreeSelectionListener(TreeSelectionListener tsl){
-		productTree.addTreeSelectionListener(tsl);
+
+	public void setProducts(List<Product> products) {
+		tree.addProduct(products);
 	}
-	
 }
