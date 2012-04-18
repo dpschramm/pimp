@@ -1,6 +1,7 @@
 package pimp.productdefs;
 
 import pimp.form.CompanionForm;
+import pimp.form.FormField;
 
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.
@@ -16,7 +17,10 @@ import pimp.form.CompanionForm;
 public abstract class Product {
 	
 	// Fields
+	@FormField(displayName="Name")
 	public String name;
+	
+	@FormField(displayName="Quantity")
 	public int quantity;
 	public CompanionForm displayForm;
 	
@@ -32,5 +36,7 @@ public abstract class Product {
 	public String toString() {
 	    return this.name;
 	}
+	
+	
 
 }

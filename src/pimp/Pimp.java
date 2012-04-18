@@ -97,20 +97,15 @@ public class Pimp {
 	}
 	
 	private void createForm() {
-		// A dummy form.
-		FormBuilder fb = new FormBuilder(TestClass.class);
-		fb.addFormElement(new StringFormElement());
-		fb.addFormElement(new DoubleFormElement());
-		fb.addFormElement(new IntFormElement());
-		fb.addFormElement(new DateFormElement());
-		fb.addFormElement(new ColorFormElement());
-		fb.createForm();
+		// Create a Form Builder
+		FormBuilder fb = new FormBuilder();
+		
 		
 		// Fill the form.
 		TestClass tc1 = new TestClass(10, 12.0, "PIMP", Date.valueOf("2012-04-03"), Color.BLUE);
 		JPanel form = null;
 		try {
-			form = (JPanel) fb.fillForm(tc1);
+			form = (JPanel) fb.createForm(tc1);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -160,7 +155,6 @@ public class Pimp {
 				e1.printStackTrace();
 			}
 		}
-		
 	}
 
 	
@@ -227,8 +221,8 @@ public class Pimp {
 			if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
 				try {
 					Product selectedProduct = (Product)selectedObject;
-					FormBuilder fb = new FormBuilder(selectedProduct.getClass());
-					JPanel newForm = (JPanel) fb.fillForm(selectedProduct);
+					FormBuilder fb = new FormBuilder();
+					JPanel newForm = (JPanel) fb.createForm(selectedProduct);
 					gui.updateProductForm(newForm);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
