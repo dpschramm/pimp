@@ -4,32 +4,14 @@
 
 package pimp;
 
-import java.awt.Color;
-import java.sql.Date;
-
-import javax.swing.JPanel;
-
-// Form
-import pimp.form.ColorFormElement;
-import pimp.form.DateFormElement;
-import pimp.form.DoubleFormElement;
-import pimp.form.FormBuilder;
-import pimp.form.IntFormElement;
-import pimp.form.StringFormElement;
-
 // Gui
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 
 // Other
 import pimp.persistence.DataAccessor;
-import pimp.persistence.ProductLoader;
-import pimp.persistence.ProductSaver;
-import pimp.persistence.XmlProductLoader;
-import pimp.persistence.XmlProductSaver;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
-import pimp.testdefs.TestClass;
 
 
 /**
@@ -40,7 +22,7 @@ import pimp.testdefs.TestClass;
 public class Pimp {
 	
 	// Database stuff
-	private String databaseDir = "products.xml";
+	private String databaseName = "products";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -71,9 +53,7 @@ public class Pimp {
 		// Initialize Gui
 		gui = new MainDisplay(this);
 		
-		ProductLoader loader = new XmlProductLoader(databaseDir);
-		ProductSaver saver = new XmlProductSaver(databaseDir);
-		DataAccessor.initialise(loader, saver);
+		DataAccessor.initialise(databaseName);
 		
 		// Load existing products.
 		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
