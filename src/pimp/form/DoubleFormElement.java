@@ -11,11 +11,20 @@ public class DoubleFormElement implements FormElement {
 	
 	@Override
 	public Double getValue(JComponent jc) {
-		return Double.parseDouble(((JTextField)jc).getText());
+		double value = 0.0;
+		try{
+			value = Double.parseDouble(((JTextField)jc).getText());
+		} catch (NumberFormatException nfe){
+			// Fall through and do nothing
+		}
+		return value;
 	}
 
 	@Override
 	public void setValue(JComponent jc, Object o) {
+		if(o == null){
+			o = new Double(0.0);
+		}
 		((JTextField)jc).setText(o.toString());
 	}
 

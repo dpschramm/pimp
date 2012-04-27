@@ -1,9 +1,9 @@
 package pimp.persistence;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
+import java.lang.reflect.Field;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,37 +18,61 @@ import org.w3c.dom.Element;
 import pimp.productdefs.Product;
 
 public class XmlProductSaver extends ProductSaver {
-	
 	private Document xml;
-	private String filePath;
-
+	private File xmlFile;
+	
+	
 	public XmlProductSaver(String xmlFilePath) {
 		try {
-			this.filePath = xmlFilePath;
-			File xmlFile = new File(xmlFilePath);
+			this.xmlFile = new File(xmlFilePath);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
+		
+			//Overwrite existing xml each time we create a saver.
+			this.xml = db.newDocument();
+			this.xml.appendChild(xml.createElement("Products"));	//Create root node
 			
-			if (xmlFile.exists()) {
-				xml = db.parse(xmlFile);
-			} else {
-				xml = db.newDocument();
-				xml.appendChild(xml.createElement("Products"));	//Create root node
-			}
-			
-		} catch (IOException ioe) {
-			System.out.println("Cannot find the file " + xmlFilePath);
 		} catch (Exception e) {
-			System.out.println("Problem parsing file " + xmlFilePath);
+			e.printStackTrace();
 		}
 	}
+		
+
+	@Override
+	protected boolean save(Product product) {
+		Class<?> c = product.getClass();
+		Field[] fields = c.getFields();
+		
+		Element root = xml.getDocumentElement();
+		
+		Element productElement = xml.createElement(c.getName());
+		root.appendChild(productElement);
+		
+		for (Field field : fields) {
+			Element objectAttributeElement = xml.createElement(field.getName());
+			objectAttributeElement.setAttribute("type", field.getType().getSimpleName());
+			String value = "";
+			try {
+				value = field.get(product).toString();
+			} catch (Exception e) {
+				System.out.println("Error retrieving object field. May not have been set.");
+			}
+			
+			objectAttributeElement.setTextContent(value);
+			productElement.appendChild(objectAttributeElement);
+		}
+		
+		return writeXml();
+	}
 	
-	private boolean writeToXml() {
+	
+	private boolean writeXml() {
 		try { 
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer t = tf.newTransformer();
 			DOMSource src = new DOMSource(xml);
-			StreamResult result = new StreamResult(new File(filePath));
+			FileOutputStream outStream = new FileOutputStream(xmlFile);
+			StreamResult result = new StreamResult(outStream);
 			
 			t.transform(src, result);
 			
@@ -57,30 +81,6 @@ public class XmlProductSaver extends ProductSaver {
 			e.printStackTrace();
 			return false;
 		}
-	}
-	@Override
-	public boolean save(Product prod) {
-		List<Method> getters = getGetters(prod.getClass());
-		Element root = xml.getDocumentElement();
-		
-		Element productElement = xml.createElement("Product");
-		root.appendChild(productElement);
-		
-		for (Method method : getters) {
-			Element objectAttributeElement = xml.createElement(method.getName().substring(3));
-			String value = "";
-			try {
-				value = method.invoke(prod, new Object[]{}).toString();
-			} catch (Exception e) {
-				System.out.println("Error retrieving object field");
-				return false;
-			}
-			
-			objectAttributeElement.setTextContent(value);
-			productElement.appendChild(objectAttributeElement);
-		}
-		
-		return writeToXml();
 	}
 
 }

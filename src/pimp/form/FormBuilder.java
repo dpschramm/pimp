@@ -12,26 +12,26 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import pimp.productdefs.Product;
+
 public class FormBuilder {
 
-	private JPanel jp;
-	private Class<?> c;
-	private Map<String, JComponent> fieldToComponentMapping;
 	private Map<Type, FormElement> typeToFormElementMapping;
-
+	private FormElement unsuportedTypeElement;
+	
 	/**
-	 * Constructor takes a Class for which it can build forms for
-	 * 
-	 * @param c
+	 * For a Form Builder, Form Builder is used to create and decode Forms
 	 */
-	public FormBuilder(Class<?> c) {
-		this.c = c;
-		fieldToComponentMapping = new HashMap<String, JComponent>();
+	public FormBuilder() {
 		typeToFormElementMapping = new HashMap<Type, FormElement>();
-
-		addFormElement(new StringFormElement()); // Default to string if form
-													// builder type added
-		// jp = createForm();
+		
+		unsuportedTypeElement = new UnsupportedTypeFormElement();
+		// Default Form Builder has double, int, string, color, date
+		addFormElement(new StringFormElement());
+		addFormElement(new IntFormElement());
+		addFormElement(new DoubleFormElement());
+		addFormElement(new DateFormElement());
+		addFormElement(new ColorFormElement());
 	}
 
 	public void addFormElement(FormElement fe) {
@@ -41,10 +41,13 @@ public class FormBuilder {
 	/**
 	 * Creates the form based on the Class c
 	 * 
-	 * @return a JPanel form that represents the class
+	 * @return a Form that represents the class
 	 */
-	public void createForm() {
-		
+	public Form createForm(Class<?> c) {
+		// Create form.
+		Form form = new Form(c);
+		form.setLayout(new GridBagLayout());
+	
 		// Get all public fields for the class.
 		Field[] fields = c.getFields();
 		
@@ -76,43 +79,46 @@ public class FormBuilder {
 				// Create input.
 				FormElement fe = typeToFormElementMapping.get(f.getType());
 				if (fe == null) {	// Default to String Input.
-					fe = typeToFormElementMapping.get(String.class);
+					fe = unsuportedTypeElement;
 				}
 				JComponent input = fe.createComponent();
 				grid.add(input, cInput);
 				
 				// Set mapping to input field.
-				fieldToComponentMapping.put(f.getName(), input);
+				form.addFieldToComponentPair(f.getName(), input);
 			}
 		}
 		
-		/* Create a wrapper panel that expands horizontally and vertically, 
-		 * but only expands it's contents horizontally. Anchor contents to 
-		 * the top leaving the area at the bottom empty. */
-		JPanel wrapper = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();	
-		c.weighty = 1.0;
-		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.NORTH; 
-		wrapper.add(grid, c);
+		/* Set the form to expand horizontally and vertically, but only expands
+		 * it's contents horizontally. Anchor contents to the top leaving the 
+		 * area at the bottom empty. */
+		GridBagConstraints gbc = new GridBagConstraints();	
+		gbc.weighty = 1.0;
+		gbc.weightx = 1.0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.NORTH; 
+		form.add(grid, gbc);
 		
-		jp = wrapper;
+		return form;
 	}
-
+	
 	/**
-	 * Clears the current form
+	 * Creates the form based on the Class c
 	 * 
-	 * @return a cleared form
+	 * @return a Form that represents the class
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
 	 */
-	public JComponent getBlankForm() {
-		createForm();
-		return jp;
+	public Form createForm(Object product) throws IllegalArgumentException, IllegalAccessException {
+
+		Form form = createForm(product.getClass());
+		fillForm(form, product);
+		
+		return form;
 	}
 
 	/**
-	 * Will fill the formBuilder form based on the object given and return the
-	 * form
+	 * Will fill the given Form based on the object given 
 	 * 
 	 * @param o
 	 *            the object to fill the form with
@@ -120,56 +126,34 @@ public class FormBuilder {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the given object is not the same type as the class the
-	 *             form builder was created with
+	 *             form was created with
 	 * @throws IllegalAccessException
 	 */
-	public JComponent fillForm(Object o) /*throws IllegalArgumentException,
-	IllegalAccessException */{
-		if (!o.getClass().equals(c)) {
+	public void fillForm(Form form, Object product) throws IllegalArgumentException,
+			IllegalAccessException {
+		System.out.println("In Fill Form");
+		if (!form.getFormClass().equals(product.getClass())) {
 			throw new IllegalArgumentException("Incompatiable object");
 		}
 		
-		for (Field f : o.getClass().getFields()) {
-			if (f.isAnnotationPresent(FormField.class)) {
-				JComponent input = fieldToComponentMapping.get(f.getName());
-				FormElement fe = typeToFormElementMapping.get(f.getType());
-				try {
-					fe.setValue(input, f.get(o));
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return jp;
-	}
+		Map<String, JComponent> fieldNameToComponent = form.getFieldToComponentMapping();
+		
+		for(Map.Entry<String, JComponent> entry : fieldNameToComponent.entrySet()){
+			
+			JComponent input = entry.getValue();
+			Field field;
+			try {
+				field = product.getClass().getField(entry.getKey());
+				FormElement fe = typeToFormElementMapping.get(field.getType());
+				if(fe == null){
+					fe = unsuportedTypeElement;
+				} 
+				fe.setValue(input, field.get(product));
 
-	/**
-	 * Will update the given object o so that its values correspond to the
-	 * values in the form
-	 * 
-	 * @param o
-	 *            the object to update
-	 * @throws IllegalArgumentException
-	 *             if the given object is not the same type as the class the
-	 *             form builder was created with
-	 * @throws IllegalAccessException
-	 */
-	public void updateObjectBasedFromForm(Object o)
-			throws IllegalArgumentException, IllegalAccessException {
-
-		if (!o.getClass().equals(c)) {
-			throw new IllegalArgumentException("Incompatiable object");
-		}
-
-		for (Field f : o.getClass().getFields()) {
-			if (f.isAnnotationPresent(FormField.class)) {
-				JComponent input = fieldToComponentMapping.get(f.getName());
-				FormElement fe = typeToFormElementMapping.get(f.getType());
-				f.set(o, fe.getValue(input));
+			} catch (SecurityException e) {
+				// Fall through and do not set the form input value
+			} catch (NoSuchFieldException e) {
+				// Fall through and do not set the form input value
 			}
 		}
 	}
@@ -183,21 +167,35 @@ public class FormBuilder {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public Object getObjectFromForm() throws IllegalArgumentException,
+	public Object getProductFromForm(Form form) throws IllegalArgumentException,
 			IllegalAccessException, InstantiationException {
 
-		Object o;
-		o = c.newInstance();
+		Object p = form.getFormClass().newInstance();
 
-		for (Field f : o.getClass().getFields()) {
-			if (f.isAnnotationPresent(FormField.class)) {
-				JComponent input = fieldToComponentMapping.get(f.getName());
-				FormElement fe = typeToFormElementMapping.get(f.getType());
-				f.set(o, fe.getValue(input));
+		Map<String, JComponent> fieldNameToComponent = form.getFieldToComponentMapping();
+
+		for (Map.Entry<String, JComponent> entry : fieldNameToComponent.entrySet()) {
+
+			JComponent input = entry.getValue();
+			Field field;
+			try {
+				field = form.getFormClass().getField(entry.getKey());
+				FormElement fe = typeToFormElementMapping.get(field.getType());
+				if(fe == null){
+					fe = unsuportedTypeElement;
+				}
+				Object inputValue = fe.getValue(input);
+				field.set(p, inputValue);
+				
+			} catch (SecurityException e) {
+				// Fall through and do nothing as field does not exist in Product
+			} catch (NoSuchFieldException e) {
+				// Fall through and do nothing as field does not exist in Product
 			}
+			
 		}
 
-		return o;
+		return p;
 	}
 
 	/**
@@ -211,6 +209,13 @@ public class FormBuilder {
 
 		JLabel name = new JLabel();
 		name.setText(f.getName());
+		if (f.isAnnotationPresent(FormField.class)) {
+			FormField ff = f.getAnnotation(FormField.class);
+			if(!ff.displayName().equals(FormField.NULL)){
+				name.setText(ff.displayName());	
+			}
+			
+		}
 		return name;
 	}
 

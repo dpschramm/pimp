@@ -3,8 +3,14 @@ package pimp.productdefs;
 import pimp.form.FormField;
 
 public class Drink extends Product {
-	@FormField
+	
+	@FormField(displayName="Capacity")
 	public String capacity;
-	@FormField
+	
+	@FormField(displayName="Quantity")
+	public int quantity;
+	
+	@FormField(displayName="Flavour")
 	public String flavour;
+	
 }
