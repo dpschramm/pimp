@@ -160,16 +160,11 @@ public class MainDisplay extends JFrame {
 	 * 
 	 * @param product
 	 */
-	public void addToProductTable(Product product){
-		//DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);	
+	public void addToProductTable(Product product){	
 		NodeItem node = new NodeItem(product.toString(), 1);
 		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());
 		treeModel.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
 		productTree.scrollPathToVisible(new TreePath(node.getPath()));
-		if(Modifier.isAbstract(product.getClass().getSuperclass().getModifiers()))
-		{
-			//Product is abstract
-		}
 	}
 	
 	/**
@@ -216,7 +211,7 @@ public class MainDisplay extends JFrame {
 	
 	/**
 	 * Method to determine whether the class has been added to the tree yet.
-	 * Not entiely necessary but tidies code a little.
+	 * Not entirely necessary but tidies code a little.
 	 * @param c class name
 	 * @return true if the class has been added to the tree.
 	 */
