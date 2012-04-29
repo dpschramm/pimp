@@ -96,7 +96,6 @@ public class ProductTree extends JTree {
 	}
 	
 	/**
-	 * 
 	 * @param products
 	 */
 	public void addProduct(List<Product> products) {
@@ -106,19 +105,13 @@ public class ProductTree extends JTree {
 	}
 	
 	/**
-	 * 
 	 * @param product
 	 */
-	public void addProduct(Product product){
-		//DefaultMutableTreeNode node = new DefaultMutableTreeNode(product);	
-		NodeItem node = new NodeItem(product.toString(), 1);
+	public void addProduct(Product product){	
+		NodeItem node = new NodeItem(product, 1);
 		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());
 		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
 		scrollPathToVisible(new TreePath(node.getPath()));
-		if(Modifier.isAbstract(product.getClass().getSuperclass().getModifiers()))
-		{
-			//Product is abstract
-		}
 	}
 	
 	/**
@@ -152,7 +145,7 @@ public class ProductTree extends JTree {
 		if (!hasClassBeenAdded(c))
 		{
 			DefaultMutableTreeNode parent;
-			NodeItem node = new NodeItem(c.toString(), 1);
+			NodeItem node = new NodeItem(c, 1);
 			//Get the appropriate parent node for this category
 			parent = getNodeFromMap(c.getSuperclass().toString());
 			//Add it to the nodeMap for future subcategories to use
@@ -201,6 +194,7 @@ public class ProductTree extends JTree {
 		return n;	
 	}
 	
+	//This will be used if we use product IDs
 	private Product getProductFromTree(){
 		// Get id from tree
 		TreePath path = getSelectionPath();
