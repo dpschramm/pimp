@@ -216,7 +216,7 @@ public class DBDataAccessor {
 		return success;
 	}
 
-	public List<Product> load() {
+	public List<Product> loadProductList() {
 		List<Product> products = new ArrayList<Product>();
 		
 		List<String> tableNames = getTableNames();
@@ -289,6 +289,26 @@ public class DBDataAccessor {
 		}
 		
 		return tableNames;
+	}
+	
+	
+	public Product loadProductFromId(int id, Class<?> productClass) {
+		String tableName = productClass.getSimpleName();
+		Product newProduct = null;
+		try {
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("SELECT * " +
+												  "FROM " + tableName + 
+												  " WHERE id=\'" + id + "\';");
+			if (rs.next()) {
+				newProduct = createProductFromResultSet(rs, tableName);
+			}
+		} catch (Exception e) {
+			System.err.println("Error loading single product from database");
+			e.printStackTrace();
+		}
+		
+		return newProduct;
 	}
 	
 }

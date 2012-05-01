@@ -1,5 +1,6 @@
 package pimp.persistence;
 
+import java.util.Collection;
 import java.util.List;
 
 import pimp.productdefs.*;
@@ -30,12 +31,35 @@ public class DataAccessor {
 		}
 	}
 	
-	public static List<Product> load() {
+	public static List<Product> loadProductList() {
 		if (instance == null) {
 			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise().");
 			return null;
 		} else {
-			return instance.load();
+			return instance.loadProductList();
+		}
+	}
+	
+	public static Product loadProductFromId(int id, Class<?> productClass) {
+		if (instance == null) {
+			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise()");
+			return null;
+		}
+		
+		return instance.loadProductFromId(id, productClass);
+	}
+	
+	public static boolean isInitialised() {
+		if (instance == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public static void saveAll(Collection<Product> products) {
+		for (Product p : products) {
+			save(p);
 		}
 	}
 }
