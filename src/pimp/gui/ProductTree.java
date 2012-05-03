@@ -59,6 +59,7 @@ public class ProductTree extends JTree {
 	}
 	
 	private void updateSelection(DefaultMutableTreeNode selectedNode) {
+		//This is currently returning null - the object isn't being referenced by the node?
 		Product product = (Product) selectedNode.getUserObject();
 		
 		//Checking that selected class isn't abstract and isn't just a String

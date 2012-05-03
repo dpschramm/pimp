@@ -35,7 +35,10 @@ public class DirectoryClassLoader {
 		classList = new ArrayList<Class<?>>();
 		
 		// Create a string pointing to the product folder.
-		URL directoryUrl = ClassLoader.getSystemResource(directoryName);
+		Class asdf = this.getClass();
+		final ClassLoader loader = this.getClass().getClassLoader();
+		
+		URL directoryUrl = loader.getResource(directoryName);/*asdf.getClassLoader().getResource(directoryName);//ClassLoader.getSystemResource(directoryName);*/
 		if (directoryUrl == null) {
 			System.out.println("Could not find the '" + directoryName + 
 					"' folder in " + System.getProperty("user.dir"));

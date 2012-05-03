@@ -128,7 +128,7 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
-			Product p = controller.getProduct();
+			Product p = controller.getNewProduct();
 			// Check to make sure user made a selection.
 			if (p != null) {
 				tree.addProduct(p);
@@ -202,10 +202,20 @@ public class MainDisplay extends JFrame {
 			if(dynamicForm != null){
 				frame.getContentPane().remove(dynamicForm);
 			}
-			JPanel form = (JPanel) fb.createForm(product);
+			JPanel form;
+			Class companionClass = product.getCompanionFormClass();
+			if(companionClass != null){
+				form = (JPanel) companionClass.newInstance();
+			}
+			else{
+				form = (JPanel) fb.createForm(product);
+			}
 			dynamicForm = form;
 			frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

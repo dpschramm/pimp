@@ -5,6 +5,8 @@
 package pimp;
 
 // Gui
+import java.util.List;
+
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 
@@ -77,10 +79,11 @@ public class Pimp {
 		gui.updateProductForm(drink);
 	}
 
-	public Product getProduct() {
+	public Product getNewProduct() {
+		List<Class<?>> classList = dcl.getClassList();
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				dcl.getClassList());
+				/*dcl.getClassList()*/classList);
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
