@@ -2,9 +2,10 @@ package pimp.gui;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -14,7 +15,6 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import pimp.form.FormBuilder;
 import pimp.productdefs.Product;
 
 public class ProductTree extends JTree {
@@ -108,11 +108,21 @@ public class ProductTree extends JTree {
 	 * @param product
 	 */
 	public void addProduct(Product product){	
-		NodeItem node = new NodeItem(product, 1);
+		NodeItem node = new NodeItem(1, product.toString());
 		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());
 		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
 		scrollPathToVisible(new TreePath(node.getPath()));
 	}
+	
+//	public void addProduct(Map<Integer, String> products) {
+//		
+//		Iterator it = products.entrySet().iterator();
+//		while(it.hasNext()){
+//			Map.Entry<Integer, String> pairs = (Map.Entry)it.next();
+//			addProduct(pairs.getKey(), pairs.getValue());
+//		}
+//		
+//	}
 	
 	/**
 	 * Takes a classList and adds each class to the productTree
@@ -145,7 +155,7 @@ public class ProductTree extends JTree {
 		if (!hasClassBeenAdded(c))
 		{
 			DefaultMutableTreeNode parent;
-			NodeItem node = new NodeItem(c, 1);
+			NodeItem node = new NodeItem(c);
 			//Get the appropriate parent node for this category
 			parent = getNodeFromMap(c.getSuperclass().toString());
 			//Add it to the nodeMap for future subcategories to use

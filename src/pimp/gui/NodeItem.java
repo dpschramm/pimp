@@ -5,28 +5,24 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import pimp.productdefs.Product;
 
 public class NodeItem extends DefaultMutableTreeNode{
-	
-    private Object o;
+
     private int id;
     private String nodeName;
     
     //Constructor that takes a product.
-    public NodeItem(Product p, int id){
-    	this.id = id;
-    	this.o = p;
-    	this.nodeName = p.toString();
+    public NodeItem(int id, String s){
+    	this.id =id;
+    	//this.o = p;
+    	this.nodeName = s;
     }
     
     //Constructor that takes a class.
-    public NodeItem(Class c, int id){
-    	this.id = id;
+    public NodeItem(Class<?> c){
+    	this.id = -1;
     	this.nodeName = extractName(c);
-    	this.o = c;
+    	//this.o = c;
     }
     
-    public Object getObject(){
-    	return o;
-    }
 
     public int getID(){
         return id;
@@ -38,7 +34,7 @@ public class NodeItem extends DefaultMutableTreeNode{
     }
     
 	//Makes the class name prettier.
-	public String extractName(Class c){
+	public String extractName(Class<?> c){
 		String s = c.toString();
 		return s.substring(s.lastIndexOf('.')+1);
 	}
