@@ -225,6 +225,8 @@ public class MainDisplay extends JFrame {
 	}
 
 	public void setProducts(List<Product> products) {
-		tree.addProduct(products);
+		for (Product p : products){
+			tree.addProduct(p);
+		}
 	}
 }

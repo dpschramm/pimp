@@ -1,5 +1,8 @@
 package pimp.gui;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +25,7 @@ public class ProductTree extends JTree {
 	// Product tree.
 	private DefaultMutableTreeNode root;
 	private DefaultTreeModel model;
-
+    private ItemListener classSelectListener;
 	private HashMap<String, NodeItem> map;
 	
 	private MainDisplay parent;
@@ -52,10 +55,10 @@ public class ProductTree extends JTree {
 			public void valueChanged(TreeSelectionEvent event) {
 				TreePath path = event.getNewLeadSelectionPath();
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+				
 				if (!selectedNode.getStoredClass().equals(null)){
-					//Fire class selected event
-					
-					//updateSelection(selectedNode);
+					ItemEvent i = new ItemEvent(null, 0, selectedNode.getStoredClass(), 0);
+					classSelectListener.itemStateChanged(i);
 				}
 			}
 		});
@@ -69,14 +72,14 @@ public class ProductTree extends JTree {
 		System.out.println(n.getStoredClass().toString());
 		
 				 
-//		Product product = (Product) selectedNode.getUserObject();
-//		
-//		//Checking that selected class isn't abstract and isn't just a String
-//		//(the "Product" root node is currently a string.
-//		Class<?> c = product.getClass();
-//		if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
-//			parent.updateProductForm(product);
-//		}
+		Product product = (Product) selectedNode.getUserObject();
+		
+		//Checking that selected class isn't abstract and isn't just a String
+		//(the "Product" root node is currently a string.
+		Class<?> c = product.getClass();
+		if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+			parent.updateProductForm(product);
+		}
 	}
 	
 	public void removeNode(MutableTreeNode node){
@@ -105,13 +108,27 @@ public class ProductTree extends JTree {
 		return product;
 	}
 	
-	/**
-	 * @param products
+
+	/*
+	 * New methods for adding products. This one takes the whole map of products within a class
 	 */
-	public void addProduct(List<Product> products) {
-		for (Product p : products) {
-			addProduct(p);
+	public void addProduct(Map<Integer, String> products, String className) {
+		NodeItem p = map.get(className);
+		for (Map.Entry<Integer, String> entry : products.entrySet()) {
+		    Integer key = entry.getKey();
+		    String value = entry.getValue();
+		    NodeItem n = new NodeItem(key, value);
+		    addProduct(n, p);
 		}
+	}
+	
+	/*
+	 * This one adds a single product under a node.
+	 */
+	
+	private void addProduct(NodeItem n, NodeItem p) {
+		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
+		scrollPathToVisible(new TreePath(n.getPath()));
 	}
 	
 	/**
@@ -124,15 +141,18 @@ public class ProductTree extends JTree {
 		scrollPathToVisible(new TreePath(node.getPath()));
 	}
 	
-//	public void addProduct(Map<Integer, String> products) {
-//		
-//		Iterator it = products.entrySet().iterator();
-//		while(it.hasNext()){
-//			Map.Entry<Integer, String> pairs = (Map.Entry)it.next();
-//			addProduct(pairs.getKey(), pairs.getValue());
+	
+//	/**
+//	 * @param products
+//	 */
+//	public void addProduct(List<Product> products) {
+//		for (Product p : products) {
+//			addProduct(p);
 //		}
-//		
 //	}
+//
+
+
 	
 	/**
 	 * Takes a classList and adds each class to the productTree
@@ -225,6 +245,10 @@ public class ProductTree extends JTree {
 			return null;
 		}
 		return null;
+	}
+	
+	private void addClassSelectListener(ItemListener a){
+		classSelectListener = a;
 	}
 	
 }
