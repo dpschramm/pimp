@@ -5,6 +5,8 @@
 package pimp;
 
 // Gui
+import java.util.Map;
+
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 
@@ -60,7 +62,7 @@ public class Pimp {
 		
 		// Load existing products.
 		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		gui.setProducts(DataAccessor.loadProductList());
+		//gui.setProducts(DataAccessor.loadProductList());
 		
 		// Make form.
 		createForm();
@@ -101,6 +103,11 @@ public class Pimp {
 		
 		// No product selected.
 		return null;
+	}
+	
+	public Map<Integer, String> getProductsByClass(Class<?> c){
+	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(c.toString());
+	return m;
 	}
 	
 }

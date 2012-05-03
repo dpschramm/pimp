@@ -23,7 +23,7 @@ public class ProductTree extends JTree {
 	private DefaultMutableTreeNode root;
 	private DefaultTreeModel model;
 
-	private HashMap<String, DefaultMutableTreeNode> map;
+	private HashMap<String, NodeItem> map;
 	
 	private MainDisplay parent;
 	
@@ -35,7 +35,7 @@ public class ProductTree extends JTree {
 		// Create the model.
 		root = new DefaultMutableTreeNode("Products");
 		model = new DefaultTreeModel(root);
-		map = new HashMap<String, DefaultMutableTreeNode>();
+		map = new HashMap<String, NodeItem>();
 		
 		// Set model and settings.
 		setModel(model);
@@ -51,22 +51,32 @@ public class ProductTree extends JTree {
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				TreePath path = event.getNewLeadSelectionPath();
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-                	path.getLastPathComponent();
-				updateSelection(selectedNode);
+				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+				if (!selectedNode.getStoredClass().equals(null)){
+					//Fire class selected event
+					
+					//updateSelection(selectedNode);
+				}
 			}
 		});
 	}
 	
-	private void updateSelection(DefaultMutableTreeNode selectedNode) {
-		Product product = (Product) selectedNode.getUserObject();
+	private void updateSelection(NodeItem selectedNode) {
 		
-		//Checking that selected class isn't abstract and isn't just a String
-		//(the "Product" root node is currently a string.
-		Class<?> c = product.getClass();
-		if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
-			parent.updateProductForm(product);
-		}
+		System.out.println(selectedNode.toString());
+		NodeItem n = map.get(selectedNode.getStoredClass().toString());
+		
+		System.out.println(n.getStoredClass().toString());
+		
+				 
+//		Product product = (Product) selectedNode.getUserObject();
+//		
+//		//Checking that selected class isn't abstract and isn't just a String
+//		//(the "Product" root node is currently a string.
+//		Class<?> c = product.getClass();
+//		if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
+//			parent.updateProductForm(product);
+//		}
 	}
 	
 	public void removeNode(MutableTreeNode node){
@@ -185,7 +195,7 @@ public class ProductTree extends JTree {
 	 * @param s the class's toString() value
 	 * @param n the node 
 	 */
-	public void addToNodeMap(String s, DefaultMutableTreeNode n){
+	public void addToNodeMap(String s, NodeItem n){
 		map.put(s, n);		
 	}
 	
