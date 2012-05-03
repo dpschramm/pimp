@@ -74,6 +74,11 @@ public class ProductTree extends JTree {
 		repaint();
 	}
 	
+	public void empty() {
+		root.removeAllChildren();
+		model.setRoot(root);
+	}
+	
 	/**
 	 * This should be re-written as two separate methods; one that gets the
 	 * currently selected product, and the other that removes a specified
