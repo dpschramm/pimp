@@ -330,16 +330,15 @@ public class DBDataAccessor {
 	}
 	
 	
-	public Product loadProductFromId(int id, Class<?> productClass) {
-		String tableName = productClass.getSimpleName();
+	public Product loadProductFromId(int id, String className) {
 		Product newProduct = null;
 		try {
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * " +
-												  "FROM " + tableName + 
+												  "FROM " + className + 
 												  " WHERE id=\'" + id + "\';");
 			if (rs.next()) {
-				newProduct = createProductFromResultSet(rs, tableName);
+				newProduct = createProductFromResultSet(rs, className);
 			}
 		} catch (Exception e) {
 			System.err.println("Error loading single product from database");
