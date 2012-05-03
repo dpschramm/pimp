@@ -251,7 +251,6 @@ public class DBDataAccessor {
 			System.err.println("Error retreiving product from table " + tableName);
 			e.printStackTrace();
 		}
-		
 		return products;
 	}
 
