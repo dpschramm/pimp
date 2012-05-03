@@ -95,12 +95,12 @@ public class MainDisplay extends JFrame {
 		btnDelete.addActionListener(new deleteButtonListener());
 		
 		// Create Load Products Button
-		JButton btnLoadProducts = new JButton("Load Products");
-		btnLoadProducts.addActionListener(new loadButtonListener());
+		JButton btnLoadProducts = new JButton("Import");
+		btnLoadProducts.addActionListener(new importButtonListener());
 		
 		// Create Load Product Button
-		JButton btnSaveProducts = new JButton("Save Products");
-		btnSaveProducts.addActionListener(new saveButtonListener());
+		JButton btnSaveProducts = new JButton("Export");
+		btnSaveProducts.addActionListener(new exportButtonListener());
 		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
@@ -174,7 +174,7 @@ public class MainDisplay extends JFrame {
 	/** 
 	 * Save products to file.
 	 */
-	class saveButtonListener implements ActionListener {
+	class exportButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(getContentPane(), 
@@ -183,11 +183,14 @@ public class MainDisplay extends JFrame {
 		
 	}
 	
-	class loadButtonListener implements ActionListener {
+	class importButtonListener implements ActionListener {
+		/**
+		 * Brings up a dialog to select the database file
+		 * and load products from that database.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(getContentPane(), 
-					"Not yet implemented.");
+			
 			//Needs to bring up dialog for xml file selection
 		}
 	}
