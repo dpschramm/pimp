@@ -106,8 +106,7 @@ public class Pimp {
 	}
 	
 	public Map<Integer, String> getProductsByClass(Class<?> c){
-	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(c.toString());
-	return m;
+		return DataAccessor.getProductIdsAndNames(c.toString());
 	}
 	
 }
