@@ -22,7 +22,7 @@ import pimp.productdefs.Product;
 public class Pimp {
 	
 	// Database stuff
-	private String databaseName = "products";
+	private String defaultDatabaseName = "products";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -46,7 +46,10 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp() {
-		
+		initialise(defaultDatabaseName);
+	}
+	
+	public void initialise(String databaseName) {
 		// Load class definitions.
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		

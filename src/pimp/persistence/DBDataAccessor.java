@@ -1,5 +1,6 @@
 package pimp.persistence;
 
+import java.awt.Color;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import pimp.productdefs.Product;
 
 public class DBDataAccessor {
@@ -125,8 +130,10 @@ public class DBDataAccessor {
 			Class<?> type = field.getType();
 			String typeName = type.getSimpleName();
 			
-			if (typeName.equals("String") || typeName.equals("Date") || typeName.equals("Color")) {
-				preparedStatement.setString(index, (String) field.get(product));
+			if (typeName.equals("String") || typeName.equals("Date")) {
+				preparedStatement.setString(index, field.get(product).toString());
+			} else if (typeName.equals("Color")) {
+				preparedStatement.setInt(index, ((Color)field.get(product)).getRGB());
 			} else if (typeName.equals("int")) {
 				preparedStatement.setInt(index, (Integer) field.get(product));
 			} else if (typeName.equals("double")) {
@@ -260,7 +267,20 @@ public class DBDataAccessor {
 			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as colnums start from 1 and we want to ignore id col for now.. TODO: include id field?
 				String columnName = metaData.getColumnName(i);
 				Field f = c.getField(columnName);
-				f.set(product, rs.getObject(i));
+				Class<?> fieldType = f.getType();
+				String fieldTypeName = fieldType.getSimpleName();
+				
+				if (fieldTypeName.equals("Date")) {
+					f.set(product, new Date(rs.getString(i)));
+				} else if (fieldTypeName.equals("Color")) {
+					f.set(product, new Color(rs.getInt(i)));
+				} else if (fieldTypeName.equalsIgnoreCase("double")){
+					f.set(product, rs.getDouble(i));
+				} else if (fieldTypeName.equalsIgnoreCase("int")) {
+					f.set(product, rs.getInt(i));
+				} else if (fieldTypeName.equals("String")) {
+					f.set(product, rs.getString(i));
+				}
 			}
 		} catch (Exception e) {
 			System.err.println("Error re-creating product object");
@@ -289,6 +309,24 @@ public class DBDataAccessor {
 		}
 		
 		return tableNames;
+	}
+	
+	public Map<Integer, String> getProductIdsAndNames(String className) {
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT id, name " +
+											 "FROM " + className + ";");
+			while (rs.next()) {
+				map.put(rs.getInt("id"), rs.getString("name"));
+			}
+		} catch (Exception e) {
+			System.err.println("Error loading id-name map");
+			e.printStackTrace();
+		}
+		
+		return map;
 	}
 	
 	
