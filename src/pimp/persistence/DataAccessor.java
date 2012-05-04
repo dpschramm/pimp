@@ -1,5 +1,10 @@
 package pimp.persistence;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -7,15 +12,8 @@ import java.util.Map;
 import pimp.productdefs.*;
 
 public class DataAccessor {
-	private ProductLoader loader;
-	private ProductSaver saver;
 	
-	public static DBDataAccessor instance = null;
-	
-	private DataAccessor(ProductLoader loader, ProductSaver saver) {
-		this.loader = loader;
-		this.saver = saver;
-	}
+	private static DBDataAccessor instance = null;
 
 	public static void initialise(String dbName) {
 		instance = new DBDataAccessor(dbName);
@@ -37,6 +35,22 @@ public class DataAccessor {
 		} else {
 			return instance.loadProductList();
 		}
+	}
+	
+	public static void exportDb(File newDatabaseFile) throws Exception {
+		InputStream in = new FileInputStream(instance.getDatabaseName());
+		OutputStream out = new FileOutputStream(newDatabaseFile);
+		byte[] buffer = new byte[1024];
+		int len;
+		
+		while((len = in.read(buffer)) > 0) {
+			out.write(buffer, 0, len);
+		}
+		
+		in.close();
+		out.close();
+		
+		initialise(newDatabaseFile.getName());
 	}
 	
 	public static Map<Integer, String> getProductIdsAndNames(String className) {

@@ -21,9 +21,11 @@ import pimp.productdefs.Product;
 
 public class DBDataAccessor {
 	private Connection conn;
+	private String databaseName;
 	
-	public DBDataAccessor(String dbName) {
+	protected DBDataAccessor(String dbName) {
 		try {
+			this.databaseName = dbName;
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 		} catch (Exception e) {
@@ -32,7 +34,11 @@ public class DBDataAccessor {
 		}
 	}
 	
-	public boolean save(Product product) {
+	protected String getDatabaseName() {
+		return databaseName;
+	}
+	
+	protected boolean save(Product product) {
 		Class<?> c = product.getClass();
 		String className = c.getSimpleName();
 		if (!tableExists(className)) {
@@ -223,7 +229,7 @@ public class DBDataAccessor {
 		return success;
 	}
 
-	public List<Product> loadProductList() {
+	protected List<Product> loadProductList() {
 		List<Product> products = new ArrayList<Product>();
 		
 		List<String> tableNames = getTableNames();
@@ -310,7 +316,7 @@ public class DBDataAccessor {
 		return tableNames;
 	}
 	
-	public Map<Integer, String> getProductIdsAndNames(String className) {
+	protected Map<Integer, String> getProductIdsAndNames(String className) {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		
 		try {
@@ -329,7 +335,7 @@ public class DBDataAccessor {
 	}
 	
 	
-	public Product loadProductFromId(int id, String className) {
+	protected Product loadProductFromId(int id, String className) {
 		Product newProduct = null;
 		try {
 			Statement statement = conn.createStatement();
@@ -346,5 +352,4 @@ public class DBDataAccessor {
 		
 		return newProduct;
 	}
-	
 }
