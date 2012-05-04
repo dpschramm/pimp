@@ -2,6 +2,7 @@ package pimp.persistence;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import pimp.productdefs.*;
 
@@ -17,9 +18,7 @@ public class DataAccessor {
 	}
 
 	public static void initialise(String dbName) {
-		if (instance == null) {
-			instance = new DBDataAccessor(dbName);
-		}
+		instance = new DBDataAccessor(dbName);
 	}
 	
 	public static boolean save(Product product) {
@@ -40,7 +39,15 @@ public class DataAccessor {
 		}
 	}
 	
-	public static Product loadProductFromId(int id, Class<?> productClass) {
+	public static Map<Integer, String> getProductIdsAndNames(String className) {
+		if (instance == null) {
+			return null;
+		}
+		
+		return instance.getProductIdsAndNames(className);
+	}
+	
+	public static Product loadProductFromId(int id, String productClass) {
 		if (instance == null) {
 			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise()");
 			return null;

@@ -5,7 +5,11 @@
 package pimp;
 
 // Gui
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
@@ -24,7 +28,7 @@ import pimp.productdefs.Product;
 public class Pimp {
 	
 	// Database stuff
-	private String databaseName = "products";
+	private String defaultDatabaseName = "products.db";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -48,23 +52,26 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp() {
-		
 		// Load class definitions.
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		
 		// Initialize Gui
 		gui = new MainDisplay(this);
 		
-		DataAccessor.initialise(databaseName);
-		
-		// Load existing products.
-		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		gui.setProducts(DataAccessor.loadProductList());
+		initialiseDB(defaultDatabaseName);
 		
 		// Make form.
 		createForm();
 
 		gui.display();
+	}
+	
+	public void initialiseDB(String databaseName) {
+		DataAccessor.initialise(databaseName);
+		
+		// Load existing products.
+		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
+		//gui.setProducts(DataAccessor.loadProductList());
 	}
 	
 	private void createForm() {
@@ -81,15 +88,24 @@ public class Pimp {
 
 	public Product getNewProduct() {
 		List<Class<?>> classList = dcl.getClassList();
+		List<Class<?>> concreteClassList = new ArrayList<Class<?>>();
+		//Ensuring we don't give the option of creating abstract classes
+		for(Class c: classList){
+			if(!Modifier.isAbstract(c.getModifiers())){
+				concreteClassList.add(c);				
+			}
+		}
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				/*dcl.getClassList()*/classList);
+				/*dcl.getClassList()*/concreteClassList);
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				return c.newInstance();
+				Product p = c.newInstance();
+				DataAccessor.save(p);
+				return p;
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -101,6 +117,11 @@ public class Pimp {
 		
 		// No product selected.
 		return null;
+	}
+	
+	public Map<Integer, String> getProductsByClass(Class<?> c){
+	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(c.toString());
+	return m;
 	}
 	
 }

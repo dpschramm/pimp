@@ -4,15 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -95,12 +98,12 @@ public class MainDisplay extends JFrame {
 		btnDelete.addActionListener(new deleteButtonListener());
 		
 		// Create Load Products Button
-		JButton btnLoadProducts = new JButton("Load Products");
-		btnLoadProducts.addActionListener(new loadButtonListener());
+		JButton btnLoadProducts = new JButton("Open");
+		btnLoadProducts.addActionListener(new OpenButtonListener());
 		
 		// Create Load Product Button
-		JButton btnSaveProducts = new JButton("Save Products");
-		btnSaveProducts.addActionListener(new saveButtonListener());
+		JButton btnSaveProducts = new JButton("Export");
+		btnSaveProducts.addActionListener(new exportButtonListener());
 		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
@@ -132,7 +135,9 @@ public class MainDisplay extends JFrame {
 			// Check to make sure user made a selection.
 			if (p != null) {
 				tree.addProduct(p);
-				products.add(p);
+				//don't think we need this anymore?
+				//products.add(p);
+							
 				// Debug.
 				System.out.println("You selected to create a " + p.getClass().getName());
 			}
@@ -174,7 +179,7 @@ public class MainDisplay extends JFrame {
 	/** 
 	 * Save products to file.
 	 */
-	class saveButtonListener implements ActionListener {
+	class exportButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(getContentPane(), 
@@ -183,12 +188,35 @@ public class MainDisplay extends JFrame {
 		
 	}
 	
-	class loadButtonListener implements ActionListener {
+	class OpenButtonListener implements ActionListener {
+		/**
+		 * Brings up a dialog to select the database file
+		 * and load products from that database.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(getContentPane(), 
-					"Not yet implemented.");
-			//Needs to bring up dialog for xml file selection
+			//TODO: break this JFileChooser stuff out so it can be reused for the export button.
+			final JFileChooser chooser = new JFileChooser();
+			
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setCurrentDirectory(new File("."));
+			chooser.setFileFilter(new FileFilter() {
+				public boolean accept(File f) {
+					return f.getName().toLowerCase().endsWith(".db")
+							|| f.isDirectory();				
+				}
+				
+				public String getDescription() {
+					return "DB files";
+				};
+			});
+			
+			int returnVal = chooser.showDialog(MainDisplay.this, "Open");
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = chooser.getSelectedFile();
+				tree.empty();
+				controller.initialiseDB(selectedFile.getName());				
+			}
 		}
 	}
 	

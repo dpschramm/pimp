@@ -43,37 +43,7 @@ public class IntFormElementTest extends junit.framework.TestCase{
 		}
 		assertTrue(4 == intFE.getValue(jc));
 	}
-	/***
-	public void testGetValueAfterNothingSet() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		assertEquals(0.0, doubleFE.getValue(jc));
-	}
-	
-	public void testSetValueNull() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		try {
-			doubleFE.setValue(jc, null);
-		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
-		}
-	}
 
-	public void testGetValueAfterSetToNullIsNull() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		try {
-			doubleFE.setValue(jc, null);
-		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
-		}
-		assertEquals(0.0, doubleFE.getValue(jc));
-	}
-	***/
 	public void testCreateComponent() {
 		
 		JComponent jc = ife.createComponent();
