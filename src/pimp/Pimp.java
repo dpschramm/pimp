@@ -7,25 +7,17 @@ package pimp;
 // Gui
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
+
 import java.io.File;
-=======
->>>>>>> 0d32a472f80cd6728998835162fbc81a283c71c2
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-<<<<<<< HEAD
 
-import javax.swing.JOptionPane;
-
-=======
->>>>>>> 0d32a472f80cd6728998835162fbc81a283c71c2
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
-import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
 
@@ -130,11 +122,7 @@ public class Pimp {
 			try {
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(c.newInstance());
-<<<<<<< HEAD
-				cache.addToCache(l);
-=======
 				cache.addToCache(l, 1);
->>>>>>> 0d32a472f80cd6728998835162fbc81a283c71c2
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -152,11 +140,7 @@ public class Pimp {
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-<<<<<<< HEAD
-			cache.addToCache(l);
-=======
 			cache.addToCache(l, 0);
->>>>>>> 0d32a472f80cd6728998835162fbc81a283c71c2
 		}
 	}
 	
