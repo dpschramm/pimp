@@ -53,6 +53,14 @@ public class DataAccessor {
 		initialise(newDatabaseFile.getName());
 	}
 	
+	public static Map<Integer, Product> getIdToProductMap(String className) {
+		if (instance == null) {
+			return null;
+		}
+		
+		return instance.getIdToProductMap(className);
+	}
+	
 	public static Map<Integer, String> getProductIdsAndNames(String className) {
 		if (instance == null) {
 			return null;
