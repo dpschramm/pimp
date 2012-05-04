@@ -3,20 +3,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.Rectangle;
 import java.awt.Dimension;
 import javax.swing.JList;
 import javax.swing.JButton;
 
-import pimp.Pimp;
 import pimp.productdefs.Product;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 /**
  * This class provides a dialog window that allows users to select a product
  * class.
@@ -29,6 +26,7 @@ public class SelectProductDialog {
 	// Instance variables.
 	private JDialog dialog;
 	private JList list;
+	private Map<String, Class<?>> classMap;
 	
 	/**
 	 * Constructor to create the formatted dialog box.
@@ -41,9 +39,18 @@ public class SelectProductDialog {
 		// Create dialog.
 		dialog = new JDialog(frame, "Create new product", true);
 		
+		// Build a map of class name to classes.
+		classMap = new HashMap<String, Class<?>>();
+		for (Class<?> c : classList) {
+			// Strip the package name.
+			String name = c.toString();
+			name = name.substring(name.lastIndexOf('.') + 1);
+			// Add to map.
+			classMap.put(name, c);
+		}
+		
 		// Create JList
-		list = createList(classList); /* the createPanel method is dependent
-										on this method having already run. */
+		list = new JList(classMap.keySet().toArray());
 		
 		// Add content to dialog
 		dialog.getContentPane().add(createPanel());
@@ -55,23 +62,6 @@ public class SelectProductDialog {
 		
 		// Show the dialog.
 		dialog.setVisible(true);
-	}
-	
-	/**
-	 * Create the JList from whatever disguisting form of list we try to
-	 * inflict on this poor class.
-	 * 
-	 * @param classList a thing that hopefully is a list of product classes.
-	 * @return a JList containing the different types of classes that can be 
-	 * selected.
-	 */
-	private JList createList(List<?> classList) {
-		/* The following line gives a warning, see this link for details:
-		 * http://stackoverflow.com/questions/749425/how-do-i-use-generics-with-an-array-of-classes
-		 */
-		Class<?>[] classArray = 
-			classList.toArray(new Class[0]);
-		return new JList(classArray);
 	}
 	
 	/**
@@ -129,6 +119,8 @@ public class SelectProductDialog {
 			return null;
 		}
 		
-		return (Class<? extends Product>) selection;
+		Class<?> c = classMap.get(selection);
+		
+		return (Class<? extends Product>) c;
 	}
 }
