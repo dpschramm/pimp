@@ -26,7 +26,7 @@ public class ProductCache {
 	
 	public void addToCache(List<Product> products, int status){
 		for (Product p : products){
-			CachedItem<Product, Enum<?>> c = new CachedItem<Product, Enum<?>>(p, status);
+			CachedItem<Product, Status> c = new CachedItem<Product, Status>(p, status);
 			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
