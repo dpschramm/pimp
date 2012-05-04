@@ -219,6 +219,7 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			System.out.println("Going to try to load class " + e.getActionCommand());
 			controller.getProductsByClass(e.getActionCommand());
 		}		
 		

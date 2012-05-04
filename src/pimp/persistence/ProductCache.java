@@ -19,9 +19,11 @@ public class ProductCache {
 	private ActionListener productsRemovedListener;
 
 	private ArrayList<CachedItem> list;
+	private ArrayList<String> classesLoaded;
 	
 	public ProductCache(){
 		list = new ArrayList<CachedItem>();
+		classesLoaded = new ArrayList<String>();
 	}
 	
 	/**
@@ -33,7 +35,7 @@ public class ProductCache {
 		for (Product p : products){
 
 			CachedItem c = new CachedItem(p, status);
-			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
+			System.out.println(status + ": " + p.toString());
 			list.add(c);
 		}
 		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
@@ -49,6 +51,18 @@ public class ProductCache {
 				}
 			}
 		return l;
+	}
+	
+	public void addToClassesLoaded(String s){
+		classesLoaded.add(s);
+	}
+	
+	public boolean isLoaded(String s){
+		if(classesLoaded.contains(s))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	

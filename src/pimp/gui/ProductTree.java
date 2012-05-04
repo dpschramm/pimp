@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
@@ -67,7 +69,6 @@ public class ProductTree extends JTree {
 					String s = o.toString();
 					ActionEvent i = new ActionEvent(model, 0, s);
 					classSelectListener.actionPerformed(i);
-					System.out.println("Class");
 				}
 				else
 				{
@@ -76,7 +77,38 @@ public class ProductTree extends JTree {
 				}
 			}
 		});
+		
+		addTreeExpansionListener(new TreeExpansionListener() {
+			/* Retrieve the selected object and creates a new dynamic form to display the 
+			 * product's attributes.
+			 */
+
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void treeExpanded(TreeExpansionEvent event) {
+				TreePath path = (TreePath) event.getPath();
+				if (!(path == null)){
+				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+				Object o = selectedNode.getStoredObject();
+				if (o.getClass().equals(Class.class)){
+//					//Need to figure out what the source is - it can't be null.
+					String s = o.toString();
+					ActionEvent i = new ActionEvent(model, 0, s);
+					classSelectListener.actionPerformed(i);
+				}
+				}
+			}
+		});
+		
+		
 	}
+	
+	
 	
 	// This exists because we can't refer to parent from in that inner class up there
 	// We could move that code from out of the constructor at some stage
@@ -115,7 +147,7 @@ public class ProductTree extends JTree {
 		NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
 		
-		Product product = (Product) selectedNode.getUserObject();
+		Product product = (Product) selectedNode.getStoredObject();
 		
 		Class<?> c = product.getClass();
 		if(!Modifier.isAbstract(c.getModifiers())){

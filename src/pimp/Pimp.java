@@ -132,13 +132,15 @@ public class Pimp {
 	}
 	
 	public void getProductsByClass(String className){
-		if (cache.getFromCache(className).size() == 0){
+		if (!cache.isLoaded(className)){
+			System.out.println("Going to try to load class " + className);
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
 			cache.addToCache(l, Status.FRESH);
+			cache.addToClassesLoaded(className);
 		}
 	}
 	
