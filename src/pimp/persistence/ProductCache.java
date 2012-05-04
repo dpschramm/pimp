@@ -7,10 +7,17 @@ import java.util.List;
 
 import pimp.productdefs.Product;
 
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
+
 public class ProductCache {
 	
 	private ActionListener productsAddedListener;
 	private ActionListener productsRemovedListener;
+
 	private ArrayList<CachedItem> list;
 	
 	public ProductCache(){
@@ -25,6 +32,7 @@ public class ProductCache {
 	public void addToCache(List<Product> products, Status status){
 		for (Product p : products){
 			CachedItem c = new CachedItem(p, status);
+			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
 		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
@@ -41,6 +49,7 @@ public class ProductCache {
 			}
 		return l;
 	}
+
 	
 	public void removeFromCache(Product p){
 		list.remove(p);

@@ -18,6 +18,11 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import pimp.productdefs.Product;
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
 
 public class ProductTree extends JTree {
 	

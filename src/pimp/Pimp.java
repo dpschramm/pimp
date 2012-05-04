@@ -19,6 +19,7 @@ import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
 import pimp.persistence.Status;
+import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
 
@@ -87,21 +88,17 @@ public class Pimp {
 	}
 	
 	private void createForm() {
+		
 		// Fill the form.
-		/*Drink drink = new Drink();
+		Drink drink = new Drink();
 		drink.capacity = "Large";
 		drink.flavour = "Blue";
 		drink.name = "Gatorade";
 		drink.quantity = 40;
 		
 		// Update the form displayed by the GUI.
-		gui.updateProductForm(drink);*/
-		Shoe shoe = new Shoe();
-		shoe.name = "STYLISH SHOOOOE";
-		shoe.quantity = 4;
-		shoe.shoeSize = 12;
-		shoe.sizingSystem = "EU";
-		gui.updateProductForm(shoe);
+		gui.updateProductForm(drink);
+
 	}
 
 	public void getNewProduct() {
@@ -148,7 +145,6 @@ public class Pimp {
 	class productAddedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getSource().toString());
 			//Code to update the tree here.
 			gui.setProducts((List<Product>) e.getSource());
 		}
