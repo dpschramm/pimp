@@ -339,6 +339,28 @@ public class DBDataAccessor {
 		return map;
 	}
 	
+	protected Map<Integer, Product> getIdToProductMap(String className) {
+		Map<Integer, Product> map = new HashMap<Integer, Product>();
+		String tableName = extractTableName(className);
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs;
+			
+			if (tableExists(tableName)) {
+				rs = stmt.executeQuery("SELECT * FROM " + tableName + ";");
+				
+				while (rs.next()) {
+					Product p = createProductFromResultSet(rs, tableName);
+					int id = rs.getInt("id");
+					
+					map.put(id, p);
+				}
+			}
+		} catch (Exception e) {}
+		
+		return map;
+	}
+	
 	
 	protected Product loadProductFromId(int id, String className) {
 		String tableName = extractTableName(className);
