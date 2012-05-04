@@ -1,5 +1,6 @@
 package pimp.form;
 
+import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -17,13 +18,16 @@ public class NullDecoratorInput extends JPanel {
 	public NullDecoratorInput(JComponent input) {
 		super();
 		this.input = input;
-		nullCheckBox = new JCheckBox();
+		nullCheckBox = new JCheckBox("null");
 		nullCheckBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				enableInputField(nullCheckBox.isSelected());
+				enableInputField(!nullCheckBox.isSelected());
 			}
 		    });		
+		this.setLayout(new BorderLayout());
+		this.add(input, BorderLayout.CENTER);
+		this.add(nullCheckBox, BorderLayout.EAST);
 	}
 
 	public JComponent getInputComponent(){
@@ -35,7 +39,7 @@ public class NullDecoratorInput extends JPanel {
 	}
 	
 	public void setNullSelected(boolean isNull){
-		nullCheckBox.setSelected(true);
+		nullCheckBox.setSelected(isNull);
 	}
 	
 	protected void enableInputField(boolean enable) {

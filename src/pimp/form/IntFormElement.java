@@ -11,7 +11,13 @@ public class IntFormElement implements FormElement {
 
 	@Override
 	public Integer getValue(JComponent jc) {
-		return Integer.parseInt(((JTextField)jc).getText());
+		int value = 0;
+		try{
+			value = Integer.parseInt(((JTextField)jc).getText());	
+		} catch (NumberFormatException nfe){
+			// Fall through and return 0.
+		}
+		return value;
 	}
 
 	@Override

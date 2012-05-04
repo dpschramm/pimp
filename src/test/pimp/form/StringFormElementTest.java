@@ -7,7 +7,7 @@ import org.junit.Before;
 
 import pimp.form.StringFormElement;
 
-public class StringFormElementTest extends junit.framework.TestCase{
+public class StringFormElementTest extends junit.framework.TestCase implements FormElementTestInterface {
 	
 	StringFormElement sfe;
 	
@@ -19,7 +19,8 @@ public class StringFormElementTest extends junit.framework.TestCase{
 		sfe = new StringFormElement();
 	}
 	
-	public void testSetStringValue() {
+	@Override
+	public void testSetValue() {
 		
 		StringFormElement strFE = new StringFormElement();
 		JComponent jc = strFE.createComponent();
@@ -30,7 +31,8 @@ public class StringFormElementTest extends junit.framework.TestCase{
 		}
 	}
 
-	public void testGetValueAfterSetToStringValue() {
+	@Override
+	public void testGetValueAfterSetToValue() {
 		
 		StringFormElement strFE = new StringFormElement();
 		JComponent jc = strFE.createComponent();
@@ -42,6 +44,7 @@ public class StringFormElementTest extends junit.framework.TestCase{
 		assertEquals("Hello", strFE.getValue(jc));
 	}
 	
+	@Override
 	public void testGetValueAfterNothingSet() {
 		
 		StringFormElement strFE = new StringFormElement();
@@ -49,29 +52,20 @@ public class StringFormElementTest extends junit.framework.TestCase{
 		assertEquals("", strFE.getValue(jc));
 	}
 	
+	@Override
 	public void testSetValueNull() {
 		
 		StringFormElement strFE = new StringFormElement();
 		JComponent jc = strFE.createComponent();
 		try {
 			strFE.setValue(jc, null);
+			fail("Should throw NPE");
 		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
+			// Fall through.
 		}
-	}
-
-	public void testGetValueAfterSetToNullIsNull() {
-		
-		StringFormElement strFE = new StringFormElement();
-		JComponent jc = strFE.createComponent();
-		try {
-			strFE.setValue(jc, null);
-		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
-		}
-		assertNull(strFE.getValue(jc));
 	}
 	
+	@Override
 	public void testCreateComponent() {
 		
 		JComponent jc = sfe.createComponent();
@@ -79,6 +73,7 @@ public class StringFormElementTest extends junit.framework.TestCase{
 		assertTrue(jc instanceof JTextField);
 	}
 	
+	@Override
 	public void testGetInputType() {
 		assertTrue((String.class).equals(sfe.getInputType()));
 	}

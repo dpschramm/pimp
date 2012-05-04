@@ -56,7 +56,9 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(jacket);
-			f.setVisible(true);
+			JFrame testFrame = new JFrame();
+			testFrame.add(f);
+			testFrame.setVisible(true);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		} catch (IllegalAccessException e) {
