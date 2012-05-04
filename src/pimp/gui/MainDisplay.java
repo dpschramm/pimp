@@ -318,7 +318,7 @@ public class MainDisplay extends JFrame {
 				frame.getContentPane().remove(dynamicForm);
 			}
 			else if(cForm != null){
-				frame.getContentPane().remove((JPanel)cForm);
+				frame.getContentPane().remove((JPanel)cForm.getForm());
 			}
 			//Form form;
 			Class companionClass = product.getCompanionFormClass();

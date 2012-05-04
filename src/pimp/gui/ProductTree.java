@@ -63,7 +63,8 @@ public class ProductTree extends JTree {
 				}
 				else
 				{
-					//updateProductForm();
+					//parent.updateProductForm((Product)selectedNode.getStoredObject());
+					updateParentForm((Product)selectedNode.getStoredObject());
 				}
 			}
 		});
@@ -75,6 +76,10 @@ public class ProductTree extends JTree {
 		Product p = parent.saveCurrentChanges();	
 	}
 
+	private void updateParentForm(Product p){
+		parent.updateProductForm(p);
+	}
+	
 	public void addClassSelectListener(ActionListener a){
 		classSelectListener = a;
 	}
