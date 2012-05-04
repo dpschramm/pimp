@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +24,8 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import pimp.Pimp;
+import pimp.form.CompanionForm;
+import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Product;
@@ -39,8 +43,6 @@ import java.awt.Dimension;
 public class MainDisplay extends JFrame {
 	
 	// Views.
-	private JPanel dynamicForm; /* Keeping this reference to the dynamic form
-	means we can remove it before replacing it with a new one. */
 	private JFrame frame;
 	
 	// Models.
@@ -49,6 +51,12 @@ public class MainDisplay extends JFrame {
 	
 	// Controller.
 	private Pimp controller;
+	
+	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
+	private FormBuilder fb;
+	private Form dynamicForm; /* Keeping this reference to the dynamic form
+								means we can remove it before replacing it with a new one. */
+	private CompanionForm cForm;
 	
 	/** 
 	 * Constructor
@@ -64,6 +72,9 @@ public class MainDisplay extends JFrame {
 		
 		// Create product list.
 		products = new ArrayList<Product>();
+		
+		// Init. form builder
+		fb = new FormBuilder();
 		
 		// Create product tree.
 		tree = new ProductTree(this);
@@ -130,16 +141,62 @@ public class MainDisplay extends JFrame {
 	
 	/**
 	 * This ActionListener is applied to the New button on the main gui. 
-	 * When clicked it needs to launch a NewProductDialog, retriegui.updateProductForm(form);ve the input
+	 * When clicked it needs to launch a NewProductDialog, retrieve the input
 	 * from that and create a product of the returned type
 	 */
 	class newProductListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
-			controller.getProduct();			
+
+			controller.getNewProduct();	
+//			// Check to make sure user made a selection.
+//			if (p != null) {
+//				tree.addProduct(p);
+//				//shouldn't need this anymore?
+//				//products.add(p);
+//							
+//				// Debug.
+//				System.out.println("You selected to create a " + p.getClass().getName());
+//			}
+//			else System.out.println("No selection.");
 		}
-	}	
+	}
+	
+	/*
+	 * This is called by the product tree on valueChange so that when a new tree item is 
+	 * selected, any edits made to the previously selected product will be saved. 
+	 * The current object state is retrieved by passing the form/companion form through
+	 * the form builder.
+	 * */	
+	public Product saveCurrentChanges(){
+		try {
+			Object currentProductState;
+			if(dynamicForm != null){
+				currentProductState = fb.getProductFromForm(dynamicForm);
+			}
+			else/* if(cForm != null)*/{
+				currentProductState = cForm.getObject();
+			}
+			//This check shouldn't be necessary but whatever
+			if(currentProductState instanceof Product){
+				controller.saveChangesToProduct((Product)currentProductState);
+			}
+			return (Product) currentProductState;
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
 	/**
 	 * Delete the specified product.
 	 * 
@@ -257,18 +314,44 @@ public class MainDisplay extends JFrame {
 	 * @param form
 	 */
 	public void updateProductForm(Product product) {
-		FormBuilder fb = new FormBuilder();
 		try {
 			if(dynamicForm != null){
 				frame.getContentPane().remove(dynamicForm);
 			}
-			JPanel form = (JPanel) fb.createForm(product);
-			dynamicForm = form;
-			frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
+			else if(cForm != null){
+				frame.getContentPane().remove((JPanel)cForm.getForm());
+			}
+			//Form form;
+			Class companionClass = product.getCompanionFormClass();
+			if(companionClass != null){
+				Constructor constr = companionClass.getConstructor(product.getClass());
+				cForm = (CompanionForm) constr.newInstance(product);
+				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
+				dynamicForm = null;
+			}
+			else{
+				dynamicForm = fb.createForm(product);
+				frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
+				cForm = null;
+			}
+			//dynamicForm = form;
+			//frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

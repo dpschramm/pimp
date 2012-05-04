@@ -7,16 +7,17 @@ package pimp;
 // Gui
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
+import pimp.testdefs.Shoe;
 
 
 /**
@@ -84,20 +85,34 @@ public class Pimp {
 	
 	private void createForm() {
 		// Fill the form.
-		Drink drink = new Drink();
+		/*Drink drink = new Drink();
 		drink.capacity = "Large";
 		drink.flavour = "Blue";
 		drink.name = "Gatorade";
 		drink.quantity = 40;
 		
 		// Update the form displayed by the GUI.
-		gui.updateProductForm(drink);
+		gui.updateProductForm(drink);*/
+		Shoe shoe = new Shoe();
+		shoe.name = "STYLISH SHOOOOE";
+		shoe.quantity = 4;
+		shoe.shoeSize = 12;
+		shoe.sizingSystem = "EU";
+		gui.updateProductForm(shoe);
 	}
 
-	public void getProduct() {
+	public void getNewProduct() {
+		List<Class<?>> classList = dcl.getClassList();
+		List<Class<?>> concreteClassList = new ArrayList<Class<?>>();
+		//Ensuring we don't give the option of creating abstract classes
+		for(Class c: classList){
+			if(!Modifier.isAbstract(c.getModifiers())){
+				concreteClassList.add(c);				
+			}
+		}
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				dcl.getClassList());
+				/*dcl.getClassList()*/concreteClassList);
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -133,7 +148,16 @@ public class Pimp {
 			System.out.println(e.getSource().toString());
 			//Code to update the tree here.
 			gui.setProducts((List<Product>) e.getSource());
-			
-		}		
+		}
 	}
+	
+
+	/*
+	 * It seems weird, that this is necessary. But we don't want to use a data accessor
+	 * from the gui. That would be A Bad Thing to do.
+	 * */
+	public void saveChangesToProduct(Product p){
+		DataAccessor.save(p);
+	}
+
 }
