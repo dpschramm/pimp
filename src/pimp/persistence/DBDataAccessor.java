@@ -317,14 +317,19 @@ public class DBDataAccessor {
 	}
 	
 	protected Map<Integer, String> getProductIdsAndNames(String className) {
+		String tableName = extractTableName(className);
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT id, name " +
-											 "FROM " + className + ";");
-			while (rs.next()) {
-				map.put(rs.getInt("id"), rs.getString("name"));
+			ResultSet rs;
+			if (tableExists(tableName)) {
+				rs = stmt.executeQuery("SELECT id, name " +
+									   "FROM " + tableName + ";");
+			
+				while (rs.next()) {
+					map.put(rs.getInt("id"), rs.getString("name"));
+				}
 			}
 		} catch (Exception e) {
 			System.err.println("Error loading id-name map");
@@ -336,14 +341,15 @@ public class DBDataAccessor {
 	
 	
 	protected Product loadProductFromId(int id, String className) {
+		String tableName = extractTableName(className);
 		Product newProduct = null;
 		try {
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * " +
-												  "FROM " + className + 
+												  "FROM " + tableName + 
 												  " WHERE id=\'" + id + "\';");
 			if (rs.next()) {
-				newProduct = createProductFromResultSet(rs, className);
+				newProduct = createProductFromResultSet(rs, tableName);
 			}
 		} catch (Exception e) {
 			System.err.println("Error loading single product from database");
@@ -351,5 +357,9 @@ public class DBDataAccessor {
 		}
 		
 		return newProduct;
+	}
+	
+	private String extractTableName(String className) {
+		return className.substring(className.lastIndexOf("."));
 	}
 }
