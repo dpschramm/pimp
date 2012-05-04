@@ -59,6 +59,8 @@ public class MainDisplay extends JFrame {
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
 	
+	private Product currentProduct;
+	
 	private JScrollPane treeScrollPanel;
 	
 	/** 
@@ -153,17 +155,18 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
-			Product p = controller.getNewProduct();
-			// Check to make sure user made a selection.
-			if (p != null) {
-				tree.addProduct(p);
-				//shouldn't need this anymore?
-				//products.add(p);
-							
-				// Debug.
-				System.out.println("You selected to create a " + p.getClass().getName());
-			}
-			else System.out.println("No selection.");
+
+			controller.getNewProduct();	
+//			// Check to make sure user made a selection.
+//			if (p != null) {
+//				tree.addProduct(p);
+//				//shouldn't need this anymore?
+//				//products.add(p);
+//							
+//				// Debug.
+//				System.out.println("You selected to create a " + p.getClass().getName());
+//			}
+//			else System.out.println("No selection.");
 		}
 	}
 	
@@ -175,18 +178,23 @@ public class MainDisplay extends JFrame {
 	 * */	
 	public Product saveCurrentChanges(){
 		try {
-			Object currentProductState;
+			/*Object currentProductState = null;
 			if(dynamicForm != null){
 				currentProductState = fb.getProductFromForm(dynamicForm);
 			}
-			else/* if(cForm != null)*/{
+			else if(cForm != null){
 				currentProductState = cForm.getObject();
 			}
 			//This check shouldn't be necessary but whatever
 			if(currentProductState instanceof Product){
-				controller.saveChangesToProduct((Product)currentProductState);
+				//controller.saveChangesToProduct((Product)currentProductState);
 			}
-			return (Product) currentProductState;
+			return (Product) currentProductState;*/
+			Object currentFormState = fb.getProductFromForm(dynamicForm);
+			//asdf The current form state needs to be copied over to the current product here
+			//there is no easy way to do this. There should be. 
+			
+
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -211,18 +219,20 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Remove selected product from tree
-			tree.removeSelectedProduct();
+			Product p = tree.removeSelectedProduct();
 			// Flag product in cache as deleted
+			
+			controller.remove(p);
 		}
-		
 	}	
+	
+
 	
 	class classChangedListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Map<Integer, Product> m = controller.getProductsByClass(e.getActionCommand());
-			tree.addProduct(m, e.getActionCommand());
+			controller.getProductsByClass(e.getActionCommand());
 		}		
 		
 	}
@@ -322,10 +332,10 @@ public class MainDisplay extends JFrame {
 			else if(cForm != null){
 				frame.getContentPane().remove((JPanel)cForm.getForm());
 			}
-			//Form form;
-			Class companionClass = product.getCompanionFormClass();
+			currentProduct = product;
+			Class<?> companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
-				Constructor constr = companionClass.getConstructor(product.getClass());
+				Constructor<?> constr = companionClass.getConstructor(product.getClass());
 				cForm = (CompanionForm) constr.newInstance(product);
 				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
 				dynamicForm = null;
@@ -370,5 +380,9 @@ public class MainDisplay extends JFrame {
 		for (Product p : products){
 			tree.addProduct(p);
 		}
+	}
+
+	public void removeProduct(Product p) {
+		tree.removeProduct(p);
 	}
 }

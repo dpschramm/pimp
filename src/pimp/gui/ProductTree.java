@@ -3,9 +3,12 @@ package pimp.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -50,21 +53,24 @@ public class ProductTree extends JTree {
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				// Retrieve current product from dynamic form and save changes to database
-				retrieveAndSave(); 
-				TreePath path = event.getNewLeadSelectionPath();
-				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-				Object o = selectedNode.getStoredObject();
-				if (o.getClass().equals(Class.class)){
-					//Need to figure out what the source is - it can't be null.
-					String s = o.toString();
-					ActionEvent i = new ActionEvent(model, 0, s);
-					classSelectListener.actionPerformed(i);
-					System.out.println("Class");
-				}
-				else
-				{
-					//parent.updateProductForm((Product)selectedNode.getStoredObject());
-					updateParentForm((Product)selectedNode.getStoredObject());
+				if(event.isAddedPath()){
+					retrieveAndSave(); 
+				
+					TreePath path = event.getNewLeadSelectionPath();
+					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+					Object o = selectedNode.getStoredObject();
+					if (o.getClass().equals(Class.class)){
+						//Need to figure out what the source is - it can't be null.
+						String s = o.toString();
+						ActionEvent i = new ActionEvent(model, 0, s);
+						classSelectListener.actionPerformed(i);
+						System.out.println("Class");
+					}
+					else
+					{
+						//parent.updateProductForm((Product)selectedNode.getStoredObject());
+						updateParentForm((Product)selectedNode.getStoredObject());
+					}
 				}
 			}
 		});
@@ -73,7 +79,7 @@ public class ProductTree extends JTree {
 	// This exists because we can't refer to parent from in that inner class up there
 	// We could move that code from out of the constructor at some stage
 	private void retrieveAndSave(){
-		Product p = parent.saveCurrentChanges();	
+		/*Product p =*/ parent.saveCurrentChanges();	
 	}
 
 	private void updateParentForm(Product p){
@@ -102,7 +108,7 @@ public class ProductTree extends JTree {
 	 * 
 	 * @return the product that was removed.
 	 */
-	public void removeSelectedProduct() {
+	public Product removeSelectedProduct() {
 		TreePath selectionPath = getSelectionPath();
 		NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
@@ -113,7 +119,7 @@ public class ProductTree extends JTree {
 		if(!Modifier.isAbstract(c.getModifiers())){
 			removeNode(selectedNode);
 		}
-		//return product;
+		return product;
 	}
 	/**
 	 * @param product
@@ -244,20 +250,25 @@ public class ProductTree extends JTree {
 		}
 		return n;	
 	}
-	
-	//This will be used if we use product IDs
-	private Product getProductFromTree(){
-		// Get id from tree
-		TreePath path = getSelectionPath();
-		if(path != null){
-			NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-			int id = selectedNode.getID();
-			// Get product from id
-			return null;
-		}
-		return null;
+
+	public void removeProduct(Product p) {
+		removeNode(p);
 	}
 	
-
+	public void removeNode(Product p){
+		NodeItem n;
+		Class<?> c = p.getClass();
+		NodeItem parent = getNodeFromMap(c.toString());
+		Enumeration<NodeItem> children = parent.children();
+		while (children.hasMoreElements()){
+			NodeItem child = children.nextElement();
+			if(child.getStoredObject().equals(p))
+			{
+				parent.remove(child);
+				System.out.println("Removed!");
+			}
+			
+		}
+	}
 	
 }

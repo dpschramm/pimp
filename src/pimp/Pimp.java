@@ -5,16 +5,14 @@
 package pimp;
 
 // Gui
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
-
-// Other
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
 import pimp.productdefs.Drink;
@@ -64,7 +62,9 @@ public class Pimp {
 		
 		//Initialise cache
 		cache = new ProductCache();
-		
+		//Probably here?
+		cache.addProductAddedListener(new productAddedListener());
+		cache.addProductRemovedListener(new productRemovedListener());
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -85,27 +85,27 @@ public class Pimp {
 	
 	private void createForm() {
 		// Fill the form.
-		/*Drink drink = new Drink();
+		Drink drink = new Drink();
 		drink.capacity = "Large";
 		drink.flavour = "Blue";
 		drink.name = "Gatorade";
 		drink.quantity = 40;
 		
 		// Update the form displayed by the GUI.
-		gui.updateProductForm(drink);*/
-		Shoe shoe = new Shoe();
+		gui.updateProductForm(drink);
+		/*Shoe shoe = new Shoe();
 		shoe.name = "STYLISH SHOOOOE";
 		shoe.quantity = 4;
 		shoe.shoeSize = 12;
 		shoe.sizingSystem = "EU";
-		gui.updateProductForm(shoe);
+		gui.updateProductForm(shoe);*/
 	}
 
-	public Product getNewProduct() {
+	public void getNewProduct() {
 		List<Class<?>> classList = dcl.getClassList();
 		List<Class<?>> concreteClassList = new ArrayList<Class<?>>();
 		//Ensuring we don't give the option of creating abstract classes
-		for(Class c: classList){
+		for(Class<?> c: classList){
 			if(!Modifier.isAbstract(c.getModifiers())){
 				concreteClassList.add(c);				
 			}
@@ -118,9 +118,9 @@ public class Pimp {
 		Class<? extends Product> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				Product p = c.newInstance();
-				//DataAccessor.save(p);
-				return p;
+				ArrayList<Product> l = new ArrayList<Product>();
+				l.add(c.newInstance());
+				cache.addToCache(l, 1);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -129,22 +129,39 @@ public class Pimp {
 				e.printStackTrace();
 			}
 		}
-		// No product selected.
-		return null;
 	}
 	
-
-	/*
-	 * It seems weird, that this is necessary. But we don't want to use a data accessor
-	 * from the gui. That would be A Bad Thing to do.
-	 * */
-	public void saveChangesToProduct(Product p){
-		DataAccessor.save(p);
+	public void getProductsByClass(String className){
+		if (cache.getFromCache(className).size() == 0){
+			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
+			ArrayList<Product> l = new ArrayList<Product>();
+			for (Product p : m.values()) {
+			    l.add(p);
+			}
+			cache.addToCache(l, 0);
+		}
 	}
 	
-
-	public Map<Integer, Product> getProductsByClass(String className){
-		Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
-		return m;
+	class productAddedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println(e.getSource().toString());
+			//Code to update the tree here.
+			gui.setProducts((List<Product>) e.getSource());
+		}
 	}
+	
+	class productRemovedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//Remove from tree;
+			gui.removeProduct((Product) e.getSource());
+		}
+	}	
+
+
+	public void remove(Product p){
+		cache.removeFromCache(p);
+	}
+
 }
