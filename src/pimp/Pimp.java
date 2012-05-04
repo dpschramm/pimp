@@ -24,7 +24,7 @@ import pimp.productdefs.Product;
 public class Pimp {
 	
 	// Database stuff
-	private String defaultDatabaseName = "products";
+	private String defaultDatabaseName = "products.db";
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -48,26 +48,28 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp() {
-		initialise(defaultDatabaseName);
-	}
-	
-	public void initialise(String databaseName) {
 		// Load class definitions.
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		
 		// Initialize Gui
 		gui = new MainDisplay(this);
-		
-		DataAccessor.initialise(databaseName);
-		
+	
 		// Load existing products.
-		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		gui.setProducts(DataAccessor.loadProductList());
+
+		initialiseDB(defaultDatabaseName);
 		
 		// Make form.
 		createForm();
 
 		gui.display();
+	}
+	
+	public void initialiseDB(String databaseName) {
+		DataAccessor.initialise(databaseName);
+		
+		// Load existing products.
+		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
+		//gui.setProducts(DataAccessor.loadProductList());
 	}
 	
 	private void createForm() {
@@ -105,8 +107,8 @@ public class Pimp {
 		return null;
 	}
 	
-	public Map<Integer, String> getProductsByClass(Class<?> c){
-	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(c.toString());
+	public Map<Integer, String> getProductsByClass(String className){
+	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(className);
 	return m;
 	}
 	

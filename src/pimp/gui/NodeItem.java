@@ -11,7 +11,7 @@ public class NodeItem extends DefaultMutableTreeNode{
     private Class<?> c;
     //Constructor that takes a product.
     public NodeItem(int id, String s){
-    	this.id =id;
+    	this.id = id;
     	this.nodeName = s;
     	this.c = null;
     }

@@ -18,9 +18,7 @@ public class DataAccessor {
 	}
 
 	public static void initialise(String dbName) {
-		if (instance == null) {
-			instance = new DBDataAccessor(dbName);
-		}
+		instance = new DBDataAccessor(dbName);
 	}
 	
 	public static boolean save(Product product) {

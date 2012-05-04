@@ -25,7 +25,7 @@ public class DBDataAccessor {
 	public DBDataAccessor(String dbName) {
 		try {
 			Class.forName("org.sqlite.JDBC");
-			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName+".db");
+			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
