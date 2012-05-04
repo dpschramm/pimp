@@ -237,18 +237,22 @@ public class MainDisplay extends JFrame {
 	}
 	
 	/**
-	 * Creates the file chooser used for exporting and opening.
-	 * @return a configured JFileChooser.
+	 * Creates the file chooser used for exporting and opening, and asks
+	 * the user what file to ope.
+	 * 
+	 * @return the selected file.
 	 */
 	private File getFile(String windowText) {
+		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setCurrentDirectory(new File("."));
 		
+		// Filter out non database files.
 		chooser.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
-				return f.getName().toLowerCase().endsWith(".db")
-						|| f.isDirectory();				
+				return f.getName().toLowerCase().endsWith(".db") 
+					|| f.isDirectory();
 			}
 			
 			public String getDescription() {
@@ -256,6 +260,7 @@ public class MainDisplay extends JFrame {
 			};
 		});
 		
+		// Show dialog.
 		int result = chooser.showDialog(MainDisplay.this, windowText);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			return chooser.getSelectedFile();
