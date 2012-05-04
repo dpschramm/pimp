@@ -2,7 +2,13 @@ package pimp.persistence;
 
 import pimp.productdefs.Product;
 
-public class CachedItem<Product, Integer>{
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
+
+public class CachedItem<Product, Enum>{
 	private Product product;
 	private int status;
 	
@@ -13,10 +19,6 @@ public class CachedItem<Product, Integer>{
 
 	public Product getProduct() {
 		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
 	}
 
 	public int getStatus() {

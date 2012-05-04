@@ -4,6 +4,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import pimp.productdefs.Product;
 
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
+
 public class NodeItem extends DefaultMutableTreeNode{
 
     private String nodeName;

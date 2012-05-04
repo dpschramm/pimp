@@ -7,7 +7,15 @@ import java.util.List;
 
 import pimp.productdefs.Product;
 
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
+
 public class ProductCache {
+	
+	
 	
 	//0: Unmodified
 	//1: Added (i.e. has been created the the New Product button)
@@ -24,7 +32,8 @@ public class ProductCache {
 	
 	public void addToCache(List<Product> products, int status){
 		for (Product p : products){
-			CachedItem c = new CachedItem(p, status);
+			CachedItem<Product, Enum<?>> c = new CachedItem<Product, Enum<?>>(p, status);
+			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
 		productAddedListener.actionPerformed(new ActionEvent(products, 0, null));
@@ -32,7 +41,7 @@ public class ProductCache {
 	
 	public ArrayList<Product> getFromCache(String className){
 		ArrayList<Product> l = new ArrayList<Product>();
-			for (CachedItem c : list){
+			for (CachedItem<Product, Enum<?>> c : list){
 				Product p = (Product) c.getProduct();
 				if (p.getClass().toString().equals(className));
 				{
@@ -41,6 +50,7 @@ public class ProductCache {
 			}
 		return l;
 	}
+
 	
 	public void removeFromCache(Product p){
 		list.remove(p);
