@@ -2,11 +2,11 @@ package pimp.persistence;
 
 import pimp.productdefs.Product;
 
-public class CachedItem<Product, Status>{
+public class CachedItem {
 	private Product product;
 	private Status status;
 	
-	public CachedItem(Product p, Status s){
+	public CachedItem(Product p, Status s) {
         this.product = p;
         this.status = s;
     }
