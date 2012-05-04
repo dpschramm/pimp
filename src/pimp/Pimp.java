@@ -18,6 +18,8 @@ import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
+import pimp.persistence.Status;
+import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
 
@@ -65,8 +67,8 @@ public class Pimp {
 		//Initialise cache
 		cache = new ProductCache();
 		//Probably here?
-		cache.addProductAddedListener(new productAddedListener());
-		cache.addProductRemovedListener(new productRemovedListener());
+		cache.addProductsAddedListener(new productAddedListener());
+		cache.addProductsRemovedListener(new productRemovedListener());
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -118,7 +120,7 @@ public class Pimp {
 			try {
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(c.newInstance());
-				cache.addToCache(l, 1);
+				cache.addToCache(l, Status.NEW);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -136,7 +138,7 @@ public class Pimp {
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.addToCache(l, 0);
+			cache.addToCache(l, Status.FRESH);
 		}
 	}
 	

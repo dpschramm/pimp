@@ -15,27 +15,33 @@ import pimp.productdefs.Product;
 
 public class ProductCache {
 	
+	private ActionListener productsAddedListener;
+	private ActionListener productsRemovedListener;
 
-	private ActionListener productAddedListener;
-	private ActionListener productRemovedListener;
 	private ArrayList<CachedItem> list;
 	
 	public ProductCache(){
 		list = new ArrayList<CachedItem>();
 	}
 	
-	public void addToCache(List<Product> products, int status){
+	/**
+	 * 
+	 * @param products
+	 * @param status
+	 */
+	public void addToCache(List<Product> products, Status status){
 		for (Product p : products){
+
 			CachedItem<Product, Status> c = new CachedItem<Product, Status>(p, status);
 			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
-		productAddedListener.actionPerformed(new ActionEvent(products, 0, null));
+		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
 	
 	public ArrayList<Product> getFromCache(String className){
 		ArrayList<Product> l = new ArrayList<Product>();
-			for (CachedItem<Product, Enum<?>> c : list){
+			for (CachedItem c : list){
 				Product p = (Product) c.getProduct();
 				if (p.getClass().toString().equals(className));
 				{
@@ -48,14 +54,14 @@ public class ProductCache {
 	
 	public void removeFromCache(Product p){
 		list.remove(p);
-		productRemovedListener.actionPerformed(new ActionEvent(p, 0, null));
+		productsRemovedListener.actionPerformed(new ActionEvent(p, 0, null));
 	}
 	
-	public void addProductAddedListener(ActionListener a){
-		productAddedListener = a;
+	public void addProductsAddedListener(ActionListener a){
+		productsAddedListener = a;
 	}
 	
-	public void addProductRemovedListener(ActionListener a){
-		productRemovedListener = a;
+	public void addProductsRemovedListener(ActionListener a){
+		productsRemovedListener = a;
 	}
 }
