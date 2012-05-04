@@ -32,7 +32,7 @@ public class ProductCache {
 	public void addToCache(List<Product> products, Status status){
 		for (Product p : products){
 
-			CachedItem<Product, Status> c = new CachedItem<Product, Status>(p, status);
+			CachedItem c = new CachedItem(p, status);
 			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
