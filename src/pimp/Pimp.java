@@ -32,7 +32,7 @@ import pimp.testdefs.Shoe;
 public class Pimp {
 	
 	// Database stuff
-	private String defaultDatabaseName = "products.db";
+	private String defaultDatabaseName = "test.db";
 	
 	private ProductCache cache;
 	
@@ -99,6 +99,13 @@ public class Pimp {
 		// Update the form displayed by the GUI.
 		gui.updateProductForm(drink);
 
+		/*Shoe shoe = new Shoe();
+		shoe.name = "STYLISH SHOOOOE";
+		shoe.quantity = 4;
+		shoe.shoeSize = 12;
+		shoe.sizingSystem = "EU";
+		gui.updateProductForm(shoe);*/
+
 	}
 
 	public void getNewProduct() {
@@ -158,14 +165,11 @@ public class Pimp {
 			//Remove from tree;
 			gui.removeProduct((Product) e.getSource());
 		}
-	}
+	}	
 
-	/*
-	 * It seems weird, that this is necessary. But we don't want to use a data accessor
-	 * from the gui. That would be A Bad Thing to do.
-	 * */
-	public void saveChangesToProduct(Product p){
-		DataAccessor.save(p);
+
+	public void remove(Product p){
+		cache.removeFromCache(p);
 	}
 	
 	/**

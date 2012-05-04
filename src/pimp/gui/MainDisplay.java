@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 
 import pimp.Pimp;
@@ -56,6 +57,10 @@ public class MainDisplay extends JFrame {
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
 	
+	private Product currentProduct;
+	
+	private JScrollPane treeScrollPanel;
+	
 	/** 
 	 * Constructor
 	 */
@@ -78,7 +83,9 @@ public class MainDisplay extends JFrame {
 		tree = new ProductTree(this);
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
-		JScrollPane treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		
 		// Add panels.
@@ -169,18 +176,23 @@ public class MainDisplay extends JFrame {
 	 * */	
 	public Product saveCurrentChanges(){
 		try {
-			Object currentProductState;
+			/*Object currentProductState = null;
 			if(dynamicForm != null){
 				currentProductState = fb.getProductFromForm(dynamicForm);
 			}
-			else/* if(cForm != null)*/{
+			else if(cForm != null){
 				currentProductState = cForm.getObject();
 			}
 			//This check shouldn't be necessary but whatever
 			if(currentProductState instanceof Product){
-				controller.saveChangesToProduct((Product)currentProductState);
+				//controller.saveChangesToProduct((Product)currentProductState);
 			}
-			return (Product) currentProductState;
+			return (Product) currentProductState;*/
+			Object currentFormState = fb.getProductFromForm(dynamicForm);
+			//asdf The current form state needs to be copied over to the current product here
+			//there is no easy way to do this. There should be. 
+			
+
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -205,12 +217,11 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Remove selected product from tree
-			Product product = tree.removeSelectedProduct();
-			products.remove(product);
+			Product p = tree.removeSelectedProduct();
+			// Flag product in cache as deleted
 			
-			// Erase from xml
-			// This is done by overwriting the file with the new, smaller list of products
-		}		
+			controller.remove(p);
+		}
 	}	
 	
 
@@ -238,27 +249,30 @@ public class MainDisplay extends JFrame {
 	}
 	
 	/**
-	 * Creates the file chooser used for exporting and opening.
-	 * @return a configured JFileChooser.
+	 * Creates the file chooser used for exporting and opening, and asks
+	 * the user what file to open.
+	 * 
+	 * @return the selected file.
 	 */
-	private File getFile(String windowText, boolean hasFilter) {
+	private File getFile(String windowText) {
+		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setCurrentDirectory(new File("."));
 		
-		if (hasFilter) {
-			chooser.setFileFilter(new FileFilter() {
-				public boolean accept(File f) {
-					return f.getName().toLowerCase().endsWith(".db")
-							|| f.isDirectory();				
-				}
-				
-				public String getDescription() {
-					return "DB files";
-				};
-			});
-		}
+		// Filter out non database files.
+		chooser.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.getName().toLowerCase().endsWith(".db") 
+					|| f.isDirectory();
+			}
+			
+			public String getDescription() {
+				return "DB files";
+			};
+		});
 		
+		// Show dialog.
 		int result = chooser.showDialog(MainDisplay.this, windowText);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			return chooser.getSelectedFile();
@@ -279,7 +293,7 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = getFile("Export", false);
+			File file = getFile("Export");
 			if (file != null) {
 				if (controller.exportDatabase(file)) {
 					JOptionPane.showMessageDialog(getContentPane(), 
@@ -301,7 +315,7 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = getFile("Open", false);
+			File file = getFile("Open");
 			if (file != null) {
 				tree.empty();
 				controller.initialiseDB(file.getName());
@@ -323,7 +337,7 @@ public class MainDisplay extends JFrame {
 			else if(cForm != null){
 				frame.getContentPane().remove((JPanel)cForm.getForm());
 			}
-			//Form form;
+			currentProduct = product;
 			Class<?> companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
 				Constructor<?> constr = companionClass.getConstructor(product.getClass());
@@ -336,6 +350,7 @@ public class MainDisplay extends JFrame {
 				frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 				cForm = null;
 			}
+
 			//dynamicForm = form;
 			//frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {

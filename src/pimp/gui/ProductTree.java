@@ -59,21 +59,24 @@ public class ProductTree extends JTree {
 			 */
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
-				// Retrieve current product from dynamic form and save changes to database
-				retrieveAndSave(); 
-				TreePath path = event.getNewLeadSelectionPath();
-				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-				Object o = selectedNode.getStoredObject();
-				if (o.getClass().equals(Class.class)){
-					//Need to figure out what the source is - it can't be null.
-					String s = o.toString();
-					ActionEvent i = new ActionEvent(model, 0, s);
-					classSelectListener.actionPerformed(i);
-				}
-				else
-				{
-					//parent.updateProductForm((Product)selectedNode.getStoredObject());
-					updateParentForm((Product)selectedNode.getStoredObject());
+				if(event.isAddedPath()){
+					retrieveAndSave(); 
+				
+					TreePath path = event.getNewLeadSelectionPath();
+					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+					Object o = selectedNode.getStoredObject();
+					if (o.getClass().equals(Class.class)){
+						//Need to figure out what the source is - it can't be null.
+						String s = o.toString();
+						ActionEvent i = new ActionEvent(model, 0, s);
+						classSelectListener.actionPerformed(i);
+						System.out.println("Class");
+					}
+					else
+					{
+						//parent.updateProductForm((Product)selectedNode.getStoredObject());
+						updateParentForm((Product)selectedNode.getStoredObject());
+					}
 				}
 			}
 		});
@@ -113,7 +116,7 @@ public class ProductTree extends JTree {
 	// This exists because we can't refer to parent from in that inner class up there
 	// We could move that code from out of the constructor at some stage
 	private void retrieveAndSave(){
-		Product p = parent.saveCurrentChanges();	
+		/*Product p =*/ parent.saveCurrentChanges();	
 	}
 
 	private void updateParentForm(Product p){
@@ -155,7 +158,6 @@ public class ProductTree extends JTree {
 		}
 		return product;
 	}
-	
 	/**
 	 * @param product
 	 */
