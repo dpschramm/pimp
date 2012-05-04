@@ -9,11 +9,6 @@ import pimp.productdefs.Product;
 
 public class ProductCache {
 	
-	//0: Unmodified
-	//1: Added (i.e. has been created the the New Product button)
-	//2: Updated (you should not update an Added product)
-	//3: Deleted
-	
 	private ActionListener productAddedListener;
 	private ActionListener productRemovedListener;
 	private ArrayList<CachedItem> list;
