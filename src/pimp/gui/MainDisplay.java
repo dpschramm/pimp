@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +71,9 @@ public class MainDisplay extends JFrame {
 		
 		// Create product list.
 		products = new ArrayList<Product>();
+		
+		// Init. form builder
+		fb = new FormBuilder();
 		
 		// Create product tree.
 		tree = new ProductTree(this);
@@ -145,7 +150,7 @@ public class MainDisplay extends JFrame {
 			// Check to make sure user made a selection.
 			if (p != null) {
 				tree.addProduct(p);
-				//don't think we need this anymore?
+				//shouldn't need this anymore?
 				//products.add(p);
 							
 				// Debug.
@@ -161,7 +166,7 @@ public class MainDisplay extends JFrame {
 	 * The current object state is retrieved by passing the form/companion form through
 	 * the form builder.
 	 * */	
-	public void saveCurrentChanges(){
+	public Product saveCurrentChanges(){
 		try {
 			Object currentProductState;
 			if(dynamicForm != null){
@@ -174,6 +179,7 @@ public class MainDisplay extends JFrame {
 			if(currentProductState instanceof Product){
 				controller.saveChangesToProduct((Product)currentProductState);
 			}
+			return (Product) currentProductState;
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -184,7 +190,7 @@ public class MainDisplay extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return null;
 	}
 	
 
@@ -306,7 +312,6 @@ public class MainDisplay extends JFrame {
 	 * @param form
 	 */
 	public void updateProductForm(Product product) {
-		fb = new FormBuilder();
 		try {
 			if(dynamicForm != null){
 				frame.getContentPane().remove(dynamicForm);
@@ -317,7 +322,8 @@ public class MainDisplay extends JFrame {
 			//Form form;
 			Class companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
-				cForm = (CompanionForm) companionClass.newInstance();
+				Constructor constr = companionClass.getConstructor(product.getClass());
+				cForm = (CompanionForm) constr.newInstance(product);
 				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
 				dynamicForm = null;
 			}
@@ -335,6 +341,15 @@ public class MainDisplay extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

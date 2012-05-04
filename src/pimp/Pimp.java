@@ -90,7 +90,7 @@ public class Pimp {
 		Shoe shoe = new Shoe();
 		shoe.name = "STYLISH SHOOOOE";
 		shoe.quantity = 4;
-		shoe.shoeSize = 41;
+		shoe.shoeSize = 12;
 		shoe.sizingSystem = "EU";
 		gui.updateProductForm(shoe);
 	}
@@ -123,7 +123,6 @@ public class Pimp {
 				e.printStackTrace();
 			}
 		}
-		
 		// No product selected.
 		return null;
 	}
