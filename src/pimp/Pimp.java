@@ -16,6 +16,7 @@ import pimp.gui.SelectProductDialog;
 
 // Other
 import pimp.persistence.DataAccessor;
+import pimp.persistence.ProductCache;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
@@ -30,6 +31,8 @@ public class Pimp {
 	
 	// Database stuff
 	private String defaultDatabaseName = "products.db";
+	
+	private ProductCache cache;
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -58,7 +61,10 @@ public class Pimp {
 		
 		// Initialize Gui
 		gui = new MainDisplay(this);
-	
+		
+		//Initialise cache
+		cache = new ProductCache();
+		
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -127,6 +133,7 @@ public class Pimp {
 		return null;
 	}
 	
+
 	/*
 	 * It seems weird, that this is necessary. But we don't want to use a data accessor
 	 * from the gui. That would be A Bad Thing to do.
@@ -135,9 +142,9 @@ public class Pimp {
 		DataAccessor.save(p);
 	}
 	
-	public Map<Integer, String> getProductsByClass(String className){
-	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(className);
-	return m;
+
+	public Map<Integer, Product> getProductsByClass(String className){
+		Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
+		return m;
 	}
-	
 }

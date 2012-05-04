@@ -8,25 +8,24 @@ public class NodeItem extends DefaultMutableTreeNode{
 
     private int id;
     private String nodeName;
-    private Class<?> c;
+    private Object o;
     //Constructor that takes a product.
-    public NodeItem(int id, String s){
+    public NodeItem(Product p){
     	this.id = id;
-    	this.nodeName = s;
-    	this.c = null;
+    	this.nodeName = p.toString();
+    	this.o = p;
     }
     
     //Constructor that takes a class.
     public NodeItem(Class<?> c){
     	this.id = -1;
     	this.nodeName = extractName(c);
-    	this.c = c;
+    	this.o = c;
     }
     
-
-    public Class<?> getStoredClass() {
-		return c;
-	}
+    public Object getStoredObject(){
+    	return o;
+    }
 
 	public int getID(){
         return id;

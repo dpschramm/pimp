@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -54,17 +53,17 @@ public class ProductTree extends JTree {
 				retrieveAndSave(); 
 				TreePath path = event.getNewLeadSelectionPath();
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-				
-				if (selectedNode.getStoredClass() != null){
+				Object o = selectedNode.getStoredObject();
+				if (o.getClass().equals(Class.class)){
 					//Need to figure out what the source is - it can't be null.
-					String s = selectedNode.getStoredClass().toString();
-					//s = s.substring(s.lastIndexOf('.')+1);
+					String s = o.toString();
 					ActionEvent i = new ActionEvent(model, 0, s);
-					System.out.println(s);
 					classSelectListener.actionPerformed(i);
+					System.out.println("Class");
 				}
-				else{
-					updateProductForm()
+				else
+				{
+					//updateProductForm();
 				}
 			}
 		});
@@ -115,9 +114,9 @@ public class ProductTree extends JTree {
 	/**
 	 * @param product
 	 */
-	public void addProduct(Product product){	
-		NodeItem node = new NodeItem(1, product.toString());
-		NodeItem parent = getNodeFromMap(product.getClass().toString());
+	public void addProduct(Product p){	
+		NodeItem node = new NodeItem(p);
+		NodeItem parent = getNodeFromMap(p.getClass().toString());
 		insertNode(node, parent);
 //		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
 //		scrollPathToVisible(new TreePath(node.getPath()));
@@ -127,12 +126,15 @@ public class ProductTree extends JTree {
 	/*
 	 * New methods for adding products. This one takes the whole map of products within a class
 	 */
-	public void addProduct(Map<Integer, String> products, String className) {
+	public void addProduct(Map<Integer, Product> products, String className) {
 		NodeItem p = map.get(className);
-		for (Map.Entry<Integer, String> entry : products.entrySet()) {
+		//Huuuuge hack to make it work for the time being.
+		//TODO: Remove when we have a cache.
+		p.removeAllChildren();
+		for (Map.Entry<Integer, Product> entry : products.entrySet()) {
 		    Integer key = entry.getKey();
-		    String value = entry.getValue();
-		    NodeItem n = new NodeItem(key, value);
+		    Product value = entry.getValue();
+		    NodeItem n = new NodeItem(value);
 		    insertNode(n, p);
 		}
 	}
