@@ -11,20 +11,11 @@ public class StringFormElement implements FormElement {
 	
 	@Override
 	public String getValue(JComponent jc) {
-		String value = ((JTextField)jc).getText();
-		if(value.equals("null")){
-			value = null;
-		}
-		return value;
+		return ((JTextField)jc).getText();
 	}
 
 	@Override
 	public void setValue(JComponent jc, Object o) {
-		// A way of dealing with null is the string is null since you cannot set
-		// a JTextField to null
-		if(o == null){
-			o = "null";
-		}
 		((JTextField)jc).setText(o.toString());
 	}
 

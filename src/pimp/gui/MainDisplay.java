@@ -23,6 +23,7 @@ import javax.swing.tree.TreePath;
 
 import pimp.Pimp;
 import pimp.form.FormBuilder;
+import pimp.persistence.DataAccessor;
 import pimp.productdefs.Product;
 
 /**
@@ -106,7 +107,7 @@ public class MainDisplay extends JFrame {
 		
 		// Create Load Product Button
 		JButton btnSaveProducts = new JButton("Export");
-		btnSaveProducts.addActionListener(new exportButtonListener());
+		btnSaveProducts.addActionListener(new ExportButtonListener());
 		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
@@ -190,11 +191,35 @@ public class MainDisplay extends JFrame {
 	/** 
 	 * Save products to file.
 	 */
-	class exportButtonListener implements ActionListener {
+	class ExportButtonListener implements ActionListener {
+		/**
+		 * Brings up a dialog to choose/create new database location.
+		 * The current database will be copied to the new location, 
+		 * and all subsequent database transactions will be performed at
+		 * the new location.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(getContentPane(), 
-					"Not yet implemented.");
+			final JFileChooser chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setCurrentDirectory(new File("."));
+			
+			int returnVal = chooser.showDialog(MainDisplay.this, "Export");
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = chooser.getSelectedFile();
+				try {
+					DataAccessor.exportDb(selectedFile);
+				} catch (Exception e1) {
+					System.err.println("Could not export database to " + selectedFile.getName());
+					e1.printStackTrace();
+					
+					JOptionPane.showMessageDialog(getContentPane(), 
+												  "Could not export database to this location");
+					return;
+				}
+				JOptionPane.showMessageDialog(getContentPane(), 
+											  "Database exported to " + selectedFile.getName() + " successfully");
+			}
 		}
 		
 	}
@@ -226,7 +251,10 @@ public class MainDisplay extends JFrame {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File selectedFile = chooser.getSelectedFile();
 				tree.empty();
-				controller.initialiseDB(selectedFile.getName());				
+				controller.initialiseDB(selectedFile.getName());
+				
+				JOptionPane.showMessageDialog(getContentPane(), 
+											  "Database " + selectedFile.getName() + " opened");
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import org.junit.Before;
 import pimp.form.DoubleFormElement;
 import pimp.form.StringFormElement;
 
-public class DoubleFormElementTest extends junit.framework.TestCase{
+public class DoubleFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	
 	DoubleFormElement dfe;
 	
@@ -20,7 +20,8 @@ public class DoubleFormElementTest extends junit.framework.TestCase{
 		dfe = new DoubleFormElement();
 	}
 	
-	public void testSetDoubleValue() {
+	@Override
+	public void testSetValue() {
 		
 		DoubleFormElement doubleFE = new DoubleFormElement();
 		JComponent jc = doubleFE.createComponent();
@@ -31,7 +32,8 @@ public class DoubleFormElementTest extends junit.framework.TestCase{
 		}
 	}
 
-	public void testGetValueAfterSetToDoubleValue() {
+	@Override
+	public void testGetValueAfterSetToValue() {
 		
 		DoubleFormElement doubleFE = new DoubleFormElement();
 		JComponent jc = doubleFE.createComponent();
@@ -43,6 +45,7 @@ public class DoubleFormElementTest extends junit.framework.TestCase{
 		assertEquals(1.23, doubleFE.getValue(jc));
 	}
 	
+	@Override
 	public void testGetValueAfterNothingSet() {
 		
 		DoubleFormElement doubleFE = new DoubleFormElement();
@@ -50,29 +53,20 @@ public class DoubleFormElementTest extends junit.framework.TestCase{
 		assertEquals(0.0, doubleFE.getValue(jc));
 	}
 	
+	@Override
 	public void testSetValueNull() {
 		
 		DoubleFormElement doubleFE = new DoubleFormElement();
 		JComponent jc = doubleFE.createComponent();
 		try {
 			doubleFE.setValue(jc, null);
+			fail("Should throw NPE");
 		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
+			// Expected.
 		}
-	}
-
-	public void testGetValueAfterSetToNullIsNull() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		try {
-			doubleFE.setValue(jc, null);
-		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
-		}
-		assertEquals(0.0, doubleFE.getValue(jc));
 	}
 	
+	@Override
 	public void testCreateComponent() {
 		
 		JComponent jc = dfe.createComponent();
@@ -80,6 +74,7 @@ public class DoubleFormElementTest extends junit.framework.TestCase{
 		assertTrue(jc instanceof JTextField);
 	}
 	
+	@Override
 	public void testGetInputType() {
 		assertTrue((double.class).equals(dfe.getInputType()));
 	}

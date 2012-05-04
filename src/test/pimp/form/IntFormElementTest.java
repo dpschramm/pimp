@@ -9,7 +9,7 @@ import pimp.form.DoubleFormElement;
 import pimp.form.IntFormElement;
 import pimp.form.StringFormElement;
 
-public class IntFormElementTest extends junit.framework.TestCase{
+public class IntFormElementTest extends junit.framework.TestCase implements FormElementTestInterface {
 	
 	IntFormElement ife;
 	
@@ -21,7 +21,8 @@ public class IntFormElementTest extends junit.framework.TestCase{
 		ife = new IntFormElement();
 	}
 	
-	public void testSetIntValue() {
+	@Override
+	public void testSetValue() {
 		
 		IntFormElement intFE = new IntFormElement();
 		JComponent jc = intFE.createComponent();
@@ -32,7 +33,8 @@ public class IntFormElementTest extends junit.framework.TestCase{
 		}
 	}
 
-	public void testGetValueAfterSetToIntValue() {
+	@Override
+	public void testGetValueAfterSetToValue() {
 		
 		IntFormElement intFE = new IntFormElement();
 		JComponent jc = intFE.createComponent();
@@ -43,37 +45,29 @@ public class IntFormElementTest extends junit.framework.TestCase{
 		}
 		assertTrue(4 == intFE.getValue(jc));
 	}
-	/***
-	public void testGetValueAfterNothingSet() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		assertEquals(0.0, doubleFE.getValue(jc));
-	}
 	
+	@Override
 	public void testSetValueNull() {
 		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
+		IntFormElement intFE = new IntFormElement();
+		JComponent jc = intFE.createComponent();
 		try {
-			doubleFE.setValue(jc, null);
+			intFE.setValue(jc, null);
+			fail("Should throw NPE");
 		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
+			// Expected.
 		}
+	}
+	
+	@Override
+	public void testGetValueAfterNothingSet() {
+		
+		IntFormElement intFE = new IntFormElement();
+		JComponent jc = intFE.createComponent();
+		assertTrue(0 == intFE.getValue(jc));
 	}
 
-	public void testGetValueAfterSetToNullIsNull() {
-		
-		DoubleFormElement doubleFE = new DoubleFormElement();
-		JComponent jc = doubleFE.createComponent();
-		try {
-			doubleFE.setValue(jc, null);
-		} catch (NullPointerException npe) {
-			fail("Should not throw NPE");
-		}
-		assertEquals(0.0, doubleFE.getValue(jc));
-	}
-	***/
+	@Override
 	public void testCreateComponent() {
 		
 		JComponent jc = ife.createComponent();
@@ -81,6 +75,7 @@ public class IntFormElementTest extends junit.framework.TestCase{
 		assertTrue(jc instanceof JTextField);
 	}
 	
+	@Override
 	public void testGetInputType() {
 		assertTrue((int.class).equals(ife.getInputType()));
 	}
