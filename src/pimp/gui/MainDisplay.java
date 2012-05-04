@@ -238,7 +238,7 @@ public class MainDisplay extends JFrame {
 	
 	/**
 	 * Creates the file chooser used for exporting and opening, and asks
-	 * the user what file to ope.
+	 * the user what file to open.
 	 * 
 	 * @return the selected file.
 	 */
