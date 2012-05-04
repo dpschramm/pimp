@@ -67,7 +67,7 @@ public class Pimp {
 		
 		// Load existing products.
 		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		//gui.setProducts(DataAccessor.loadProductList());
+		gui.setProducts(DataAccessor.loadProductList());
 	}
 	
 	private void createForm() {
