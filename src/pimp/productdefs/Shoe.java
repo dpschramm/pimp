@@ -1,4 +1,4 @@
-package pimp.testdefs;
+package pimp.productdefs;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;

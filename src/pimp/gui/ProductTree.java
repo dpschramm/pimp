@@ -49,6 +49,8 @@ public class ProductTree extends JTree {
 			 */
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
+				// Retrieve current product from dynamic form and save changes to database
+				retrieveAndSave(); 
 				TreePath path = event.getNewLeadSelectionPath();
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
 				Object o = selectedNode.getStoredObject();
@@ -61,33 +63,27 @@ public class ProductTree extends JTree {
 				}
 				else
 				{
-					System.out.println("Product");
+					//parent.updateProductForm((Product)selectedNode.getStoredObject());
+					updateParentForm((Product)selectedNode.getStoredObject());
 				}
 			}
 		});
 	}
 	
+	// This exists because we can't refer to parent from in that inner class up there
+	// We could move that code from out of the constructor at some stage
+	private void retrieveAndSave(){
+		Product p = parent.saveCurrentChanges();	
+	}
+
+	private void updateParentForm(Product p){
+		parent.updateProductForm(p);
+	}
+	
 	public void addClassSelectListener(ActionListener a){
 		classSelectListener = a;
 	}
-	
-//	private void updateSelection(NodeItem selectedNode) {
-//		
-//		System.out.println(selectedNode.toString());
-//		NodeItem n = map.get(selectedNode.getStoredClass().toString());
-//		
-//		System.out.println(n.getStoredClass().toString());
-//		
-//				 
-//		Product product = (Product) selectedNode.getUserObject();
-//		
-//		//Checking that selected class isn't abstract and isn't just a String
-//		//(the "Product" root node is currently a string.
-//		Class<?> c = product.getClass();
-//		if(!Modifier.isAbstract(c.getModifiers()) && c != "".getClass()){
-//			parent.updateProductForm(product);
-//		}
-//	}
+
 	
 	public void removeNode(MutableTreeNode node){
 		model.removeNodeFromParent(node);

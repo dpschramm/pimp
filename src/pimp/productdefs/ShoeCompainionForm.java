@@ -1,4 +1,4 @@
-package pimp.testdefs;
+package pimp.productdefs;
 
 import java.awt.GridLayout;
 
