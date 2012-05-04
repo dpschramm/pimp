@@ -322,9 +322,9 @@ public class MainDisplay extends JFrame {
 				frame.getContentPane().remove((JPanel)cForm.getForm());
 			}
 			//Form form;
-			Class companionClass = product.getCompanionFormClass();
+			Class<?> companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
-				Constructor constr = companionClass.getConstructor(product.getClass());
+				Constructor<?> constr = companionClass.getConstructor(product.getClass());
 				cForm = (CompanionForm) constr.newInstance(product);
 				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
 				dynamicForm = null;
@@ -368,5 +368,9 @@ public class MainDisplay extends JFrame {
 		for (Product p : products){
 			tree.addProduct(p);
 		}
+	}
+
+	public void removeProduct(Product p) {
+		tree.removeProduct(p);
 	}
 }

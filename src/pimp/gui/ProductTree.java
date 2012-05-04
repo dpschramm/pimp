@@ -3,9 +3,12 @@ package pimp.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -245,20 +248,25 @@ public class ProductTree extends JTree {
 		}
 		return n;	
 	}
-	
-	//This will be used if we use product IDs
-	private Product getProductFromTree(){
-		// Get id from tree
-		TreePath path = getSelectionPath();
-		if(path != null){
-			NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-			int id = selectedNode.getID();
-			// Get product from id
-			return null;
-		}
-		return null;
+
+	public void removeProduct(Product p) {
+		removeNode(p);
 	}
 	
-
+	public void removeNode(Product p){
+		NodeItem n;
+		Class<?> c = p.getClass();
+		NodeItem parent = getNodeFromMap(c.toString());
+		Enumeration<NodeItem> children = parent.children();
+		while (children.hasMoreElements()){
+			NodeItem child = children.nextElement();
+			if(child.getStoredObject().equals(p))
+			{
+				parent.remove(child);
+				System.out.println("Removed!");
+			}
+			
+		}
+	}
 	
 }

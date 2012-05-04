@@ -269,7 +269,7 @@ public class DBDataAccessor {
 			Class<?> c = Class.forName("pimp.productdefs." + tableName);
 			product = (Product) c.newInstance();
 			
-			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as colnums start from 1 and we want to ignore id col for now.. TODO: include id field?
+			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as columns start from 1 and we want to ignore id col for now.. TODO: include id field?
 				String columnName = metaData.getColumnName(i);
 				Field f = c.getField(columnName);
 				Class<?> fieldType = f.getType();

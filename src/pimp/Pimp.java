@@ -63,8 +63,8 @@ public class Pimp {
 		//Initialise cache
 		cache = new ProductCache();
 		//Probably here?
-		cache.addModelListener(new modelChangedListener());
-		
+		cache.addProductAddedListener(new productAddedListener());
+		cache.addProductRemovedListener(new productRemovedListener());
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -105,7 +105,7 @@ public class Pimp {
 		List<Class<?>> classList = dcl.getClassList();
 		List<Class<?>> concreteClassList = new ArrayList<Class<?>>();
 		//Ensuring we don't give the option of creating abstract classes
-		for(Class c: classList){
+		for(Class<?> c: classList){
 			if(!Modifier.isAbstract(c.getModifiers())){
 				concreteClassList.add(c);				
 			}
@@ -142,7 +142,7 @@ public class Pimp {
 		}
 	}
 	
-	class modelChangedListener implements ActionListener{
+	class productAddedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println(e.getSource().toString());
@@ -151,6 +151,13 @@ public class Pimp {
 		}
 	}
 	
+	class productRemovedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//Remove from tree;
+			gui.removeProduct((Product) e.getSource());
+		}
+	}
 
 	/*
 	 * It seems weird, that this is necessary. But we don't want to use a data accessor

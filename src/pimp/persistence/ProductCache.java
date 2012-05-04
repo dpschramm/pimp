@@ -9,7 +9,8 @@ import pimp.productdefs.Product;
 
 public class ProductCache {
 	
-	private ActionListener modelChangedListener;
+	private ActionListener productAddedListener;
+	private ActionListener productRemovedListener;
 	private ArrayList<Product> list;
 	
 	public ProductCache(){
@@ -20,7 +21,7 @@ public class ProductCache {
 		for (Product p : products){
 			list.add(p);
 		}
-		modelChangedListener.actionPerformed(new ActionEvent(products, 0, null));
+		productAddedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
 	
 	public ArrayList<Product> getFromCache(String className){
@@ -32,7 +33,16 @@ public class ProductCache {
 		return l;
 	}
 	
-	public void addModelListener(ActionListener a){
-		modelChangedListener = a;
+	public void removeFromCache(Product p){
+		list.remove(p);
+		productRemovedListener.actionPerformed(new ActionEvent(p, 0, null));
+	}
+	
+	public void addProductAddedListener(ActionListener a){
+		productAddedListener = a;
+	}
+	
+	public void addProductRemovedListener(ActionListener a){
+		productRemovedListener = a;
 	}
 }
