@@ -12,6 +12,7 @@ import pimp.gui.SelectProductDialog;
 
 // Other
 import pimp.persistence.DataAccessor;
+import pimp.persistence.ProductCache;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 
@@ -25,6 +26,8 @@ public class Pimp {
 	
 	// Database stuff
 	private String defaultDatabaseName = "products.db";
+	
+	private ProductCache cache;
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -53,7 +56,10 @@ public class Pimp {
 		
 		// Initialize Gui
 		gui = new MainDisplay(this);
-	
+		
+		//Initialise cache
+		cache = new ProductCache();
+		
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -107,9 +113,8 @@ public class Pimp {
 		return null;
 	}
 	
-	public Map<Integer, String> getProductsByClass(String className){
-	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(className);
+	public Map<Integer, Product> getProductsByClass(String className){
+	Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 	return m;
 	}
-	
 }

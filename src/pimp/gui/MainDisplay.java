@@ -25,6 +25,7 @@ import pimp.Pimp;
 import pimp.form.FormBuilder;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Product;
+import java.awt.Dimension;
 
 /**
  * The main user interface window.
@@ -66,6 +67,7 @@ public class MainDisplay extends JFrame {
 		
 		// Create product tree.
 		tree = new ProductTree(this);
+		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
 		JScrollPane treeScrollPanel = new JScrollPane(tree);
 		
@@ -169,10 +171,9 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Map<Integer, String> m = controller.getProductsByClass(e.getActionCommand());
+			Map<Integer, Product> m = controller.getProductsByClass(e.getActionCommand());
 			tree.addProduct(m, e.getActionCommand());
-		}
-		
+		}		
 		
 	}
 	
