@@ -4,6 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import pimp.productdefs.Product;
+import pimp.testdefs.ShoeCompainionForm;
 
 public class Shoe extends Product {
 	
@@ -12,6 +13,7 @@ public class Shoe extends Product {
 	
 	public Shoe() {
 		super();
+		super.setCompanionFormClass(ShoeCompainionForm.class);
 	}
 	
 	
@@ -24,7 +26,8 @@ public class Shoe extends Product {
 
 	// ignore - Just used to test the shoe companion form 
 	public static void main(String[] args) {
-		System.out.println("Hello");
+		// Commented out while changing comp. form
+		/*System.out.println("Hello");
 		Shoe s = new Shoe();
 		s.name = "Nike Air";
 		s.quantity = 10;
@@ -39,6 +42,6 @@ public class Shoe extends Product {
 		JFrame testFrame = new JFrame();
 		testFrame.add(scf.getForm());
 		testFrame.pack();
-		testFrame.setVisible(true);
+		testFrame.setVisible(true);*/
 	}
 }

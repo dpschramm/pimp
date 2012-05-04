@@ -21,18 +21,24 @@ import pimp.productdefs.Product;
 
 public class DBDataAccessor {
 	private Connection conn;
+	private String databaseName;
 	
-	public DBDataAccessor(String dbName) {
+	protected DBDataAccessor(String dbName) {
 		try {
+			this.databaseName = dbName;
 			Class.forName("org.sqlite.JDBC");
-			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName+".db");
+			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean save(Product product) {
+	protected String getDatabaseName() {
+		return databaseName;
+	}
+	
+	protected boolean save(Product product) {
 		Class<?> c = product.getClass();
 		String className = c.getSimpleName();
 		if (!tableExists(className)) {
@@ -223,7 +229,7 @@ public class DBDataAccessor {
 		return success;
 	}
 
-	public List<Product> loadProductList() {
+	protected List<Product> loadProductList() {
 		List<Product> products = new ArrayList<Product>();
 		
 		List<String> tableNames = getTableNames();
@@ -263,7 +269,7 @@ public class DBDataAccessor {
 			Class<?> c = Class.forName("pimp.productdefs." + tableName);
 			product = (Product) c.newInstance();
 			
-			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as colnums start from 1 and we want to ignore id col for now.. TODO: include id field?
+			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as columns start from 1 and we want to ignore id col for now.. TODO: include id field?
 				String columnName = metaData.getColumnName(i);
 				Field f = c.getField(columnName);
 				Class<?> fieldType = f.getType();
@@ -310,15 +316,20 @@ public class DBDataAccessor {
 		return tableNames;
 	}
 	
-	public Map<Integer, String> getProductIdsAndNames(String className) {
+	protected Map<Integer, String> getProductIdsAndNames(String className) {
+		String tableName = extractTableName(className);
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT id, name " +
-											 "FROM " + className + ";");
-			while (rs.next()) {
-				map.put(rs.getInt("id"), rs.getString("name"));
+			ResultSet rs;
+			if (tableExists(tableName)) {
+				rs = stmt.executeQuery("SELECT id, name " +
+									   "FROM " + tableName + ";");
+			
+				while (rs.next()) {
+					map.put(rs.getInt("id"), rs.getString("name"));
+				}
 			}
 		} catch (Exception e) {
 			System.err.println("Error loading id-name map");
@@ -328,16 +339,39 @@ public class DBDataAccessor {
 		return map;
 	}
 	
+	protected Map<Integer, Product> getIdToProductMap(String className) {
+		Map<Integer, Product> map = new HashMap<Integer, Product>();
+		String tableName = extractTableName(className);
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs;
+			
+			if (tableExists(tableName)) {
+				rs = stmt.executeQuery("SELECT * FROM " + tableName + ";");
+				
+				while (rs.next()) {
+					Product p = createProductFromResultSet(rs, tableName);
+					int id = rs.getInt("id");
+					
+					map.put(id, p);
+				}
+			}
+		} catch (Exception e) {}
+		
+		return map;
+	}
 	
-	public Product loadProductFromId(int id, String className) {
+	
+	protected Product loadProductFromId(int id, String className) {
+		String tableName = extractTableName(className);
 		Product newProduct = null;
 		try {
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT * " +
-												  "FROM " + className + 
+												  "FROM " + tableName + 
 												  " WHERE id=\'" + id + "\';");
 			if (rs.next()) {
-				newProduct = createProductFromResultSet(rs, className);
+				newProduct = createProductFromResultSet(rs, tableName);
 			}
 		} catch (Exception e) {
 			System.err.println("Error loading single product from database");
@@ -347,4 +381,7 @@ public class DBDataAccessor {
 		return newProduct;
 	}
 	
+	private String extractTableName(String className) {
+		return className.substring(className.lastIndexOf(".") + 1);
+	}
 }

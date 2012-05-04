@@ -40,12 +40,19 @@ public class ShoeCompainionForm implements CompanionForm{
 	         12.0
 	};
 	
-	public ShoeCompainionForm() {
+	/*
+	 * Constructor needs to take a shoe object
+	 * */
+	public ShoeCompainionForm(Shoe shoe) {
 
 		shoeSizeSelector = new JComboBox(shoeSizes);
+		shoeSizeSelector.setSelectedItem(shoe.shoeSize);
 		shoeSizingSystemSelector = new JComboBox(shoeSizeSystem);
+		shoeSizingSystemSelector.setSelectedItem(shoe.sizingSystem);
 		nameInput = new JTextField();
+		nameInput.setText(shoe.name);
 		quantityInput = new JTextField();
+		quantityInput.setText(Integer.toString(shoe.quantity));
 		
 		form = new JPanel();
 		GridLayout gl = new GridLayout(4, 2);
