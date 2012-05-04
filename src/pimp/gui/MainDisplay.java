@@ -169,8 +169,8 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Map<Integer, String> m = controller.getProductsByClass(e.paramString());
-			tree.addProduct(m, e.paramString());
+			Map<Integer, String> m = controller.getProductsByClass(e.getActionCommand());
+			tree.addProduct(m, e.getActionCommand());
 		}
 		
 		

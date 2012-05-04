@@ -55,8 +55,8 @@ public class ProductTree extends JTree {
 				
 				if (selectedNode.getStoredClass() != null){
 					//Need to figure out what the source is - it can't be null.
-					String s = selectedNode.getStoredClass().toString().toString();
-					s = s.substring(s.lastIndexOf('.')+1);
+					String s = selectedNode.getStoredClass().toString();
+					//s = s.substring(s.lastIndexOf('.')+1);
 					ActionEvent i = new ActionEvent(model, 0, s);
 					System.out.println(s);
 					classSelectListener.actionPerformed(i);
