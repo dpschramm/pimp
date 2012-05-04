@@ -9,26 +9,35 @@ import pimp.productdefs.Product;
 
 public class ProductCache {
 	
+	//0: Unmodified
+	//1: Added (i.e. has been created the the New Product button)
+	//2: Updated (you should not update an Added product)
+	//3: Deleted
+	
 	private ActionListener productAddedListener;
 	private ActionListener productRemovedListener;
-	private ArrayList<Product> list;
+	private ArrayList<CachedItem> list;
 	
 	public ProductCache(){
-		list = new ArrayList<Product>();
+		list = new ArrayList<CachedItem>();
 	}
 	
-	public void addToCache(List<Product> products){
+	public void addToCache(List<Product> products, int status){
 		for (Product p : products){
-			list.add(p);
+			CachedItem c = new CachedItem(p, status);
+			list.add(c);
 		}
 		productAddedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
 	
 	public ArrayList<Product> getFromCache(String className){
 		ArrayList<Product> l = new ArrayList<Product>();
-			for (Product p : list){
+			for (CachedItem c : list){
+				Product p = (Product) c.getProduct();
 				if (p.getClass().toString().equals(className));
-				l.add(p);
+				{
+					l.add(p);
+				}
 			}
 		return l;
 	}

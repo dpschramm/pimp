@@ -120,7 +120,7 @@ public class Pimp {
 			try {
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(c.newInstance());
-				cache.addToCache(l);
+				cache.addToCache(l, 1);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -138,7 +138,7 @@ public class Pimp {
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.addToCache(l);
+			cache.addToCache(l, 0);
 		}
 	}
 	
