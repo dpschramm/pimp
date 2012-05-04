@@ -240,23 +240,21 @@ public class MainDisplay extends JFrame {
 	 * Creates the file chooser used for exporting and opening.
 	 * @return a configured JFileChooser.
 	 */
-	private File getFile(String windowText, boolean hasFilter) {
+	private File getFile(String windowText) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setCurrentDirectory(new File("."));
 		
-		if (hasFilter) {
-			chooser.setFileFilter(new FileFilter() {
-				public boolean accept(File f) {
-					return f.getName().toLowerCase().endsWith(".db")
-							|| f.isDirectory();				
-				}
-				
-				public String getDescription() {
-					return "DB files";
-				};
-			});
-		}
+		chooser.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.getName().toLowerCase().endsWith(".db")
+						|| f.isDirectory();				
+			}
+			
+			public String getDescription() {
+				return "DB files";
+			};
+		});
 		
 		int result = chooser.showDialog(MainDisplay.this, windowText);
 		if (result == JFileChooser.APPROVE_OPTION) {
@@ -278,7 +276,7 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = getFile("Export", false);
+			File file = getFile("Export");
 			if (file != null) {
 				if (controller.exportDatabase(file)) {
 					JOptionPane.showMessageDialog(getContentPane(), 
@@ -300,7 +298,7 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = getFile("Open", false);
+			File file = getFile("Open");
 			if (file != null) {
 				tree.empty();
 				controller.initialiseDB(file.getName());
