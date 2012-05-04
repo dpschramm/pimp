@@ -360,6 +360,6 @@ public class DBDataAccessor {
 	}
 	
 	private String extractTableName(String className) {
-		return className.substring(className.lastIndexOf("."));
+		return className.substring(className.lastIndexOf(".") + 1);
 	}
 }
