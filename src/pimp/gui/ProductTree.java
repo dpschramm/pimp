@@ -1,15 +1,15 @@
 package pimp.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -20,9 +20,9 @@ import pimp.productdefs.Product;
 public class ProductTree extends JTree {
 	
 	// Product tree.
-	private DefaultMutableTreeNode root;
+	private NodeItem root;
 	private DefaultTreeModel model;
-
+    private ActionListener classSelectListener;
 	private HashMap<String, NodeItem> map;
 	
 	private MainDisplay parent;
@@ -39,7 +39,7 @@ public class ProductTree extends JTree {
 		this.parent = parent;
 		
 		// Create the model.
-		root = new DefaultMutableTreeNode("Products");
+		root = new NodeItem(Product.class);
 		model = new DefaultTreeModel(root);
 		map = new HashMap<String, NodeItem>();
 		
@@ -60,10 +60,14 @@ public class ProductTree extends JTree {
 				retrieveAndSave(); 
 				TreePath path = event.getNewLeadSelectionPath();
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-				if (!selectedNode.getStoredClass().equals(null)){
-					//Fire class selected event
-					
-					//updateSelection(selectedNode);
+				
+				if (selectedNode.getStoredClass() != null){
+					//Need to figure out what the source is - it can't be null.
+					String s = selectedNode.getStoredClass().toString();
+					//s = s.substring(s.lastIndexOf('.')+1);
+					ActionEvent i = new ActionEvent(model, 0, s);
+					System.out.println(s);
+					classSelectListener.actionPerformed(i);
 				}
 			}
 		});
@@ -75,6 +79,11 @@ public class ProductTree extends JTree {
 		parent.saveCurrentChanges();
 		
 	}
+
+	public void addClassSelectListener(ActionListener a){
+		classSelectListener = a;
+	}
+
 	
 	public void removeNode(MutableTreeNode node){
 		model.removeNodeFromParent(node);
@@ -95,7 +104,7 @@ public class ProductTree extends JTree {
 	 */
 	public Product removeSelectedProduct() {
 		TreePath selectionPath = getSelectionPath();
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
+		NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
 		
 		Product product = (Product) selectedNode.getUserObject();
@@ -108,33 +117,51 @@ public class ProductTree extends JTree {
 	}
 	
 	/**
-	 * @param products
-	 */
-	public void addProduct(List<Product> products) {
-		for (Product p : products) {
-			addProduct(p);
-		}
-	}
-	
-	/**
 	 * @param product
 	 */
 	public void addProduct(Product product){	
 		NodeItem node = new NodeItem(1, product.toString());
-		DefaultMutableTreeNode parent = getNodeFromMap(product.getClass().toString());
-		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
-		scrollPathToVisible(new TreePath(node.getPath()));
+		NodeItem parent = getNodeFromMap(product.getClass().toString());
+		insertNode(node, parent);
+//		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
+//		scrollPathToVisible(new TreePath(node.getPath()));
 	}
 	
-//	public void addProduct(Map<Integer, String> products) {
-//		
-//		Iterator it = products.entrySet().iterator();
-//		while(it.hasNext()){
-//			Map.Entry<Integer, String> pairs = (Map.Entry)it.next();
-//			addProduct(pairs.getKey(), pairs.getValue());
+
+	/*
+	 * New methods for adding products. This one takes the whole map of products within a class
+	 */
+	public void addProduct(Map<Integer, String> products, String className) {
+		NodeItem p = map.get(className);
+		for (Map.Entry<Integer, String> entry : products.entrySet()) {
+		    Integer key = entry.getKey();
+		    String value = entry.getValue();
+		    NodeItem n = new NodeItem(key, value);
+		    insertNode(n, p);
+		}
+	}
+	
+	/*
+	 * This one adds a single product under a node.
+	 */
+	
+	private void insertNode(NodeItem n, NodeItem p) {
+		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
+		scrollPathToVisible(new TreePath(n.getPath()));
+	}
+	
+	
+//	/**
+//	 * @param products
+//	 */
+//	public void addProduct(List<Product> products) {
+//		for (Product p : products) {
+//			addProduct(p);
 //		}
-//		
 //	}
+//
+
+
 	
 	/**
 	 * Takes a classList and adds each class to the productTree
@@ -166,7 +193,7 @@ public class ProductTree extends JTree {
 		//You cannot put this check around the initial method call as it will not work.
 		if (!hasClassBeenAdded(c))
 		{
-			DefaultMutableTreeNode parent;
+			NodeItem parent;
 			NodeItem node = new NodeItem(c);
 			//Get the appropriate parent node for this category
 			parent = getNodeFromMap(c.getSuperclass().toString());
@@ -208,8 +235,8 @@ public class ProductTree extends JTree {
 	 * node it returns the rootNode - this happens when a tier 1 product type
 	 * calls this method.
 	 */
-	public DefaultMutableTreeNode getNodeFromMap(String s){
-		DefaultMutableTreeNode n = map.get(s);
+	public NodeItem getNodeFromMap(String s){
+		NodeItem n = map.get(s);
 		if (n == null) {
 			return root;
 		}
@@ -228,5 +255,7 @@ public class ProductTree extends JTree {
 		}
 		return null;
 	}
+	
+
 	
 }

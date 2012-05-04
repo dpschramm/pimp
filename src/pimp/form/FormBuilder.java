@@ -27,11 +27,11 @@ public class FormBuilder {
 		
 		unsuportedTypeElement = new UnsupportedTypeFormElement();
 		// Default Form Builder has double, int, string, color, date
-		addFormElement(new StringFormElement());
+		addFormElement(new NullDecoratorFormElement(new StringFormElement()));
 		addFormElement(new IntFormElement());
 		addFormElement(new DoubleFormElement());
-		addFormElement(new DateFormElement());
-		addFormElement(new ColorFormElement());
+		addFormElement(new NullDecoratorFormElement(new DateFormElement()));
+		addFormElement(new NullDecoratorFormElement(new ColorFormElement()));
 	}
 
 	public void addFormElement(FormElement fe) {

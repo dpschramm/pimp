@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -71,7 +72,9 @@ public class MainDisplay extends JFrame {
 		
 		// Create product tree.
 		tree = new ProductTree(this);
+		tree.addClassSelectListener(new classChangedListener());
 		JScrollPane treeScrollPanel = new JScrollPane(tree);
+		
 		
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
@@ -184,6 +187,7 @@ public class MainDisplay extends JFrame {
 		
 	}
 	
+
 	/**
 	 * Delete the specified product.
 	 * 
@@ -202,6 +206,17 @@ public class MainDisplay extends JFrame {
 		}
 		
 	}	
+	
+	class classChangedListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Map<Integer, String> m = controller.getProductsByClass(e.getActionCommand());
+			tree.addProduct(m, e.getActionCommand());
+		}
+		
+		
+	}
 	
 	class copyButtonListener implements ActionListener{
 		@Override
@@ -333,6 +348,8 @@ public class MainDisplay extends JFrame {
 	}
 
 	public void setProducts(List<Product> products) {
-		tree.addProduct(products);
+		for (Product p : products){
+			tree.addProduct(p);
+		}
 	}
 }

@@ -25,7 +25,7 @@ public class DateFormElement implements FormElement {
 
 	@Override
 	public void setValue(JComponent jc, Object o) {
-		((JDateChooser)jc).setDate(new Date(2012,2,2));
+		((JDateChooser)jc).setDate((Date) o);
 	}
 
 	@Override

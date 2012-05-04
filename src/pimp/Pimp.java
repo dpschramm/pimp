@@ -58,7 +58,9 @@ public class Pimp {
 		
 		// Initialize Gui
 		gui = new MainDisplay(this);
-		
+	
+		// Load existing products.
+
 		initialiseDB(defaultDatabaseName);
 		
 		// Make form.
@@ -72,7 +74,7 @@ public class Pimp {
 		
 		// Load existing products.
 		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		gui.setProducts(DataAccessor.loadProductList());
+		//gui.setProducts(DataAccessor.loadProductList());
 	}
 	
 	private void createForm() {
@@ -134,8 +136,8 @@ public class Pimp {
 		DataAccessor.save(p);
 	}
 	
-	public Map<Integer, String> getProductsByClass(Class<?> c){
-	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(c.toString());
+	public Map<Integer, String> getProductsByClass(String className){
+	Map<Integer, String> m = DataAccessor.getProductIdsAndNames(className);
 	return m;
 	}
 	

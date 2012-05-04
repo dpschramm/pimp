@@ -22,9 +22,6 @@ public class DoubleFormElement implements FormElement {
 
 	@Override
 	public void setValue(JComponent jc, Object o) {
-		if(o == null){
-			o = new Double(0.0);
-		}
 		((JTextField)jc).setText(o.toString());
 	}
 
