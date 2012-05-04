@@ -32,7 +32,7 @@ import pimp.testdefs.Shoe;
 public class Pimp {
 	
 	// Database stuff
-	private String defaultDatabaseName = "products.db";
+	private String defaultDatabaseName = "test.db";
 	
 	private ProductCache cache;
 	
