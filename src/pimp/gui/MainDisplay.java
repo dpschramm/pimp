@@ -11,6 +11,9 @@ import java.awt.FlowLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,6 +26,7 @@ import pimp.Pimp;
 import pimp.form.CompanionForm;
 import pimp.form.Form;
 import pimp.form.FormBuilder;
+import pimp.persistence.DataAccessor;
 import pimp.productdefs.Product;
 
 /**
