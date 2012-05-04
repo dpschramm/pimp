@@ -18,6 +18,7 @@ import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
+import pimp.testdefs.Shoe;
 
 
 /**
@@ -76,14 +77,20 @@ public class Pimp {
 	
 	private void createForm() {
 		// Fill the form.
-		Drink drink = new Drink();
+		/*Drink drink = new Drink();
 		drink.capacity = "Large";
 		drink.flavour = "Blue";
 		drink.name = "Gatorade";
 		drink.quantity = 40;
 		
 		// Update the form displayed by the GUI.
-		gui.updateProductForm(drink);
+		gui.updateProductForm(drink);*/
+		Shoe shoe = new Shoe();
+		shoe.name = "STYLISH SHOOOOE";
+		shoe.quantity = 4;
+		shoe.shoeSize = 41;
+		shoe.sizingSystem = "EU";
+		gui.updateProductForm(shoe);
 	}
 
 	public Product getNewProduct() {
@@ -104,7 +111,7 @@ public class Pimp {
 		if (c != null) {
 			try {
 				Product p = c.newInstance();
-				DataAccessor.save(p);
+				//DataAccessor.save(p);
 				return p;
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
@@ -117,6 +124,14 @@ public class Pimp {
 		
 		// No product selected.
 		return null;
+	}
+	
+	/*
+	 * It seems weird, that this is necessary. But we don't want to use a data accessor
+	 * from the gui. That would be A Bad Thing to do.
+	 * */
+	public void saveChangesToProduct(Product p){
+		DataAccessor.save(p);
 	}
 	
 	public Map<Integer, String> getProductsByClass(Class<?> c){

@@ -27,6 +27,12 @@ public class ProductTree extends JTree {
 	
 	private MainDisplay parent;
 	
+	/* This is so that, when we save on valueChanged event, we know what product we're saving.
+	 * This product should be edited whenever values in the dynamic form are changed, so that
+	 * whenever the selected tree element changes, we will have an accurate model of the edited product.
+	 * */
+	private Product currentlySelectedProduct;
+	
 	public ProductTree(MainDisplay parent) {
 		super();
 		
@@ -50,6 +56,8 @@ public class ProductTree extends JTree {
 			 */
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
+				// Retrieve current product from dynamic form and save changes to database
+				retrieveAndSave(); 
 				TreePath path = event.getNewLeadSelectionPath();
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
 				if (!selectedNode.getStoredClass().equals(null)){
@@ -61,6 +69,12 @@ public class ProductTree extends JTree {
 		});
 	}
 	
+	// This exists because we can't refer to parent from in that inner class up there
+	// We could move that code from out of the constructor at some stage
+	private void retrieveAndSave(){
+		parent.saveCurrentChanges();
+		
+	}
 	
 	public void removeNode(MutableTreeNode node){
 		model.removeNodeFromParent(node);
