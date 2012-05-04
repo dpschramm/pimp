@@ -137,15 +137,7 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
-			Product p = controller.getProduct();
-			// Check to make sure user made a selection.
-			if (p != null) {
-				tree.addProduct(p);
-				products.add(p);
-				// Debug.
-				System.out.println("You selected to create a " + p.getClass().getName());
-			}
-			else System.out.println("No selection.");
+			controller.getProduct();			
 		}
 	}	
 	/**
@@ -163,16 +155,16 @@ public class MainDisplay extends JFrame {
 			
 			// Erase from xml
 			// This is done by overwriting the file with the new, smaller list of products
-		}
-		
+		}		
 	}	
+	
+
 	
 	class classChangedListener implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Map<Integer, Product> m = controller.getProductsByClass(e.getActionCommand());
-			tree.addProduct(m, e.getActionCommand());
+			controller.getProductsByClass(e.getActionCommand());
 		}		
 		
 	}

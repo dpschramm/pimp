@@ -5,12 +5,14 @@
 package pimp;
 
 // Gui
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
-
-// Other
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
 import pimp.productdefs.Drink;
@@ -59,6 +61,8 @@ public class Pimp {
 		
 		//Initialise cache
 		cache = new ProductCache();
+		//Probably here?
+		cache.addModelListener(new modelChangedListener());
 		
 		// Load existing products.
 
@@ -90,7 +94,7 @@ public class Pimp {
 		gui.updateProductForm(drink);
 	}
 
-	public Product getProduct() {
+	public void getProduct() {
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
 				dcl.getClassList());
@@ -99,7 +103,9 @@ public class Pimp {
 		Class<? extends Product> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				return c.newInstance();
+				ArrayList<Product> l = new ArrayList<Product>();
+				l.add(c.newInstance());
+				cache.addToCache(l);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,13 +114,26 @@ public class Pimp {
 				e.printStackTrace();
 			}
 		}
-		
-		// No product selected.
-		return null;
 	}
 	
-	public Map<Integer, Product> getProductsByClass(String className){
-	Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
-	return m;
+	public void getProductsByClass(String className){
+		if (cache.getFromCache(className).size() == 0){
+			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
+			ArrayList<Product> l = new ArrayList<Product>();
+			for (Product p : m.values()) {
+			    l.add(p);
+			}
+			cache.addToCache(l);
+		}
+	}
+	
+	class modelChangedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println(e.getSource().toString());
+			//Code to update the tree here.
+			gui.setProducts((List<Product>) e.getSource());
+			
+		}		
 	}
 }
