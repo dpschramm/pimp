@@ -2,4 +2,5 @@
 /out/
 /.metadata/
 /.settings/
-newdb.db
+*.db
+!products.db

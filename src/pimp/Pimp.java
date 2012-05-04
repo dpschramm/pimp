@@ -7,15 +7,17 @@ package pimp;
 // Gui
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
-import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
 
@@ -160,6 +162,22 @@ public class Pimp {
 	 * */
 	public void saveChangesToProduct(Product p){
 		DataAccessor.save(p);
+	}
+	
+	/**
+	 * This method was written to do the controller side processing of the
+	 * export button. It takes a file and attempts to save the database to
+	 * it.
+	 */
+	public boolean exportDatabase(File dbFile) {
+		try {
+			DataAccessor.exportDb(dbFile);
+		} catch (Exception e1) {
+			System.err.println("Could not export database to " + dbFile.getName());
+			e1.printStackTrace();
+			return false;
+		}	
+		return true;
 	}
 
 }

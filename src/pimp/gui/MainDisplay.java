@@ -1,15 +1,17 @@
 package pimp.gui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -19,9 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import pimp.Pimp;
 import pimp.form.CompanionForm;
@@ -29,7 +28,6 @@ import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Product;
-import java.awt.Dimension;
 
 /**
  * The main user interface window.
@@ -238,6 +236,36 @@ public class MainDisplay extends JFrame {
 		}	
 	}
 	
+	/**
+	 * Creates the file chooser used for exporting and opening.
+	 * @return a configured JFileChooser.
+	 */
+	private File getFile(String windowText, boolean hasFilter) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		chooser.setCurrentDirectory(new File("."));
+		
+		if (hasFilter) {
+			chooser.setFileFilter(new FileFilter() {
+				public boolean accept(File f) {
+					return f.getName().toLowerCase().endsWith(".db")
+							|| f.isDirectory();				
+				}
+				
+				public String getDescription() {
+					return "DB files";
+				};
+			});
+		}
+		
+		int result = chooser.showDialog(MainDisplay.this, windowText);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile();
+		}
+		
+		return null;
+	}
+	
 	/** 
 	 * Save products to file.
 	 */
@@ -250,25 +278,16 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			final JFileChooser chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			chooser.setCurrentDirectory(new File("."));
-			
-			int returnVal = chooser.showDialog(MainDisplay.this, "Export");
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File selectedFile = chooser.getSelectedFile();
-				try {
-					DataAccessor.exportDb(selectedFile);
-				} catch (Exception e1) {
-					System.err.println("Could not export database to " + selectedFile.getName());
-					e1.printStackTrace();
-					
+			File file = getFile("Export", false);
+			if (file != null) {
+				if (controller.exportDatabase(file)) {
 					JOptionPane.showMessageDialog(getContentPane(), 
-												  "Could not export database to this location");
-					return;
+							"Database exported to " + file.getName() + " successfully");
 				}
-				JOptionPane.showMessageDialog(getContentPane(), 
-											  "Database exported to " + selectedFile.getName() + " successfully");
+				else {
+					JOptionPane.showMessageDialog(getContentPane(), 
+						"Could not export database to this location");
+				}
 			}
 		}
 		
@@ -281,30 +300,12 @@ public class MainDisplay extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//TODO: break this JFileChooser stuff out so it can be reused for the export button.
-			final JFileChooser chooser = new JFileChooser();
-			
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			chooser.setCurrentDirectory(new File("."));
-			chooser.setFileFilter(new FileFilter() {
-				public boolean accept(File f) {
-					return f.getName().toLowerCase().endsWith(".db")
-							|| f.isDirectory();				
-				}
-				
-				public String getDescription() {
-					return "DB files";
-				};
-			});
-			
-			int returnVal = chooser.showDialog(MainDisplay.this, "Open");
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File selectedFile = chooser.getSelectedFile();
+			File file = getFile("Open", false);
+			if (file != null) {
 				tree.empty();
-				controller.initialiseDB(selectedFile.getName());
-				
+				controller.initialiseDB(file.getName());
 				JOptionPane.showMessageDialog(getContentPane(), 
-											  "Database " + selectedFile.getName() + " opened");
+						"Database " + file.getName() + " opened");
 			}
 		}
 	}
