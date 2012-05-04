@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -58,6 +59,8 @@ public class MainDisplay extends JFrame {
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
 	
+	private JScrollPane treeScrollPanel;
+	
 	/** 
 	 * Constructor
 	 */
@@ -80,7 +83,9 @@ public class MainDisplay extends JFrame {
 		tree = new ProductTree(this);
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
-		JScrollPane treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		
 		// Add panels.
@@ -206,11 +211,8 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Remove selected product from tree
-			Product product = tree.removeSelectedProduct();
-			products.remove(product);
-			
-			// Erase from xml
-			// This is done by overwriting the file with the new, smaller list of products
+			tree.removeSelectedProduct();
+			// Flag product in cache as deleted
 		}
 		
 	}	
@@ -333,6 +335,7 @@ public class MainDisplay extends JFrame {
 				frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 				cForm = null;
 			}
+
 			//dynamicForm = form;
 			//frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {

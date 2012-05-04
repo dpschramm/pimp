@@ -102,20 +102,19 @@ public class ProductTree extends JTree {
 	 * 
 	 * @return the product that was removed.
 	 */
-	public Product removeSelectedProduct() {
+	public void removeSelectedProduct() {
 		TreePath selectionPath = getSelectionPath();
 		NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
 		
-		Product product = (Product) selectedNode.getUserObject();
+		Product product = (Product) selectedNode.getStoredObject();
 		
 		Class<?> c = product.getClass();
 		if(!Modifier.isAbstract(c.getModifiers())){
 			removeNode(selectedNode);
 		}
-		return product;
+		//return product;
 	}
-	
 	/**
 	 * @param product
 	 */
