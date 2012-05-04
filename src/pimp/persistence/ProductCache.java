@@ -7,27 +7,36 @@ import java.util.List;
 
 import pimp.productdefs.Product;
 
+/**
+ * 
+ * @author Joel Mason
+ *
+ */
+
 public class ProductCache {
 	
-	//0: Unmodified
-	//1: Added (i.e. has been created the the New Product button)
-	//2: Updated (you should not update an Added product)
-	//3: Deleted
-	
-	private ActionListener productAddedListener;
-	private ActionListener productRemovedListener;
+	private ActionListener productsAddedListener;
+	private ActionListener productsRemovedListener;
+
 	private ArrayList<CachedItem> list;
 	
 	public ProductCache(){
 		list = new ArrayList<CachedItem>();
 	}
 	
-	public void addToCache(List<Product> products, int status){
+	/**
+	 * 
+	 * @param products
+	 * @param status
+	 */
+	public void addToCache(List<Product> products, Status status){
 		for (Product p : products){
+
 			CachedItem c = new CachedItem(p, status);
+			System.out.println("Added " + p.toString() + " to the cache with flag " + status);
 			list.add(c);
 		}
-		productAddedListener.actionPerformed(new ActionEvent(products, 0, null));
+		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
 	
 	public ArrayList<Product> getFromCache(String className){
@@ -41,17 +50,18 @@ public class ProductCache {
 			}
 		return l;
 	}
+
 	
 	public void removeFromCache(Product p){
 		list.remove(p);
-		productRemovedListener.actionPerformed(new ActionEvent(p, 0, null));
+		productsRemovedListener.actionPerformed(new ActionEvent(p, 0, null));
 	}
 	
-	public void addProductAddedListener(ActionListener a){
-		productAddedListener = a;
+	public void addProductsAddedListener(ActionListener a){
+		productsAddedListener = a;
 	}
 	
-	public void addProductRemovedListener(ActionListener a){
-		productRemovedListener = a;
+	public void addProductsRemovedListener(ActionListener a){
+		productsRemovedListener = a;
 	}
 }

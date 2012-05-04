@@ -7,14 +7,18 @@ package pimp;
 // Gui
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.persistence.DataAccessor;
 import pimp.persistence.ProductCache;
+import pimp.persistence.Status;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
@@ -63,8 +67,8 @@ public class Pimp {
 		//Initialise cache
 		cache = new ProductCache();
 		//Probably here?
-		cache.addProductAddedListener(new productAddedListener());
-		cache.addProductRemovedListener(new productRemovedListener());
+		cache.addProductsAddedListener(new productAddedListener());
+		cache.addProductsRemovedListener(new productRemovedListener());
 		// Load existing products.
 
 		initialiseDB(defaultDatabaseName);
@@ -84,6 +88,7 @@ public class Pimp {
 	}
 	
 	private void createForm() {
+		
 		// Fill the form.
 		Drink drink = new Drink();
 		drink.capacity = "Large";
@@ -93,12 +98,14 @@ public class Pimp {
 		
 		// Update the form displayed by the GUI.
 		gui.updateProductForm(drink);
+
 		/*Shoe shoe = new Shoe();
 		shoe.name = "STYLISH SHOOOOE";
 		shoe.quantity = 4;
 		shoe.shoeSize = 12;
 		shoe.sizingSystem = "EU";
 		gui.updateProductForm(shoe);*/
+
 	}
 
 	public void getNewProduct() {
@@ -120,7 +127,7 @@ public class Pimp {
 			try {
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(c.newInstance());
-				cache.addToCache(l, 1);
+				cache.addToCache(l, Status.NEW);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -138,14 +145,13 @@ public class Pimp {
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.addToCache(l, 0);
+			cache.addToCache(l, Status.FRESH);
 		}
 	}
 	
 	class productAddedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getSource().toString());
 			//Code to update the tree here.
 			gui.setProducts((List<Product>) e.getSource());
 		}
@@ -162,6 +168,22 @@ public class Pimp {
 
 	public void remove(Product p){
 		cache.removeFromCache(p);
+	}
+	
+	/**
+	 * This method was written to do the controller side processing of the
+	 * export button. It takes a file and attempts to save the database to
+	 * it.
+	 */
+	public boolean exportDatabase(File dbFile) {
+		try {
+			DataAccessor.exportDb(dbFile);
+		} catch (Exception e1) {
+			System.err.println("Could not export database to " + dbFile.getName());
+			e1.printStackTrace();
+			return false;
+		}	
+		return true;
 	}
 
 }
