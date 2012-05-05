@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pimp.Pimp;
 import pimp.productdefs.Product;
 
 /**
@@ -181,10 +180,11 @@ public class ProductModel {
 	 * to those in the persistence layer after a 'commit', so mark them as FRESH (as if they had just been loaded)
 	 */
 	public void flushCache(){
-		for (Map.Entry<Product, Status> entry : list.entrySet()) {
-		    Status s = entry.getValue();
-		    s = Status.FRESH;
-
+		for (Product p : list.keySet()) {
+			if (list.get(p) == Status.DELETED) {
+				list.remove(p);
+			}
+			else list.put(p, Status.FRESH);
 		}
 	}
 	

@@ -3,7 +3,6 @@ package pimp;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -22,31 +21,24 @@ import java.util.jar.JarFile;
  */
 public class DirectoryJarLoader {
 	
-	private List<Class<?>> classList;
+	private DirectoryJarLoader() {} // Make it impossible to instantiate.
 	
 	/**
-	 * A DirectoryJarLoader loads all classes in a directory.
+	 * Searches the specified directory for jar files, and loads all classes
+	 * within these jar files.
 	 * 
-	 * The package name is required in order to load the class, however 
-	 * this should not cause issues as a folder should theoretically 
-	 * only contain classes from a single package.
-	 * 
-	 * We could potentially use the Singleton pattern for this class.
-	 * 
-	 * @param directoryName	the directory to monitor.
+	 * @return the list of classes found.
 	 */
-	public DirectoryJarLoader(String directoryName) {
-		// Clear the previous class list.
-		classList = new ArrayList<Class<?>>();
+	public static List<Class<?>> getClassList(String directoryName) {
+		List<Class<?>> classList = new ArrayList<Class<?>>();
 		
 		// Create a string pointing to the product folder.
-		final ClassLoader loader = this.getClass().getClassLoader();
-		
-		URL directoryUrl = loader.getResource(directoryName+File.separator);
+		final ClassLoader loader = DirectoryJarLoader.class.getClassLoader();
+		URL directoryUrl = loader.getResource(directoryName);
 		if (directoryUrl == null) {
 			System.out.println("Could not find the '" + directoryName + 
 					"' folder in " + System.getProperty("user.dir"));
-			return; // Could not find the product directory.
+			return classList; // Could not find the product directory.
 		}
 		
 		// Get a list of files in the directory.
@@ -71,9 +63,11 @@ public class DirectoryJarLoader {
 		        classList.addAll(loadClassesFromJar(file));
 		    }
 	    }
+	    
+	    return classList;
 	}
 	
-	private List<Class<?>> loadClassesFromJar(File file) {
+	private static List<Class<?>> loadClassesFromJar(File file) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		try {
 			// Create the ClassLoader for this Jar.
@@ -98,14 +92,5 @@ public class DirectoryJarLoader {
 			e.printStackTrace();
 		}
 		return classes;
-	}
-	
-	/**
-	 * Returns a list of the classes loaded.
-	 * 
-	 * @return the list of classes found in the directory.
-	 */
-	public List<Class<?>> getClassList() {
-		return classList;
 	}
 }

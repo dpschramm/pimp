@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -24,8 +23,6 @@ import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.model.ProductModel;
 import pimp.productdefs.Product;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * The main user interface window.

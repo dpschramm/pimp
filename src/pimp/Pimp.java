@@ -15,6 +15,7 @@ import pimp.gui.DatabaseSelector;
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.model.ProductModel;
+import pimp.model.Status;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
@@ -54,8 +55,6 @@ public class Pimp {
 	 * This involves applying appropriate ActionListeners to the given View
 	 */
 	public Pimp() {
-		// Load class definitions.
-		djl = new DirectoryJarLoader(productDir);
 		
 		//Initialise cache
 		cache = new ProductModel();
@@ -92,18 +91,11 @@ public class Pimp {
 		gui.updateProductForm(shoe);*/
 
 	}
-	
-	public List<Class<?>> getClassList() {
-		return djl.getClassList();
-	}
 
-	public List<Class<?>> getConcreteProductList() {
-		List<Class<?>> fullList = getClassList();
+	public List<Class<?>> getClassList() {
+		List<Class<?>> fullList = DirectoryJarLoader.getClassList(productDir);
 		List<Class<?>> productClassList = new ArrayList<Class<?>>();
 		for(Class<?> c: fullList){
-			/*if(c.getSuperclass() == Product.class){
-				productClassList.add(c);
-			}*/
 			if(getAllSuperclasses(c).contains(Product.class)){
 				productClassList.add(c);
 			}
@@ -113,7 +105,7 @@ public class Pimp {
 	
 	public List<Class<?>> getAllSuperclasses(Class<?> c){
 		List<Class<?>> superClasses = new ArrayList<Class<?>>();
-		Class sc = c.getSuperclass();
+		Class<?> sc = c.getSuperclass();
 		while(sc != null && sc != Object.class){
 			superClasses.add(sc);
 			sc = sc.getSuperclass();
@@ -122,9 +114,12 @@ public class Pimp {
 	}
 	
 	public void createNewProduct() {
+		
+		List<Class<?>> cpl = getClassList();
+		gui.setClasses(cpl); // must be called before setProducts.
+		
 		// Create and show product dialog.
-		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				getConcreteProductList());
+		SelectProductDialog selectDialog = new SelectProductDialog(gui, cpl);
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -199,7 +194,7 @@ public class Pimp {
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
 		// Load existing products.
-		List<Class<?>> cpl = getConcreteProductList();
+		List<Class<?>> cpl = getClassList();
 		gui.setClasses(cpl); // must be called before setProducts.
 	}
 	
