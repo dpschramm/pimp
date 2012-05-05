@@ -147,7 +147,7 @@ public class Pimp {
 	}
 	
 	public void update(Product product){
-		cache.update(product);
+		cache.update(product, updatedProduct);
 	}
 	
 	public void initialiseDB(String databaseName) {
