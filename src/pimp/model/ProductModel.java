@@ -43,12 +43,16 @@ public class ProductModel {
 	 * Adds a single product to the list. This will only get called when a brand new product is created
 	 * via the NEW PRODUCT button on the gui. Thus, only one is created at a time. It marks it with the flag Status.NEW
 	 * to indicate that it doesn't exist in the database.
+	 * It makes it into a list that the productAddedListener can pass on. Normally there are
+	 * multiple products added at a time (say, from the database) so the listener prefers to handle lists.
 	 * @param p the product to add
 	 */
 	public void add(Product p){
+		ArrayList<Product> l = new ArrayList<Product>();
+		l.add(p);
 		list.put(p, Status.NEW);
 		if (productsAddedListener != null) {
-			productsAddedListener.actionPerformed(new ActionEvent(p, 0, null));
+			productsAddedListener.actionPerformed(new ActionEvent(l, 0, null));
 		}
 	}
 	

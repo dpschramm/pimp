@@ -33,10 +33,12 @@ public class ProductTree extends JTree {
 	// Product tree.
 	private NodeItem root;
 	private DefaultTreeModel model;
+	private NodeItem lastSelectedNode;
 
     private ActionListener classSelectListener;
     private ActionListener productUpdatedListener;
     private ActionListener productSelectedListener;
+    private ActionListener productEditedListener;
     
 	private HashMap<String, NodeItem> map;
 	
@@ -66,7 +68,13 @@ public class ProductTree extends JTree {
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				if(event.isAddedPath()){
-				
+					if (productEditedListener != null && lastSelectedNode != null && (!lastSelectedNode.getClass().equals(Class.class)))
+					{
+						System.out.println("Firing edit");
+						ActionEvent edited = new ActionEvent((Product)lastSelectedNode.getStoredObject(), 0, "");
+						productEditedListener.actionPerformed(edited);
+					}
+					
 					TreePath path = event.getNewLeadSelectionPath();
 					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
 					Object o = selectedNode.getStoredObject();
@@ -82,6 +90,8 @@ public class ProductTree extends JTree {
 						//The user has selected a product. So we'll update the form.
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
+						lastSelectedNode = selectedNode;
+						System.out.println(lastSelectedNode.toString());
 					}
 				}
 			}
@@ -366,5 +376,11 @@ public class ProductTree extends JTree {
 	public void addProductSelectedListener(ActionListener a){
 		productSelectedListener = a;
 	}
+	
+	public void addProductEditedListener(ActionListener a){
+		productEditedListener = a;
+	}
+	
+	
 	
 }
