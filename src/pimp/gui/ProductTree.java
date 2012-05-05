@@ -93,13 +93,15 @@ public class ProductTree extends JTree {
 			public void treeExpanded(TreeExpansionEvent event) {
 				TreePath path = (TreePath) event.getPath();
 				if (!(path == null)){
-				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-				Object o = selectedNode.getStoredObject();
-				if (o.getClass().equals(Class.class)){
-					String s = o.toString();
-					ActionEvent i = new ActionEvent(model, 0, s);
-					classSelectListener.actionPerformed(i);
-				}
+					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+					Object o = selectedNode.getStoredObject();
+					if (o.getClass().equals(Class.class)){
+						//Need to figure out what the source is - it can't be null.
+						String s = o.toString();
+						ActionEvent i = new ActionEvent(model, 0, 
+								s.substring(s.lastIndexOf(' ')+1));
+						classSelectListener.actionPerformed(i);
+					}
 				}
 			}
 		});
