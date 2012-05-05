@@ -157,12 +157,22 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
-		// Create Copy Database Button
+		// Create Copy Product Button
 		JButton btnCopyProduct = new JButton("Copy");
-		btnOpenProducts.addActionListener(new ActionListener() {
+		btnCopyProduct.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//controller.createProductCopy(currentProduct);
+				try {
+					Product c = (Product) dynamicForm.getProduct();
+					controller.createNewProduct(c);
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -178,6 +188,7 @@ public class MainDisplay extends JFrame {
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
+		leftPanel.add(btnCopyProduct);
 		//leftPanel.add(btnSave);
 		leftPanel.add(btnDelete);
 		
@@ -191,7 +202,7 @@ public class MainDisplay extends JFrame {
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
 		return buttonPanel;
 	}
-	
+		
 	/*
 	 * This is called by the product tree on valueChange so that when a new tree item is 
 	 * selected, any edits made to the previously selected product will be saved. 

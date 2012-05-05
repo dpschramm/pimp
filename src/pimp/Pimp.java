@@ -150,6 +150,11 @@ public class Pimp {
 		}
 	}
 	
+	public void createNewProduct(Object fromForm){
+		Product newProduct = (Product) fromForm;
+		cache.add(newProduct);
+	}
+	
 	public void createProductCopy(Product productToCopy){
 		Class<? extends Product> c = productToCopy.getClass();
 		try {
