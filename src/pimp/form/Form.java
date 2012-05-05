@@ -23,7 +23,6 @@ public class Form extends JPanel {
 	public Form(Class<?> c, List<FormElement> formElements) {
 		super();
 		this.c = c;
-		System.out.println("In Form " + c);
 		typeToFormElementMapping = new HashMap<Type, FormElement>();
 		fieldToComponentMapping = new HashMap<String, JComponent>();
 		unsupportedFormElement = new UnsupportedTypeFormElement();
