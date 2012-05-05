@@ -181,6 +181,9 @@ public class ProductTree extends JTree {
 	private void insertNode(NodeItem n, NodeItem p) {
 		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
 		scrollPathToVisible(new TreePath(n.getPath()));
+		//The user has selected a product. So we'll update the form.
+		ActionEvent s = new ActionEvent((Product)n.getStoredObject(), 0, "");
+		productSelectedListener.actionPerformed(s);
 	}
 	
 	public void removeProduct(Product p) {
