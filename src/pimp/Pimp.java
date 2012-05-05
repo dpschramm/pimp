@@ -65,7 +65,7 @@ public class Pimp {
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		
 		//Initialise cache
-		cache = new ProductModel(this);
+		cache = new ProductModel();
 		
 		// Initialize Gui
 		gui = new MainDisplay(this, cache);

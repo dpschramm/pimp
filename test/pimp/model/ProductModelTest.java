@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
 import pimp.productdefs.Product;
 
@@ -46,16 +47,39 @@ public class ProductModelTest {
 				products.addAll((List<Product>) e.getSource());
 			}
 		});
-	}
-	
-	@Test
-	public void testProductModel() {
-		fail("Not yet implemented");
+		pm.addProductsDeletedListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				products.removeAll((List<Product>) e.getSource());
+			}
+		});
 	}
 
 	@Test
-	public void testAddListOfProduct() {
-		fail("Not yet implemented");
+	public void testAddAndDeleteListOfProduct() {
+		assertTrue(products.size() == 0);
+		assertFalse(products.contains(jacket));
+		
+		Jacket jacket1 = new Jacket();
+		jacket1.size = "Small";
+		jacket1.brand = "Huffer";
+		jacket1.isWaterproof = false;
+		jacket1.colour = null;
+		jacket1.quantity = 3;
+		jacket1.name = "Ellie's Jacket";
+		
+		List<Product> jackets = new ArrayList<Product>();
+		jackets.add(jacket);
+		jackets.add(jacket1);
+		
+		pm.add(jackets);
+		assertTrue(products.size() == 2);
+		assertTrue(products.contains(jacket));
+		assertTrue(products.contains(jacket1));
+		
+		pm.delete(jackets);
+		assertTrue(products.size() == 0);
+		assertFalse(products.contains(jacket));
+		assertFalse(products.contains(jacket1));
 	}
 
 	@Test
@@ -70,12 +94,30 @@ public class ProductModelTest {
 
 	@Test
 	public void testGet() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testDelete() {
-		fail("Not yet implemented");
+		Drink d1 = new Drink();
+		d1.name = "Fanta";
+		Drink d2 = new Drink();
+		d2.name = "Coke";
+		
+		List<Product> drinks = new ArrayList<Product>();
+		drinks.add(d1);
+		drinks.add(d2);
+		
+		assertTrue(products.size() == 0);
+		assertFalse(products.contains(jacket));
+		
+		pm.add(drinks);
+		assertTrue(products.size() == 2);
+		assertTrue(products.contains(d1));
+		assertTrue(products.contains(d2));
+		
+		pm.add(jacket);
+		assertTrue(products.size() == 3);
+		assertTrue(products.contains(jacket));
+		
+		List<Product> drinks2 = pm.get(Drink.class.toString());
+		assertTrue(drinks2.size() == 2);
+		assertTrue(drinks2.containsAll(drinks));
 	}
 
 	@Test
@@ -97,18 +139,15 @@ public class ProductModelTest {
 		assertTrue(products.size() == 1);
 		assertFalse(products.contains(newJacket));
 		
-		System.out.println(jacket.name);
 		assertTrue(jacket.name.equals(newJacket.name));
+		assertTrue(jacket.brand.equals(newJacket.brand));
+		assertTrue(jacket.quantity == newJacket.quantity);
 	}
 
 	@Test
 	public void testAddToClassesLoaded() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsLoaded() {
-		fail("Not yet implemented");
+		pm.addToClassesLoaded(Jacket.class.toString());
+		assertTrue(pm.isLoaded(Jacket.class.toString()));
 	}
 
 }
