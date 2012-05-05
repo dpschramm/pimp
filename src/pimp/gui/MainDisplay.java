@@ -80,7 +80,7 @@ public class MainDisplay extends JFrame {
 		fb = new FormBuilder();
 		
 		// Create product tree.
-		tree = new ProductTree(this);
+		tree = new ProductTree();
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
 		treeScrollPanel = new JScrollPane(tree);
@@ -216,11 +216,9 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// Remove selected product from tree
-			Product p = tree.removeSelectedProduct();
-			// Flag product in cache as deleted
-			
-			controller.remove(p);
+			ArrayList<Product> products = tree.getSelectedProduct();
+			//Fire the list up to the controller
+			controller.remove(products);
 		}
 	}	
 	
@@ -230,7 +228,6 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Going to try to load class " + e.getActionCommand());
 			controller.getProductsByClass(e.getActionCommand());
 		}		
 		
@@ -387,7 +384,9 @@ public class MainDisplay extends JFrame {
 		}
 	}
 
-	public void removeProduct(Product p) {
+	public void removeProduct(List<Product> products){
+		for (Product p : products){
 		tree.removeProduct(p);
+		}
 	}
 }

@@ -1,6 +1,0 @@
-/bin/
-/out/
-/.metadata/
-/.settings/
-*.db
-!products.db

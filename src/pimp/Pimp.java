@@ -127,7 +127,7 @@ public class Pimp {
 			try {
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(c.newInstance());
-				cache.addToCache(l, Status.NEW);
+				cache.add(l);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -140,13 +140,12 @@ public class Pimp {
 	
 	public void getProductsByClass(String className){
 		if (!cache.isLoaded(className)){
-			System.out.println("Going to try to load class " + className);
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.addToCache(l, Status.FRESH);
+			cache.add(l);
 			cache.addToClassesLoaded(className);
 		}
 	}
@@ -163,13 +162,15 @@ public class Pimp {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Remove from tree;
-			gui.removeProduct((Product) e.getSource());
+			gui.removeProduct((List<Product>) e.getSource());
 		}
 	}	
 
 
-	public void remove(Product p){
-		cache.removeFromCache(p);
+	public void remove(List<Product> products){
+		//We've received a list of products that need to be deleted.
+		//Fire it over to the cache.
+		cache.delete(products);
 	}
 	
 	/**
