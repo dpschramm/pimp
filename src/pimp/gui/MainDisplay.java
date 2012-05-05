@@ -154,17 +154,7 @@ public class MainDisplay extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
 
-			controller.createNewProduct();	
-//			// Check to make sure user made a selection.
-//			if (p != null) {
-//				tree.addProduct(p);
-//				//shouldn't need this anymore?
-//				//products.add(p);
-//							
-//				// Debug.
-//				System.out.println("You selected to create a " + p.getClass().getName());
-//			}
-//			else System.out.println("No selection.");
+			controller.createNewProduct();
 		}
 	}
 	
@@ -213,7 +203,6 @@ public class MainDisplay extends JFrame {
 	 * @param p
 	 */
 	class deleteButtonListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ArrayList<Product> products = tree.getSelectedProduct();
@@ -222,15 +211,11 @@ public class MainDisplay extends JFrame {
 		}
 	}	
 	
-
-	
 	class classChangedListener implements ActionListener{
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			controller.getProductsByClass(e.getActionCommand());
 		}		
-		
 	}
 	
 	class copyButtonListener implements ActionListener{
@@ -238,10 +223,6 @@ public class MainDisplay extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			JOptionPane.showMessageDialog(getContentPane(), 
 			"Not yet implemented.");
-			
-			// Get selected product from tree
-			
-			// Create new copy of product, with different name	
 		}	
 	}
 	

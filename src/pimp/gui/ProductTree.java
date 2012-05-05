@@ -36,12 +36,9 @@ public class ProductTree extends JTree {
     private ActionListener classSelectListener;
 	private HashMap<String, NodeItem> map;
 	
-	
 	public ProductTree() {
 		super();
-		
-		//this.parent = parent;
-		
+	
 		// Create the model.
 		root = new NodeItem(Product.class);
 		model = new DefaultTreeModel(root);
@@ -75,7 +72,6 @@ public class ProductTree extends JTree {
 					}
 					else
 					{
-						//parent.updateProductForm((Product)selectedNode.getStoredObject());
 						updateParentForm((Product)selectedNode.getStoredObject());
 					}
 				}
@@ -100,7 +96,6 @@ public class ProductTree extends JTree {
 				NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
 				Object o = selectedNode.getStoredObject();
 				if (o.getClass().equals(Class.class)){
-//					//Need to figure out what the source is - it can't be null.
 					String s = o.toString();
 					ActionEvent i = new ActionEvent(model, 0, s);
 					classSelectListener.actionPerformed(i);
@@ -111,7 +106,6 @@ public class ProductTree extends JTree {
 		
 		
 	}
-	
 	
 	
 	// This exists because we can't refer to parent from in that inner class up there
@@ -127,12 +121,6 @@ public class ProductTree extends JTree {
 	
 	public void addClassSelectListener(ActionListener a){
 		classSelectListener = a;
-	}
-
-	
-	public void removeNode(MutableTreeNode node){
-		model.removeNodeFromParent(node);
-		repaint();
 	}
 	
 	public void empty() {
@@ -192,48 +180,12 @@ public class ProductTree extends JTree {
 		NodeItem node = new NodeItem(p);
 		NodeItem parent = getNodeFromMap(p.getClass().toString());
 		insertNode(node, parent);
-//		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
-//		scrollPathToVisible(new TreePath(node.getPath()));
 	}
-	
-
-	/*
-	 * New methods for adding products. This one takes the whole map of products within a class
-	 */
-	public void addProduct(Map<Integer, Product> products, String className) {
-		NodeItem p = map.get(className);
-		//Huuuuge hack to make it work for the time being.
-		//TODO: Remove when we have a cache.
-		p.removeAllChildren();
-		for (Map.Entry<Integer, Product> entry : products.entrySet()) {
-		    Integer key = entry.getKey();
-		    Product value = entry.getValue();
-		    NodeItem n = new NodeItem(value);
-		    insertNode(n, p);
-		}
-	}
-	
-	/*
-	 * This one adds a single product under a node.
-	 */
 	
 	private void insertNode(NodeItem n, NodeItem p) {
 		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
 		scrollPathToVisible(new TreePath(n.getPath()));
 	}
-	
-	
-//	/**
-//	 * @param products
-//	 */
-//	public void addProduct(List<Product> products) {
-//		for (Product p : products) {
-//			addProduct(p);
-//		}
-//	}
-//
-
-
 	
 	/**
 	 * Takes a classList and adds each class to the productTree
@@ -273,7 +225,7 @@ public class ProductTree extends JTree {
 			addToNodeMap(c.toString(), node);
 			//insert the node into the tree and scroll it
 			model.insertNodeInto(node, parent, parent.getChildCount());
-			scrollPathToVisible(new TreePath(node.getPath()));
+			//scrollPathToVisible(new TreePath(node.getPath()));
 		}
 	}
 	
@@ -329,7 +281,8 @@ public class ProductTree extends JTree {
 			NodeItem child = children.nextElement();
 			if(child.getStoredObject().equals(p))
 			{
-				removeNode(child);
+				model.removeNodeFromParent(child);
+				repaint();
 			}
 			System.out.println(parent.toString());
 		}
