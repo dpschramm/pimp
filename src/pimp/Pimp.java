@@ -155,6 +155,7 @@ public class Pimp {
 		Product changes = p.get(1);
 		cache.update(product, changes);
 	}
+
 	
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);

@@ -3,7 +3,9 @@ package pimp.model;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pimp.productdefs.Product;
 
@@ -19,11 +21,11 @@ public class ProductModel {
 	private ActionListener productsRemovedListener;
 	private ActionListener productUpdatedListener;
 
-	private ArrayList<CachedItem> list;
+	private Map<Product, Status> list;
 	private ArrayList<String> classesLoaded;
 	
 	public ProductModel(){
-		list = new ArrayList<CachedItem>();
+		list = new HashMap<Product, Status>();
 		classesLoaded = new ArrayList<String>();
 	}
 	
@@ -34,9 +36,8 @@ public class ProductModel {
 	 */
 	public void add(List<Product> products){
 		for (Product p : products){
-			CachedItem c = new CachedItem(p, Status.FRESH);
 			System.out.println(Status.FRESH + ": " + p.toString());
-			list.add(c);
+			list.put(p, Status.FRESH);
 		}
 		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
@@ -47,43 +48,47 @@ public class ProductModel {
 		add(l);
 	}
 	
-	public ArrayList<Product> get(String className){
+	public List<Product> get(String className){
 		ArrayList<Product> l = new ArrayList<Product>();
-			for (CachedItem c : list){
-				Product p = (Product) c.getProduct();
-				if (p.getClass().toString().equals(className));
-				{
-					l.add(p);
-				}
+		for (Product p : list.keySet()) {
+			if (p.getClass().toString().equals(className)) {
+				l.add(p);
 			}
+		}
 		return l;
 	}
 	
-	
 	public void delete(List<Product> products){
 		for (Product p : products){
-			for (CachedItem c : list){
-
-				if (list.get(list.indexOf(c)).getProduct().equals(p)){
-					list.get(list.indexOf(c)).setStatus(Status.DELETED);
-					System.out.println("deleted");
-				}
-			}			
+			// Remove the product from the cache if not persisted.
+			if (list.get(p) == Status.NEW) {
+				list.remove(p);
+			}
+			// Otherwise mark for deletion next sync.
+			else {
+				list.put(p, Status.DELETED);
+			}
+			System.out.println("Deleted product: " + p);
 		}
 		productsRemovedListener.actionPerformed(new ActionEvent(products, 0, null));
 	}
 	
-	public void update(Product product, Product changes) {
-		for (CachedItem c : list){
-			if (list.get(list.indexOf(c)).getProduct().equals(product))
-			{
-				
-				
-				
-				list.get(list.indexOf(c)).setStatus(Status.UPDATED);
-				System.out.println("Updated");
-			}
-		}			
+	/**
+	 * This method takes a pointer to a product and updates it so it's state
+	 * matches that of the updatedProduct. A productUpdatedListen is fired to
+	 * indicate the product that has been updated.
+	 * 
+	 * @param product the product to be updated.
+	 * @param updatedProduct the target product.
+	 */
+	public void update(Product product, Product updatedProduct) {
+		
+		// Only change status if it is fresh from the database.
+		if (list.get(product) == Status.FRESH) {
+			list.put(product, Status.UPDATED);
+		}
+
+		System.out.println("Updated product: " + product);		
 		productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
 	}
 	
@@ -97,11 +102,7 @@ public class ProductModel {
 	}
 	
 	public boolean isLoaded(String s){
-		if(classesLoaded.contains(s))
-		{
-			return true;
-		}
-		return false;
+		return classesLoaded.contains(s);
 	}
 
 	
