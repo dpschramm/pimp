@@ -192,7 +192,7 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent u) {
 			try {
-				Object currentFormState = fb.getProductFromForm(dynamicForm);
+				Object currentFormState = dynamicForm.getProduct();
 				ArrayList<Product> l = new ArrayList<Product>();
 				l.add(0, (Product) u.getSource());
 				l.add(1, (Product) currentFormState);
