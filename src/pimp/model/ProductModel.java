@@ -40,8 +40,8 @@ public class ProductModel {
 	 */
 	public void add(List<Product> products){
 		for (Product p : products){
-			System.out.println(Status.FRESH + ": " + p.toString());
-			list.put(p, Status.FRESH);
+			System.out.println(Status.NEW + ": " + p.toString());
+			list.put(p, Status.NEW);
 		}
 		if (productsAddedListener != null) {
 			productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
@@ -52,6 +52,16 @@ public class ProductModel {
 		ArrayList<Product> l = new ArrayList<Product>();
 		l.add(p);
 		add(l);
+	}
+	
+	public void load(List<Product> products){
+		for (Product p : products){
+			System.out.println(Status.FRESH + ": " + p.toString());
+			list.put(p, Status.FRESH);
+		}
+		if (productsAddedListener != null) {
+			productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
+		}
 	}
 	
 	public List<Product> get(String className){
@@ -80,6 +90,12 @@ public class ProductModel {
 		if (productsRemovedListener != null) {
 			productsRemovedListener.actionPerformed(new ActionEvent(products, 0, null));
 		}
+	}
+	
+	public void delete(Product p){
+		ArrayList<Product> l = new ArrayList<Product>();
+		l.add(p);
+		delete(l);
 	}
 	
 	/**
@@ -122,32 +138,16 @@ public class ProductModel {
 		System.out.println("Updated product: " + product);
 	}
 	
-	public void commit() {
-		
+	
+	public Map<Product, Status> getCache(){		
+		return list;
+	}
+	
+	public void flushCache(){
 		for (Map.Entry<Product, Status> entry : list.entrySet()) {
-		    Product p = entry.getKey();
 		    Status s = entry.getValue();
-		    if (s == Status.DELETED)
-		    {
-		    	//DB.delete(p);
-		    	list.remove(p);
-		    }
-		    else if (s == Status.UPDATED)
-		    {
-		    	//DB.update(p);
-		    	s = Status.FRESH;
-		    }
-		    else if (s == Status.FRESH)
-		    {
-		    	System.out.println("Trying to save product " + p.toString());
-		    	controller.saveToPersistance(p);
-		    }
-//		    else if (s == Status.FRESH)
-//		    {
-//		    	Do nothing
-//		    }
+		    s = Status.FRESH;
 		}
-		
 	}
 	
 	public void addToClassesLoaded(String s){

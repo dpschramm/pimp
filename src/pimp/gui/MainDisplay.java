@@ -41,7 +41,7 @@ public class MainDisplay extends JFrame {
 	
 	// Views
 	private JFrame frame;
-	public ProductTree tree; // TODO make this private, encapsulate.
+	private ProductTree tree; // TODO make this private, encapsulate.
 	private JScrollPane treeScrollPanel;
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
@@ -49,6 +49,8 @@ public class MainDisplay extends JFrame {
 	private Form dynamicForm; /* Keeping this reference to the dynamic form
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
+	
+	private Product selectedProduct;
 	
 	/** 
 	 * Constructor
@@ -117,7 +119,7 @@ public class MainDisplay extends JFrame {
 				// Create new copy of product, with different name
 				// Send this in an event to the controller's listener.
 				try {
-					Product p = (Product) tree.getLastSelected();
+					Product p = selectedProduct;
 					Product c = (Product) fb.getProductFromForm(dynamicForm);
 					ArrayList<Product> l = new ArrayList<Product>();
 					l.add(0, p);
@@ -133,6 +135,7 @@ public class MainDisplay extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				//controller.commitCache();
 				
 			}
 		});
@@ -201,19 +204,8 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Update form
+			selectedProduct = (Product) e.getSource();
 			updateProductForm((Product) e.getSource());
-		}
-	}
-	 /** 
-	  * 
-	  * @author Joel
-	  *
-	  */
-	class productUpdatedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent u) {
-			
-			
 		}
 	}
 	
@@ -297,6 +289,18 @@ public class MainDisplay extends JFrame {
 				tree.removeProduct(p);
 			}
 		}
+	}
+
+	class productUpdatedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent u) {
+			tree.updateNode((Product) u.getSource());
+		}
+	}
+
+
+	public void empty() {
+		tree.empty();
 	}
 	
 

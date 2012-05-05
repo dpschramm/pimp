@@ -34,8 +34,6 @@ public class ProductTree extends JTree {
 	private NodeItem root;
 	private DefaultTreeModel model;
 
-
-	private Object lastSelected;
     private ActionListener classSelectListener;
     private ActionListener productUpdatedListener;
     private ActionListener productSelectedListener;
@@ -74,19 +72,12 @@ public class ProductTree extends JTree {
 						String s = o.toString();
 						ActionEvent i = new ActionEvent(model, 0, s);
 						classSelectListener.actionPerformed(i);
-						System.out.println("Class");
 					}
 					else
-					{			
-						
-						if (lastSelected == null)
-						{
-							lastSelected = o;
-						}
+					{	
 						//The user has selected a product. So we'll update the form.
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
-						lastSelected = o;
 					}
 				}
 			}
@@ -193,10 +184,24 @@ public class ProductTree extends JTree {
 	}
 	
 	public void removeProduct(Product p) {
-		removeNode(p);
+		NodeItem n = findNode(p);
+		if (n != null)
+		{
+			model.removeNodeFromParent(n);
+			repaint();
+		}
 	}
 	
-	public void removeNode(Product p){
+	public void updateNode(Product p){
+		NodeItem n = findNode(p);
+		if (n != null)
+		{
+			n.setName(p);
+			repaint();
+		}
+	}
+	
+	public NodeItem findNode(Product p){
 		NodeItem n;
 		Class<?> c = p.getClass();
 		NodeItem parent = getNodeFromMap(c.toString());
@@ -206,11 +211,11 @@ public class ProductTree extends JTree {
 			NodeItem child = children.nextElement();
 			if(child.getStoredObject().equals(p))
 			{
-				model.removeNodeFromParent(child);
-				repaint();
+				return child;
 			}
 			System.out.println(parent.toString());
 		}
+		return null;
 	}
 	
 	public void empty(){
@@ -307,10 +312,6 @@ public class ProductTree extends JTree {
 	
 	public void addProductSelectedListener(ActionListener a){
 		productSelectedListener = a;
-	}
-	
-	public Object getLastSelected() {
-		return lastSelected;
 	}
 	
 }

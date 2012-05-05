@@ -157,7 +157,7 @@ public class Pimp {
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.add(l);
+			cache.load(l);
 			cache.addToClassesLoaded(className);
 		}
 	}	
@@ -192,7 +192,30 @@ public class Pimp {
 	}
 	
 	public void commitCache(){
-		cache.commit();
+		Map<Product, Status> list = cache.getCache();
+		for (Map.Entry<Product, Status> entry : list.entrySet()) {
+		    Product p = entry.getKey();
+		    Status s = entry.getValue();
+		    if (s == Status.DELETED)
+		    {
+		    	//DB.delete(p);
+		    	cache.delete(p);
+		    }
+		    else if (s == Status.UPDATED)
+		    {
+		    	//DB.update(p);
+		    }
+		    else if (s == Status.NEW)
+		    {
+		    	System.out.println("Trying to save product " + p.toString());
+		    	DataAccessor.save(p);
+		    }
+//		    else if (s == Status.FRESH)
+//		    {
+//		    	Do nothing
+//		    }
+		}
+		
 	}
 	
 	public void saveToPersistance(Product p){
@@ -215,7 +238,7 @@ public class Pimp {
 		DatabaseSelector dbs = new DatabaseSelector();
 		File file = dbs.getFile("Open");
 		if (file != null) {
-			gui.tree.empty(); // TODO need to encapsulate
+			gui.empty();
 			initialiseDB(file.getName());
 			JOptionPane.showMessageDialog(gui, 
 					"Database " + file.getName() + " opened");
