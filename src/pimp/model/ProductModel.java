@@ -19,7 +19,7 @@ import pimp.productdefs.Product;
 public class ProductModel {
 	
 	private ActionListener productsAddedListener;
-	private ActionListener productsRemovedListener;
+	private ActionListener productsDeletedListener;
 	private ActionListener productUpdatedListener;
 
 	private Map<Product, Status> list;
@@ -74,8 +74,8 @@ public class ProductModel {
 			System.out.println("Deleted product: " + p);
 		}
 		
-		if (productsRemovedListener != null) {
-			productsRemovedListener.actionPerformed(new ActionEvent(products, 0, null));
+		if (productsDeletedListener != null) {
+			productsDeletedListener.actionPerformed(new ActionEvent(products, 0, null));
 		}
 	}
 	
@@ -137,8 +137,8 @@ public class ProductModel {
 		productsAddedListener = a;
 	}
 	
-	public void addProductsRemovedListener(ActionListener a){
-		productsRemovedListener = a;
+	public void addProductsDeletedListener(ActionListener a){
+		productsDeletedListener = a;
 	}
 	
 	public void addProductUpdatedListener(ActionListener a){

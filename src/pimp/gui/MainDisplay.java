@@ -60,7 +60,7 @@ public class MainDisplay extends JFrame {
 		
 		// Setup observation of model.
 		model.addProductsAddedListener(new productAddedListener());
-		model.addProductsRemovedListener(new productRemovedListener());
+		model.addProductsDeletedListener(new productDeletedListener());
 		
 		// Setup view.
 		frame = new JFrame();
@@ -282,7 +282,7 @@ public class MainDisplay extends JFrame {
 		}
 	}
 	
-	class productRemovedListener implements ActionListener{
+	class productDeletedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Remove from tree;
