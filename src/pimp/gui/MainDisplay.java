@@ -118,7 +118,7 @@ public class MainDisplay extends JFrame {
 				// Send this in an event to the controller's listener.
 				try {
 					Product p = (Product) tree.getLastSelected();
-					Product c = (Product) fb.getProductFromForm(dynamicForm);
+					Product c = (Product) dynamicForm.getProduct();
 					ArrayList<Product> l = new ArrayList<Product>();
 					l.add(0, p);
 					l.add(1, c);
