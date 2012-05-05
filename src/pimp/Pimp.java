@@ -4,12 +4,7 @@
 
 package pimp;
 
-// Gui
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import java.io.File;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +15,9 @@ import pimp.gui.DatabaseSelector;
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
 import pimp.model.ProductModel;
-import pimp.model.Status;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
-import pimp.productdefs.Shoe;
 
 
 /**
@@ -37,11 +30,11 @@ public class Pimp {
 	// Database stuff
 	private String defaultDatabaseName = "test.db";
 	
+	// Model
 	private ProductModel cache;
 	
 	// Product classes.
-	private DirectoryClassLoader dcl;
-	private String productPackage = "pimp.productdefs";
+	private DirectoryJarLoader djl;
 	private String productDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
@@ -62,7 +55,7 @@ public class Pimp {
 	 */
 	public Pimp() {
 		// Load class definitions.
-		dcl = new DirectoryClassLoader(productDir, productPackage);
+		djl = new DirectoryJarLoader(productDir);
 		
 		//Initialise cache
 		cache = new ProductModel();
@@ -101,7 +94,7 @@ public class Pimp {
 	}
 	
 	public List<Class<?>> getClassList() {
-		return dcl.getClassList();
+		return djl.getClassList();
 	}
 
 	public List<Class<?>> getConcreteProductList() {
