@@ -35,7 +35,6 @@ public class Pimp {
 	private ProductModel cache;
 	
 	// Product classes.
-	private DirectoryJarLoader djl;
 	private String productDir = "products"; /* Not sure what format this should take
 												may need to be a cmd argument. */ 
 	
@@ -91,31 +90,10 @@ public class Pimp {
 		gui.updateProductForm(shoe);*/
 
 	}
-
-	public List<Class<?>> getClassList() {
-		List<Class<?>> fullList = DirectoryJarLoader.getClassList(productDir);
-		List<Class<?>> productClassList = new ArrayList<Class<?>>();
-		for(Class<?> c: fullList){
-			if(getAllSuperclasses(c).contains(Product.class)){
-				productClassList.add(c);
-			}
-		}
-		return productClassList;
-	}
-	
-	public List<Class<?>> getAllSuperclasses(Class<?> c){
-		List<Class<?>> superClasses = new ArrayList<Class<?>>();
-		Class<?> sc = c.getSuperclass();
-		while(sc != null && sc != Object.class){
-			superClasses.add(sc);
-			sc = sc.getSuperclass();
-		}
-		return superClasses;
-	}
 	
 	public void createNewProduct() {
 		
-		List<Class<?>> cpl = getClassList();
+		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
 		gui.setClasses(cpl); // must be called before setProducts.
 		
 		// Create and show product dialog.
@@ -144,17 +122,7 @@ public class Pimp {
 	}
 	
 	public void createProductCopy(Product productToCopy){
-		Class<? extends Product> c = productToCopy.getClass();
-		try {
-			Product newProduct = c.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		// Do something?
 	}
 	
 	public void getProductsByClass(String className) {
@@ -194,7 +162,7 @@ public class Pimp {
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
 		// Load existing products.
-		List<Class<?>> cpl = getClassList();
+		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
 		gui.setClasses(cpl); // must be called before setProducts.
 	}
 	

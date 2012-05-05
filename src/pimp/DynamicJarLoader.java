@@ -19,9 +19,13 @@ import java.util.jar.JarFile;
  * 
  * @author Daniel Schramm
  */
-public class DirectoryJarLoader {
+public class DynamicJarLoader {
 	
-	private DirectoryJarLoader() {} // Make it impossible to instantiate.
+	private DynamicJarLoader() {} // Make it impossible to instantiate.
+	
+	public static List<Class<?>> load(String dirName) {
+		return load(dirName, Object.class);
+	}
 	
 	/**
 	 * Searches the specified directory for jar files, and loads all classes
@@ -29,14 +33,14 @@ public class DirectoryJarLoader {
 	 * 
 	 * @return the list of classes found.
 	 */
-	public static List<Class<?>> getClassList(String directoryName) {
+	public static List<Class<?>> load(String dirName, Class<?> superClass) {
 		List<Class<?>> classList = new ArrayList<Class<?>>();
 		
 		// Create a string pointing to the product folder.
-		final ClassLoader loader = DirectoryJarLoader.class.getClassLoader();
-		URL directoryUrl = loader.getResource(directoryName);
+		final ClassLoader loader = DynamicJarLoader.class.getClassLoader();
+		URL directoryUrl = loader.getResource(dirName);
 		if (directoryUrl == null) {
-			System.out.println("Could not find the '" + directoryName + 
+			System.out.println("Could not find the '" + dirName + 
 					"' folder in " + System.getProperty("user.dir"));
 			return classList; // Could not find the product directory.
 		}
@@ -60,28 +64,43 @@ public class DirectoryJarLoader {
 		    if (file.getName().endsWith(".jar")) {
 			    System.out.println("Checking jar file: " + file.getName());
 		      	// Load all the classes in the jarFile.
-		        classList.addAll(loadClassesFromJar(file));
+		        classList.addAll(loadClassesFromJar(file, superClass));
 		    }
 	    }
 	    
 	    return classList;
 	}
 	
-	private static List<Class<?>> loadClassesFromJar(File file) {
+	private static boolean hasSuperclass(Class<?> c, Class<?> superClass) {
+		if (superClass == Object.class) return true;
+		
+		Class<?> s = c.getSuperclass();
+		while(s != null && s != Object.class){
+			if (s == superClass) return true;
+			s = s.getSuperclass();
+		}
+		return false;
+	}
+	
+	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		try {
 			// Create the ClassLoader for this Jar.
-		    URLClassLoader classLoader = new URLClassLoader( new URL[] {file.toURI().toURL()} );
+		    URLClassLoader classLoader = new URLClassLoader( 
+		    		new URL[] {f.toURI().toURL()} );
 			
-			JarFile jar = new JarFile(file);
+			JarFile jar = new JarFile(f);
 			// Check each entry in the Jar to see if it is a class.
 			for (JarEntry entry: Collections.list(jar.entries())) {
 				if (entry.getName().endsWith(".class")) {
 					String className = entry.getName();
 					className = className.replace("/", ".").replace(".class","");
 					// Load the class.
-					classes.add(classLoader.loadClass(className));
-					System.out.println("Class loaded: " + className);
+					Class<?> c = classLoader.loadClass(className);
+					if(hasSuperclass(c, sc)) {
+						classes.add(c);
+						System.out.println("Class loaded: " + className);
+					}
 				}
 	    	}
 		} catch (IOException e) {
