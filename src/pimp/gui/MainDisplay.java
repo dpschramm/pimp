@@ -147,7 +147,7 @@ public class MainDisplay extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// Get selected class (will be null if they clicked cancel).
 
-			controller.getNewProduct();	
+			controller.createNewProduct();	
 //			// Check to make sure user made a selection.
 //			if (p != null) {
 //				tree.addProduct(p);

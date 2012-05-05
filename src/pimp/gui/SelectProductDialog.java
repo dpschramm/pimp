@@ -11,6 +11,7 @@ import pimp.productdefs.Product;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,14 @@ public class SelectProductDialog {
 		// Build a map of class name to classes.
 		classMap = new HashMap<String, Class<?>>();
 		for (Class<?> c : classList) {
-			// Strip the package name.
-			String name = c.toString();
-			name = name.substring(name.lastIndexOf('.') + 1);
-			// Add to map.
-			classMap.put(name, c);
+			// Ensure we don't give the option of creating abstract classes.
+			if(!Modifier.isAbstract(c.getModifiers())){
+				// Strip the package name.
+				String name = c.toString();
+				name = name.substring(name.lastIndexOf('.') + 1);
+				// Add to map.
+				classMap.put(name, c);
+			}
 		}
 		
 		// Create JList

@@ -100,27 +100,21 @@ public class Pimp {
 		gui.updateProductForm(drink);
 
 	}
+	
+	public List<Class<?>> getClassList() {
+		return dcl.getClassList();
+	}
 
-	public void getNewProduct() {
-		List<Class<?>> classList = dcl.getClassList();
-		List<Class<?>> concreteClassList = new ArrayList<Class<?>>();
-		//Ensuring we don't give the option of creating abstract classes
-		for(Class<?> c: classList){
-			if(!Modifier.isAbstract(c.getModifiers())){
-				concreteClassList.add(c);				
-			}
-		}
+	public void createNewProduct() {
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				/*dcl.getClassList()*/concreteClassList);
+				getClassList());
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				ArrayList<Product> l = new ArrayList<Product>();
-				l.add(c.newInstance());
-				cache.addToCache(l, Status.NEW);
+				cache.add(c.newInstance());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
