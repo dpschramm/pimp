@@ -24,6 +24,8 @@ import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.model.ProductModel;
 import pimp.productdefs.Product;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The main user interface window.
@@ -75,6 +77,7 @@ public class MainDisplay extends JFrame {
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
 		tree.addProductSelectedListener(new productSelectedListener());
+		tree.addProductEditedListener(new productEditedListener());
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -129,17 +132,7 @@ public class MainDisplay extends JFrame {
 
 				// Create new copy of product, with different name
 				// Send this in an event to the controller's listener.
-				try {
-					Product p = selectedProduct;
-					Product c = getCurrentProductState();
-					ArrayList<Product> l = new ArrayList<Product>();
-					l.add(0, p);
-					l.add(1, c);
-					controller.updateCacheItem(l);
-				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 			}
 		});
 		
@@ -188,6 +181,7 @@ public class MainDisplay extends JFrame {
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
+	
 		return buttonPanel;
 	}
 		
@@ -228,6 +222,24 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			controller.getProductsByClass(e.getActionCommand());
+		}
+	}
+	
+	class productEditedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				Product p = selectedProduct;
+				Product c = getCurrentProductState();
+				ArrayList<Product> l = new ArrayList<Product>();
+				l.add(0, p);
+				l.add(1, c);
+				controller.updateCacheItem(l);
+			} catch (IllegalArgumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 	}
 	
