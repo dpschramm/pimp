@@ -172,9 +172,17 @@ public class Pimp {
 		cache.delete(products);
 	}
 	
-	public void update(Product product){
-	//	cache.update(product);
+
+	/**
+	 * Can someone please figure out how to get pairs working
+	 * @param p
+	 */
+	public void update(ArrayList<Product> p){
+		Product product = p.get(0);
+		Product changes = p.get(1);
+		cache.update(product, changes);
 	}
+
 	
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
@@ -221,4 +229,5 @@ public class Pimp {
 			}
 		}
 	}
+
 }

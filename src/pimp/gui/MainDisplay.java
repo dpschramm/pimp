@@ -71,6 +71,8 @@ public class MainDisplay extends JFrame {
 		tree = new ProductTree();
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
+		tree.addProductUpdatedListener(new productUpdatedListener());
+		tree.addproductSelectedListener(new productSelectedListener());
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -169,23 +171,7 @@ public class MainDisplay extends JFrame {
 	 * The current object state is retrieved by passing the form/companion form through
 	 * the form builder.
 	 * */	
-	public Product saveCurrentChanges(){
-		try {
-			Object currentFormState = fb.getProductFromForm(dynamicForm);
-		// TODO Remove all these exceptions, handle them in form builder instead? -DS
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
+
 	
 	class classChangedListener implements ActionListener{
 		@Override
@@ -193,6 +179,38 @@ public class MainDisplay extends JFrame {
 			controller.getProductsByClass(e.getActionCommand());
 		}
 	}
+	
+	class productSelectedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//Update form
+			updateProductForm((Product) e.getSource());
+		}
+	}
+	
+	class productUpdatedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent u) {
+			try {
+				Object currentFormState = fb.getProductFromForm(dynamicForm);
+				ArrayList<Product> l = new ArrayList<Product>();
+				l.add(0, (Product) u.getSource());
+				l.add(1, (Product) currentFormState);
+				controller.update(l);
+			// TODO Remove all these exceptions, handle them in form builder instead? -DS
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 	/**
 	 * 

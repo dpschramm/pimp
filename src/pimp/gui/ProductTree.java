@@ -34,6 +34,9 @@ public class ProductTree extends JTree {
 	private NodeItem root;
 	private DefaultTreeModel model;
     private ActionListener classSelectListener;
+    private ActionListener productUpdatedListener;
+    private ActionListener productSelectedListener;
+    
 	private HashMap<String, NodeItem> map;
 	
 	public ProductTree() {
@@ -58,7 +61,6 @@ public class ProductTree extends JTree {
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				if(event.isAddedPath()){
-					retrieveAndSave(); 
 				
 					TreePath path = event.getNewLeadSelectionPath();
 					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
@@ -72,7 +74,10 @@ public class ProductTree extends JTree {
 					}
 					else
 					{
-						updateParentForm((Product)selectedNode.getStoredObject());
+						//The user has selected a product. So we'll update the form.
+						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
+						productSelectedListener.actionPerformed(s);
+						
 					}
 				}
 			}
@@ -85,8 +90,6 @@ public class ProductTree extends JTree {
 
 			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
@@ -109,25 +112,10 @@ public class ProductTree extends JTree {
 		
 	}
 	
-	
-	// This exists because we can't refer to parent from in that inner class up there
-	// We could move that code from out of the constructor at some stage
-	private void retrieveAndSave(){
-		/*Product p =*/ 
-		//parent.saveCurrentChanges();	
-	}
-
-	private void updateParentForm(Product p){
-		//parent.updateProductForm(p);
-	}
-	
-	public void addClassSelectListener(ActionListener a){
-		classSelectListener = a;
-	}
-	
-	public void empty() {
-		root.removeAllChildren();
-		model.setRoot(root);
+	public void findMeATrigger(){
+		//Product has been changed
+		ActionEvent u = new ActionEvent(getSelectedProduct(), 0, "");
+		productUpdatedListener.actionPerformed(u);
 	}
 	
 	/**
@@ -141,14 +129,12 @@ public class ProductTree extends JTree {
 		
 		ArrayList<Product> products = new ArrayList<Product>();
 		
-		TreePath selectionPath = getSelectionPath();
-		NodeItem selectedNode = (NodeItem)
-				selectionPath.getLastPathComponent();
-		
+		NodeItem selectedNode = getSelectedNode(); 
 		Object o = selectedNode.getStoredObject();
-		
 		Class<?> c = o.getClass();
+		
 		if(!(selectedNode == root)){
+			//if it's a single node, return the class contained in it.
 			if(!o.getClass().equals(Class.class)){				
 				products.add((Product) o);
 			}
@@ -175,6 +161,14 @@ public class ProductTree extends JTree {
 		}
 		return products;
 	}
+	
+	public NodeItem getSelectedNode(){
+		TreePath selectionPath = getSelectionPath();
+		NodeItem selectedNode = (NodeItem)
+				selectionPath.getLastPathComponent();
+		return selectedNode;
+	}
+	
 	/**
 	 * @param product
 	 */
@@ -187,6 +181,31 @@ public class ProductTree extends JTree {
 	private void insertNode(NodeItem n, NodeItem p) {
 		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
 		scrollPathToVisible(new TreePath(n.getPath()));
+	}
+	
+	public void removeProduct(Product p) {
+		removeNode(p);
+	}
+	
+	public void removeNode(Product p){
+		NodeItem n;
+		Class<?> c = p.getClass();
+		NodeItem parent = getNodeFromMap(c.toString());
+		Enumeration<NodeItem> children = parent.children();
+		
+		while (children.hasMoreElements()){
+			NodeItem child = children.nextElement();
+			if(child.getStoredObject().equals(p))
+			{
+				model.removeNodeFromParent(child);
+				repaint();
+			}
+			System.out.println(parent.toString());
+		}
+	}
+	
+	public void empty(){
+		this.removeAll();
 	}
 	
 	/**
@@ -268,26 +287,17 @@ public class ProductTree extends JTree {
 		}
 		return n;	
 	}
-
-	public void removeProduct(Product p) {
-		removeNode(p);
+	
+	public void addClassSelectListener(ActionListener a){
+		classSelectListener = a;
 	}
 	
-	public void removeNode(Product p){
-		NodeItem n;
-		Class<?> c = p.getClass();
-		NodeItem parent = getNodeFromMap(c.toString());
-		Enumeration<NodeItem> children = parent.children();
-		
-		while (children.hasMoreElements()){
-			NodeItem child = children.nextElement();
-			if(child.getStoredObject().equals(p))
-			{
-				model.removeNodeFromParent(child);
-				repaint();
-			}
-			System.out.println(parent.toString());
-		}
+	public void addProductUpdatedListener(ActionListener a){
+		productUpdatedListener = a;
+	}
+	
+	public void addproductSelectedListener(ActionListener a){
+		productSelectedListener = a;
 	}
 	
 }
