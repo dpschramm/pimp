@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
+import pimp.gui.DatabaseSelector;
 import pimp.gui.MainDisplay;
 import pimp.gui.SelectProductDialog;
+import pimp.model.ProductModel;
+import pimp.model.Status;
 import pimp.persistence.DataAccessor;
-import pimp.persistence.ProductCache;
-import pimp.persistence.Status;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
 import pimp.testdefs.Shoe;
@@ -34,7 +37,7 @@ public class Pimp {
 	// Database stuff
 	private String defaultDatabaseName = "test.db";
 	
-	private ProductCache cache;
+	private ProductModel cache;
 	
 	// Product classes.
 	private DirectoryClassLoader dcl;
@@ -61,30 +64,19 @@ public class Pimp {
 		// Load class definitions.
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		
-		// Initialize Gui
-		gui = new MainDisplay(this);
-		
 		//Initialise cache
-		cache = new ProductCache();
-		//Probably here?
-		cache.addProductsAddedListener(new productAddedListener());
-		cache.addProductsRemovedListener(new productRemovedListener());
+		cache = new ProductModel();
+		
+		// Initialize Gui
+		gui = new MainDisplay(this, cache);
+		
 		// Load existing products.
-
 		initialiseDB(defaultDatabaseName);
 		
 		// Make form.
 		createForm();
 
 		gui.display();
-	}
-	
-	public void initialiseDB(String databaseName) {
-		DataAccessor.initialise(databaseName);
-		
-		// Load existing products.
-		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		//gui.setProducts(DataAccessor.loadProductList());
 	}
 	
 	private void createForm() {
@@ -132,7 +124,7 @@ public class Pimp {
 		}
 	}
 	
-	public void getProductsByClass(String className){
+	public void getProductsByClass(String className) {
 		if (!cache.isLoaded(className)){
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
@@ -142,45 +134,61 @@ public class Pimp {
 			cache.add(l);
 			cache.addToClassesLoaded(className);
 		}
-	}
-	
-	class productAddedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			//Code to update the tree here.
-			gui.setProducts((List<Product>) e.getSource());
-		}
-	}
-	
-	class productRemovedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			//Remove from tree;
-			gui.removeProduct((List<Product>) e.getSource());
-		}
 	}	
 
-
+	/**
+	 * Delete a list of products.
+	 * 
+	 * @param products the list of products to be deleted.
+	 */
 	public void remove(List<Product> products){
-		//We've received a list of products that need to be deleted.
 		//Fire it over to the cache.
 		cache.delete(products);
 	}
 	
-	/**
-	 * This method was written to do the controller side processing of the
-	 * export button. It takes a file and attempts to save the database to
-	 * it.
-	 */
-	public boolean exportDatabase(File dbFile) {
-		try {
-			DataAccessor.exportDb(dbFile);
-		} catch (Exception e1) {
-			System.err.println("Could not export database to " + dbFile.getName());
-			e1.printStackTrace();
-			return false;
-		}	
-		return true;
+	public void initialiseDB(String databaseName) {
+		DataAccessor.initialise(databaseName);
+		// Load existing products.
+		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
 	}
-
+	
+	/**
+	 * Brings up a dialog to select the database file
+	 * and load products from that database.
+	 */
+	public void open() {
+		DatabaseSelector dbs = new DatabaseSelector();
+		File file = dbs.getFile("Open");
+		if (file != null) {
+			gui.tree.empty(); // TODO need to encapsulate
+			initialiseDB(file.getName());
+			JOptionPane.showMessageDialog(gui, 
+					"Database " + file.getName() + " opened");
+		}
+	}
+	
+	/**
+	 * Brings up a dialog to choose/create new database location.
+	 * The current database will be copied to the new location, 
+	 * and all subsequent database transactions will be performed at
+	 * the new location.
+	 */
+	public void saveAs() {
+		// Get file to process from user.
+		DatabaseSelector dbs = new DatabaseSelector();
+		File file = dbs.getFile("Export");
+		
+		if (file != null) {	// If the user selected a file...
+			try {
+				DataAccessor.exportDb(file);
+				JOptionPane.showMessageDialog(gui, 
+						"Database successfully exported to " + 
+						file.getName() + ".");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(gui, 
+					"Could not export database to this location");
+			}
+		}
+	}
 }
