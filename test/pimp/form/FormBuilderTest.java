@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test.pimp.form;
+package pimp.form;
 
 
 import java.awt.Color;
@@ -93,7 +93,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(drink);
-			Drink drinkFromForm = (Drink) fb.getProductFromForm(f);
+			Drink drinkFromForm = (Drink) f.getProduct();
 			System.out.println(drinkFromForm);
 			System.out.println(drink);
 			for(Field field : drink.getClass().getFields()){	
@@ -119,7 +119,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(jacket);
-			Jacket jacketFromForm = (Jacket) fb.getProductFromForm(f);
+			Jacket jacketFromForm = (Jacket) f.getProduct();
 			System.out.println(jacketFromForm);
 			System.out.println(jacket);
 			for(Field field : jacket.getClass().getFields()){	
@@ -162,7 +162,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(Drink.class);
-			fb.fillForm(f, drink);
+			f.setProduct(drink);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		} catch (IllegalAccessException e) {
@@ -175,7 +175,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(Jacket.class);
-			fb.fillForm(f, jacket);
+			f.setProduct(jacket);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		} catch (IllegalAccessException e) {
@@ -188,7 +188,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		FormBuilder fb = new FormBuilder();
 		try {
 			Form f = fb.createForm(Jacket.class);
-			fb.fillForm(f, drink);
+			f.setProduct(drink);
 			fail("Expected Exception");
 		} catch (IllegalArgumentException e) {
 			// Expected

@@ -24,7 +24,7 @@ import pimp.model.Status;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
-import pimp.testdefs.Shoe;
+import pimp.productdefs.Shoe;
 
 
 /**
@@ -104,16 +104,42 @@ public class Pimp {
 		return dcl.getClassList();
 	}
 
+	public List<Class<?>> getConcreteProductList() {
+		List<Class<?>> fullList = getClassList();
+		List<Class<?>> productClassList = new ArrayList<Class<?>>();
+		for(Class<?> c: fullList){
+			/*if(c.getSuperclass() == Product.class){
+				productClassList.add(c);
+			}*/
+			if(getAllSuperclasses(c).contains(Product.class)){
+				productClassList.add(c);
+			}
+		}
+		return productClassList;
+	}
+	
+	public List<Class<?>> getAllSuperclasses(Class<?> c){
+		List<Class<?>> superClasses = new ArrayList<Class<?>>();
+		Class sc = c.getSuperclass();
+		while(sc != null && sc != Object.class){
+			superClasses.add(sc);
+			sc = sc.getSuperclass();
+		}
+		return superClasses;
+	}
+	
 	public void createNewProduct() {
 		// Create and show product dialog.
 		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
-				getClassList());
+				getConcreteProductList());
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				cache.add(c.newInstance());
+				Product p = c.newInstance();
+				p.name = "New " + c.getSimpleName();
+				cache.add(p);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,6 +172,7 @@ public class Pimp {
 		cache.delete(products);
 	}
 	
+
 	/**
 	 * Can someone please figure out how to get pairs working
 	 * @param p
@@ -160,8 +187,8 @@ public class Pimp {
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
 		// Load existing products.
-		gui.setClasses(dcl.getClassList()); // must be called before setProducts.
-		getProductsByClass(dcl.getClassList().get(0).toString());
+		List<Class<?>> cpl = getConcreteProductList();
+		gui.setClasses(cpl); // must be called before setProducts.
 	}
 	
 	public void commitCache(){

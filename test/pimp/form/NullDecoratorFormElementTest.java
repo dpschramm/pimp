@@ -1,4 +1,4 @@
-package test.pimp.form;
+package pimp.form;
 
 import java.awt.Color;
 import java.util.Date;

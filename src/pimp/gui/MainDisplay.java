@@ -232,7 +232,8 @@ public class MainDisplay extends JFrame {
 			}
 			Class<?> companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
-				Constructor<?> constr = companionClass.getConstructor(product.getClass());
+				Class c = product.getClass();
+				Constructor<?> constr = companionClass.getConstructor(c);
 				cForm = (CompanionForm) constr.newInstance(product);
 				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
 				dynamicForm = null;
@@ -270,6 +271,7 @@ public class MainDisplay extends JFrame {
 	}
 	
 	public void setClasses(List<Class<?>> classList) {
+		// Need to get rid of any companion form classes in the directory.
 		tree.addProductStructure(classList);
 	}
 	

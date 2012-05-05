@@ -4,7 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import pimp.productdefs.Product;
-import pimp.testdefs.ShoeCompainionForm;
+import pimp.productdefs.ShoeCompainionForm;
 
 public class Shoe extends Product {
 	
@@ -19,8 +19,7 @@ public class Shoe extends Product {
 	
 	@Override
 	public String toString() {
-		return "Shoe [shoeSize=" + shoeSize + ", sizingSystem=" + sizingSystem
-				+ ", name=" + name + ", quantity=" + quantity + "]";
+		return this.name;
 	}
 
 
