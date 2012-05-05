@@ -7,6 +7,12 @@ import pimp.productdefs.Product;
 /**
  * 
  * @author Joel Mason
+ * NodeItems were originally designed with the goal to store a String representing a product
+ * and a hidden ID field corresponding to the product's unique ID. This was to ensure we didn't 
+ * have all products in memory.
+ * 
+ * With the switch to a caching system we probably could've gotten away with DefaultMutableTreeNodes
+ * but it's always handy having your own class extensions.
  *
  */
 
@@ -14,6 +20,7 @@ public class NodeItem extends DefaultMutableTreeNode{
 
     private String nodeName;
     private Object o;
+    
     //Constructor that takes a product.
     public NodeItem(Product p){
     	this.nodeName = p.toString();
@@ -28,6 +35,10 @@ public class NodeItem extends DefaultMutableTreeNode{
     
     public Object getStoredObject(){
     	return o;
+    }
+    
+    public void setName(Product p){
+    	nodeName = p.toString();
     }
     
     @Override

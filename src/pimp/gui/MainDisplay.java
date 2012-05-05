@@ -41,7 +41,7 @@ public class MainDisplay extends JFrame {
 	
 	// Views
 	private JFrame frame;
-	public ProductTree tree; // TODO make this private, encapsulate.
+	private ProductTree tree; // TODO make this private, encapsulate.
 	private JScrollPane treeScrollPanel;
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
@@ -49,6 +49,8 @@ public class MainDisplay extends JFrame {
 	private Form dynamicForm; /* Keeping this reference to the dynamic form
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
+	
+	private Product selectedProduct;
 	
 	/** 
 	 * Constructor
@@ -107,18 +109,29 @@ public class MainDisplay extends JFrame {
 				controller.createNewProduct();	
 			}
 		});
-		
-		// Create save Button
-		JButton btnSave = new JButton("Save");
-		btnSave.addActionListener(new ActionListener() {
+
+		// Create Copy Button
+		JButton btnCopy = new JButton("Copy");
+		btnCopy.addActionListener(new ActionListener() {
+
+
 			@Override()
 			public void actionPerformed(ActionEvent e) {
-				// Get selected product from tree	
+			}
+		});
+		
+		// Create Open Database Button
+		JButton btnOpenProducts = new JButton("Open");
+		btnOpenProducts.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.open();
+
 				// Create new copy of product, with different name
 				// Send this in an event to the controller's listener.
 				try {
-					Product p = (Product) tree.getLastSelected();
-					Product c = (Product) dynamicForm.getProduct();
+					Product p = selectedProduct;
+					Product c = getCurrentProductState();
 					ArrayList<Product> l = new ArrayList<Product>();
 					l.add(0, p);
 					l.add(1, c);
@@ -126,14 +139,7 @@ public class MainDisplay extends JFrame {
 				} catch (IllegalArgumentException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InstantiationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
-				
 			}
 		});
 		
@@ -147,12 +153,14 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
-		// Create Open Database Button
-		JButton btnOpenProducts = new JButton("Open");
-		btnOpenProducts.addActionListener(new ActionListener() {
+		// Create Copy Product Button
+		JButton btnCopyProduct = new JButton("Copy");
+		btnCopyProduct.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.open();
+				Product c = getCurrentProductState();
+				controller.createNewProduct(c);
+				
 			}
 		});
 		
@@ -168,7 +176,8 @@ public class MainDisplay extends JFrame {
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
-		leftPanel.add(btnSave);
+		leftPanel.add(btnCopyProduct);
+		//leftPanel.add(btnSave);
 		leftPanel.add(btnDelete);
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
@@ -180,6 +189,31 @@ public class MainDisplay extends JFrame {
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
 		return buttonPanel;
+	}
+		
+	/*
+	 * This checks whether we are currently used a form or a companion form, 
+	 * and returns the object representing the current form state. 
+	 * 
+	 **/
+	public Product getCurrentProductState(){
+		Product c;	
+		try {
+			if(cForm != null){
+				c = (Product) cForm.getObject();
+			}
+			else{
+				c = (Product) dynamicForm.getProduct();
+			}
+		return c;
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/*
@@ -201,19 +235,8 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Update form
+			selectedProduct = (Product) e.getSource();
 			updateProductForm((Product) e.getSource());
-		}
-	}
-	 /** 
-	  * 
-	  * @author Joel
-	  *
-	  */
-	class productUpdatedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent u) {
-			
-			
 		}
 	}
 	
@@ -297,6 +320,18 @@ public class MainDisplay extends JFrame {
 				tree.removeProduct(p);
 			}
 		}
+	}
+
+	class productUpdatedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent u) {
+			tree.updateNode((Product) u.getSource());
+		}
+	}
+
+
+	public void empty() {
+		tree.empty();
 	}
 	
 

@@ -34,8 +34,6 @@ public class ProductTree extends JTree {
 	private NodeItem root;
 	private DefaultTreeModel model;
 
-
-	private Object lastSelected;
     private ActionListener classSelectListener;
     private ActionListener productUpdatedListener;
     private ActionListener productSelectedListener;
@@ -56,11 +54,15 @@ public class ProductTree extends JTree {
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(false);
 		
-		// Selection listener.
+		
 		addTreeSelectionListener(new TreeSelectionListener() {
-			/* Retrieve the selected object and creates a new dynamic form to display the 
-			 * product's attributes.
-			 */
+			 /**
+			  * The valueChanged listener is called all the time.
+			  * The most crucial part is that it accurately distinguishes between class and product selection.
+			  * If it's a class selection, it fires a classSelectionEvent which is either handled as a DB
+			  * or cache query. A product selection results in a productSelection event firing which ends up
+			  * filling in the form in the GUI.
+			  */
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				if(event.isAddedPath()){
@@ -74,33 +76,28 @@ public class ProductTree extends JTree {
 						String s = o.toString();
 						ActionEvent i = new ActionEvent(model, 0, s);
 						classSelectListener.actionPerformed(i);
-						System.out.println("Class");
 					}
 					else
-					{			
-						
-						if (lastSelected == null)
-						{
-							lastSelected = o;
-						}
+					{	
 						//The user has selected a product. So we'll update the form.
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
-						lastSelected = o;
 					}
 				}
 			}
 		});
 		
 		addTreeExpansionListener(new TreeExpansionListener() {
-			/* Retrieve the selected object and creates a new dynamic form to display the 
-			 * product's attributes.
-			 */
-
+			
 			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
-
+			/**
+			 * The treeExpanded method is similar to valueChanged - it fires the same classSelected event
+			 * but seeing as products can't have children it doesn't need to worry about updating the form.
+			 * The main purpose in this existing is for when products are added and automatically scrolled to.
+			 * This doesn't could as a valueChanged event, but a treeExpanded event, and it needs to react accordingly.
+			 */
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				TreePath path = (TreePath) event.getPath();
@@ -121,18 +118,23 @@ public class ProductTree extends JTree {
 		
 	}
 	
+	/**
+	 * TODO: Find an appropriate time to call this. This will probably be fired from the GUI to be honest.
+	 * 
+	 */
 	public void findMeATrigger(){
-		//Product has been changed
 		ActionEvent u = new ActionEvent(getSelectedProduct(), 0, "");
 		productUpdatedListener.actionPerformed(u);
 	}
 	
 	/**
-	 * This should be re-written as two separate methods; one that gets the
-	 * currently selected product, and the other that removes a specified
-	 * product.
+	 * This returns an arrayList of the selected product(s). It's a list because if
+	 * the user is on a parent node then it should return the children of that node.
+	 * This is mostly used to send information to the delete method when the delete listener fires.
+	 * There is a confirmation if the user selects a parent to ensure they don't accidentally delete a 
+	 * bunch of things, and the user cannot select the root node and wipe everything this way either.
 	 * 
-	 * @return the product that was removed.
+	 * @return the products selected.
 	 */
 	public ArrayList<Product> getSelectedProduct() {
 		
@@ -171,6 +173,10 @@ public class ProductTree extends JTree {
 		return products;
 	}
 	
+	/**
+	 * This is used as a helped method for getSelectedProducts
+	 * @return selectedNode the selected node (leaf or parent)
+	 */
 	public NodeItem getSelectedNode(){
 		TreePath selectionPath = getSelectionPath();
 		NodeItem selectedNode = (NodeItem)
@@ -179,6 +185,8 @@ public class ProductTree extends JTree {
 	}
 	
 	/**
+	 * Adds a product to the tree. It looks up the map with its class type to figure out 
+	 * where it should be inserted.
 	 * @param product
 	 */
 	public void addProduct(Product p){	
@@ -187,16 +195,58 @@ public class ProductTree extends JTree {
 		insertNode(node, parent);
 	}
 	
+	/**
+	 * Insert node as a child of a specific node.
+	 * Also fires an event as insertNode is called when a product is added
+	 * but the valueChanged listener is not triggered, so manually trigger it here.
+	 * @param n node
+	 * @param p parent
+	 */
 	private void insertNode(NodeItem n, NodeItem p) {
 		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
 		scrollPathToVisible(new TreePath(n.getPath()));
+		
+		ActionEvent s = new ActionEvent((Product)n.getStoredObject(), 0, "");
+		productSelectedListener.actionPerformed(s);
 	}
 	
+	/**
+	 * Remove a specific product. Uses the findNode helper method to work out
+	 * the node's parent, then it's a simple call.
+	 * @param p the product to remove.
+	 */
 	public void removeProduct(Product p) {
-		removeNode(p);
+		NodeItem n = findNode(p);
+		if (n != null)
+		{
+			model.removeNodeFromParent(n);
+			repaint();
+		}
 	}
 	
-	public void removeNode(Product p){
+	/**
+	 * This is called when an update event trickles back down to the tree from the model.
+	 * Updates the string representing the node on the tree based on the produt's toString() method.
+	 * Also uses the helper method findNode.
+	 * @param p
+	 */
+	public void updateNode(Product p){
+		NodeItem n = findNode(p);
+		if (n != null)
+		{
+			n.setName(p);
+			repaint();
+		}
+	}
+	
+	/**
+	 * This method is a little tricky - given product p it can work out the parent of it,
+	 * but not the actual node where p is stored. So it has to Enumerate over the set of children.
+	 * If it finds a node containing the same object as the one it has, that's the one we want.
+	 * @param p the product to find
+	 * @return the node containing Product p
+	 */
+	public NodeItem findNode(Product p){
 		NodeItem n;
 		Class<?> c = p.getClass();
 		NodeItem parent = getNodeFromMap(c.toString());
@@ -206,13 +256,16 @@ public class ProductTree extends JTree {
 			NodeItem child = children.nextElement();
 			if(child.getStoredObject().equals(p))
 			{
-				model.removeNodeFromParent(child);
-				repaint();
+				return child;
 			}
 			System.out.println(parent.toString());
 		}
+		return null;
 	}
 	
+	/**
+	 * Method called from GUI in the event of a database switchout.
+	 */
 	public void empty(){
 		this.removeAll();
 	}
@@ -297,6 +350,11 @@ public class ProductTree extends JTree {
 		return n;	
 	}
 	
+	/**
+	 *  Self explanatory. 
+	 * @param a
+	 */
+	
 	public void addClassSelectListener(ActionListener a){
 		classSelectListener = a;
 	}
@@ -307,10 +365,6 @@ public class ProductTree extends JTree {
 	
 	public void addProductSelectedListener(ActionListener a){
 		productSelectedListener = a;
-	}
-	
-	public Object getLastSelected() {
-		return lastSelected;
 	}
 	
 }
