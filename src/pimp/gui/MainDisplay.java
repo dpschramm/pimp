@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 
 import pimp.Pimp;
@@ -56,6 +57,10 @@ public class MainDisplay extends JFrame {
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
 	
+	private Product currentProduct;
+	
+	private JScrollPane treeScrollPanel;
+	
 	/** 
 	 * Constructor
 	 */
@@ -75,10 +80,12 @@ public class MainDisplay extends JFrame {
 		fb = new FormBuilder();
 		
 		// Create product tree.
-		tree = new ProductTree(this);
+		tree = new ProductTree();
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
-		JScrollPane treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel = new JScrollPane(tree);
+		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		
 		// Add panels.
@@ -169,18 +176,23 @@ public class MainDisplay extends JFrame {
 	 * */	
 	public Product saveCurrentChanges(){
 		try {
-			Object currentProductState;
+			/*Object currentProductState = null;
 			if(dynamicForm != null){
 				currentProductState = fb.getProductFromForm(dynamicForm);
 			}
-			else/* if(cForm != null)*/{
+			else if(cForm != null){
 				currentProductState = cForm.getObject();
 			}
 			//This check shouldn't be necessary but whatever
 			if(currentProductState instanceof Product){
-				controller.saveChangesToProduct((Product)currentProductState);
+				//controller.saveChangesToProduct((Product)currentProductState);
 			}
-			return (Product) currentProductState;
+			return (Product) currentProductState;*/
+			Object currentFormState = fb.getProductFromForm(dynamicForm);
+			//asdf The current form state needs to be copied over to the current product here
+			//there is no easy way to do this. There should be. 
+			
+
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,13 +216,10 @@ public class MainDisplay extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// Remove selected product from tree
-			Product product = tree.removeSelectedProduct();
-			products.remove(product);
-			
-			// Erase from xml
-			// This is done by overwriting the file with the new, smaller list of products
-		}		
+			ArrayList<Product> products = tree.getSelectedProduct();
+			//Fire the list up to the controller
+			controller.remove(products);
+		}
 	}	
 	
 
@@ -325,7 +334,7 @@ public class MainDisplay extends JFrame {
 			else if(cForm != null){
 				frame.getContentPane().remove((JPanel)cForm.getForm());
 			}
-			//Form form;
+			currentProduct = product;
 			Class<?> companionClass = product.getCompanionFormClass();
 			if(companionClass != null){
 				Constructor<?> constr = companionClass.getConstructor(product.getClass());
@@ -338,6 +347,7 @@ public class MainDisplay extends JFrame {
 				frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 				cForm = null;
 			}
+
 			//dynamicForm = form;
 			//frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {
@@ -374,7 +384,9 @@ public class MainDisplay extends JFrame {
 		}
 	}
 
-	public void removeProduct(Product p) {
+	public void removeProduct(List<Product> products){
+		for (Product p : products){
 		tree.removeProduct(p);
+		}
 	}
 }

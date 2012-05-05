@@ -99,6 +99,13 @@ public class Pimp {
 		// Update the form displayed by the GUI.
 		gui.updateProductForm(drink);
 
+		/*Shoe shoe = new Shoe();
+		shoe.name = "STYLISH SHOOOOE";
+		shoe.quantity = 4;
+		shoe.shoeSize = 12;
+		shoe.sizingSystem = "EU";
+		gui.updateProductForm(shoe);*/
+
 	}
 	
 	public List<Class<?>> getClassList() {
@@ -126,13 +133,14 @@ public class Pimp {
 	}
 	
 	public void getProductsByClass(String className){
-		if (cache.getFromCache(className).size() == 0){
+		if (!cache.isLoaded(className)){
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
-			cache.addToCache(l, Status.FRESH);
+			cache.add(l);
+			cache.addToClassesLoaded(className);
 		}
 	}
 	
@@ -148,16 +156,15 @@ public class Pimp {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Remove from tree;
-			gui.removeProduct((Product) e.getSource());
+			gui.removeProduct((List<Product>) e.getSource());
 		}
-	}
+	}	
 
-	/*
-	 * It seems weird, that this is necessary. But we don't want to use a data accessor
-	 * from the gui. That would be A Bad Thing to do.
-	 * */
-	public void saveChangesToProduct(Product p){
-		DataAccessor.save(p);
+
+	public void remove(List<Product> products){
+		//We've received a list of products that need to be deleted.
+		//Fire it over to the cache.
+		cache.delete(products);
 	}
 	
 	/**

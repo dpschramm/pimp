@@ -1,0 +1,5 @@
+/bin/
+/out/
+/.metadata/
+/.settings/
+newdb.db
