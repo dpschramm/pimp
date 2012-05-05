@@ -36,7 +36,6 @@ public class ProductTree extends JTree {
     private ActionListener classSelectListener;
 	private HashMap<String, NodeItem> map;
 	
-	//private MainDisplay parent;
 	
 	public ProductTree() {
 		super();
