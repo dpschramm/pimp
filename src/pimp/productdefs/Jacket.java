@@ -12,10 +12,7 @@ public class Jacket extends Clothing {
 	
 	@Override
 	public String toString() {
-		return "Jacket [size=" + size + ", brand=" + brand + ", isWaterproof="
-				+ isWaterproof + ", colour=" + colour + ", name=" + name
-				+ ", quantity=" + quantity + ", displayForm="
-				+ "]";
+		return this.name;
 	}
 
 	@FormField(displayName="Is Waterproof")

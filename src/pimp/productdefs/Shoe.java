@@ -19,8 +19,7 @@ public class Shoe extends Product {
 	
 	@Override
 	public String toString() {
-		return "Shoe [shoeSize=" + shoeSize + ", sizingSystem=" + sizingSystem
-				+ ", name=" + name + ", quantity=" + quantity + "]";
+		return this.name;
 	}
 
 

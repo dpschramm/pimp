@@ -2,6 +2,7 @@ package pimp.gui;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.BorderLayout;
@@ -245,6 +246,7 @@ public class MainDisplay extends JFrame {
 	}
 	
 	public void setClasses(List<Class<?>> classList) {
+		// Need to get rid of any companion form classes in the directory.
 		tree.addProductStructure(classList);
 	}
 	
