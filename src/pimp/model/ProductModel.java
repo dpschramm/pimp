@@ -119,6 +119,11 @@ public class ProductModel {
 		System.out.println("Updated product: " + product);
 	}
 	
+	public void commit() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void addToClassesLoaded(String s){
 		classesLoaded.add(s);
 	}
@@ -139,6 +144,8 @@ public class ProductModel {
 	public void addProductUpdatedListener(ActionListener a){
 		productUpdatedListener = a;
 	}
+
+	
 
 	
 }
