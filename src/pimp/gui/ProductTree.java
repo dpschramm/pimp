@@ -33,6 +33,9 @@ public class ProductTree extends JTree {
 	// Product tree.
 	private NodeItem root;
 	private DefaultTreeModel model;
+
+
+	private Object lastSelected;
     private ActionListener classSelectListener;
     private ActionListener productUpdatedListener;
     private ActionListener productSelectedListener;
@@ -65,6 +68,7 @@ public class ProductTree extends JTree {
 					TreePath path = event.getNewLeadSelectionPath();
 					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
 					Object o = selectedNode.getStoredObject();
+					
 					if (o.getClass().equals(Class.class)){
 						//Need to figure out what the source is - it can't be null.
 						String s = o.toString();
@@ -73,11 +77,16 @@ public class ProductTree extends JTree {
 						System.out.println("Class");
 					}
 					else
-					{
+					{			
+						
+						if (lastSelected == null)
+						{
+							lastSelected = o;
+						}
 						//The user has selected a product. So we'll update the form.
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
-						
+						lastSelected = o;
 					}
 				}
 			}
@@ -296,8 +305,12 @@ public class ProductTree extends JTree {
 		productUpdatedListener = a;
 	}
 	
-	public void addproductSelectedListener(ActionListener a){
+	public void addProductSelectedListener(ActionListener a){
 		productSelectedListener = a;
+	}
+	
+	public Object getLastSelected() {
+		return lastSelected;
 	}
 	
 }

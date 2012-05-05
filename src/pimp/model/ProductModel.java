@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pimp.Pimp;
 import pimp.productdefs.Product;
 
 /**
@@ -23,8 +24,10 @@ public class ProductModel {
 
 	private Map<Product, Status> list;
 	private ArrayList<String> classesLoaded;
+	private Pimp controller;
 	
-	public ProductModel(){
+	public ProductModel(Pimp controller){
+		this.controller = controller;
 		list = new HashMap<Product, Status>();
 		classesLoaded = new ArrayList<String>();
 	}
@@ -85,15 +88,38 @@ public class ProductModel {
 		
 		// Only change status if it is fresh from the database.
 		if (list.get(product) == Status.FRESH) {
-			list.put(product, Status.UPDATED);
+			//list.get(product).setStatus(Status.UPDATED);
 		}
 
 		System.out.println("Updated product: " + product);		
-		productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
+		productUpdatedListener.actionPerformed(new ActionEvent(product, 0, ""));
 	}
 	
 	public void commit() {
-		// TODO Auto-generated method stub
+		
+		for (Map.Entry<Product, Status> entry : list.entrySet()) {
+		    Product p = entry.getKey();
+		    Status s = entry.getValue();
+		    if (s == Status.DELETED)
+		    {
+		    	//DB.delete(p);
+		    	list.remove(p);
+		    }
+		    else if (s == Status.UPDATED)
+		    {
+		    	//DB.update(p);
+		    	s = Status.FRESH;
+		    }
+		    else if (s == Status.FRESH)
+		    {
+		    	System.out.println("Trying to save product " + p.toString());
+		    	controller.saveToPersistance(p);
+		    }
+//		    else if (s == Status.FRESH)
+//		    {
+//		    	Do nothing
+//		    }
+		}
 		
 	}
 	
