@@ -107,15 +107,14 @@ public class MainDisplay extends JFrame {
 				controller.createNewProduct();	
 			}
 		});
-		
 
 		// Create Copy Button
-		JButton btnCopy = new JButton("Save");
+		JButton btnCopy = new JButton("Copy");
 		btnCopy.addActionListener(new ActionListener() {
+
 
 			@Override()
 			public void actionPerformed(ActionEvent e) {
-				// Create new copy of product, with different name	
 			}
 		});
 		
