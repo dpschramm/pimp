@@ -113,8 +113,26 @@ public class MainDisplay extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			@Override()
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-				"Not yet implemented.");
+				// Get selected product from tree	
+				// Create new copy of product, with different name
+				// Send this in an event to the controller's listener.
+				try {
+					Product p = (Product) tree.getLastSelected();
+					Product c = (Product) fb.getProductFromForm(dynamicForm);
+					ArrayList<Product> l = new ArrayList<Product>();
+					l.add(0, p);
+					l.add(1, c);
+					controller.updateCacheItem(l);
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		});
@@ -194,26 +212,8 @@ public class MainDisplay extends JFrame {
 	class productUpdatedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent u) {
-			// Get selected product from tree	
-			// Create new copy of product, with different name
-			// Send this in an event to the controller's listener.
-			try {
-				Product p = (Product) tree.getLastSelected();
-				Product c = (Product) fb.getProductFromForm(dynamicForm);
-				ArrayList<Product> l = new ArrayList<Product>();
-				l.add(0, p);
-				l.add(1, c);
-				controller.updateCacheItem(l);
-			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (InstantiationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			
+			
 		}
 	}
 	
