@@ -65,7 +65,7 @@ public class Pimp {
 		dcl = new DirectoryClassLoader(productDir, productPackage);
 		
 		//Initialise cache
-		cache = new ProductModel();
+		cache = new ProductModel(this);
 		
 		// Initialize Gui
 		gui = new MainDisplay(this, cache);
@@ -181,7 +181,7 @@ public class Pimp {
 	 * 
 	 * @param products the list of products to be deleted.
 	 */
-	public void remove(List<Product> products){
+	public void removeFromCache(List<Product> products){
 		//Fire it over to the cache.
 		cache.delete(products);
 	}
@@ -191,7 +191,7 @@ public class Pimp {
 	 * Can someone please figure out how to get pairs working
 	 * @param p
 	 */
-	public void update(ArrayList<Product> p){
+	public void updateCacheItem(ArrayList<Product> p){
 		Product product = p.get(0);
 		Product changes = p.get(1);
 		cache.update(product, changes);
@@ -205,6 +205,22 @@ public class Pimp {
 		gui.setClasses(cpl); // must be called before setProducts.
 	}
 	
+	public void commitCache(){
+		cache.commit();
+	}
+	
+	public void saveToPersistance(Product p){
+		DataAccessor.save(p);
+	}
+//	
+//	public void updateToPersistance(Product p){
+//		DataAccessor.update(p);
+//	}
+//	
+//	public void deleteFromPersistence(Product p){
+//		DataAccessor.delete(p)
+//	}
+//	
 	/**
 	 * Brings up a dialog to select the database file
 	 * and load products from that database.
@@ -244,5 +260,7 @@ public class Pimp {
 			}
 		}
 	}
+
+
 
 }

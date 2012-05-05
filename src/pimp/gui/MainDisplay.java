@@ -61,6 +61,7 @@ public class MainDisplay extends JFrame {
 		// Setup observation of model.
 		model.addProductsAddedListener(new productAddedListener());
 		model.addProductsRemovedListener(new productRemovedListener());
+		model.addProductUpdatedListener(new productUpdatedListener());
 		
 		// Setup view.
 		frame = new JFrame();
@@ -71,8 +72,7 @@ public class MainDisplay extends JFrame {
 		tree = new ProductTree();
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
-		tree.addProductUpdatedListener(new productUpdatedListener());
-		tree.addproductSelectedListener(new productSelectedListener());
+		tree.addProductSelectedListener(new productSelectedListener());
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -108,14 +108,13 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
+
 		// Create Copy Button
 		JButton btnCopy = new JButton("Save");
 		btnCopy.addActionListener(new ActionListener() {
+
 			@Override()
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(getContentPane(), 
-				"Not yet implemented.");
-				// Get selected product from tree	
 				// Create new copy of product, with different name	
 			}
 		});
@@ -126,6 +125,26 @@ public class MainDisplay extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				controller.open();
+
+				// Create new copy of product, with different name
+				// Send this in an event to the controller's listener.
+				try {
+					Product p = (Product) tree.getLastSelected();
+					Product c = (Product) dynamicForm.getProduct();
+					ArrayList<Product> l = new ArrayList<Product>();
+					l.add(0, p);
+					l.add(1, c);
+					controller.updateCacheItem(l);
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -135,7 +154,7 @@ public class MainDisplay extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO getSelectedProduct returns a list -DS
-				controller.remove(tree.getSelectedProduct());
+				controller.removeFromCache(tree.getSelectedProduct());
 			}
 		});
 		
@@ -160,7 +179,7 @@ public class MainDisplay extends JFrame {
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
-		leftPanel.add(btnCopy);
+		leftPanel.add(btnSave);
 		leftPanel.add(btnDelete);
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
@@ -196,27 +215,16 @@ public class MainDisplay extends JFrame {
 			updateProductForm((Product) e.getSource());
 		}
 	}
-	
+	 /** 
+	  * 
+	  * @author Joel
+	  *
+	  */
 	class productUpdatedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent u) {
-			try {
-				Object currentFormState = dynamicForm.getProduct();
-				ArrayList<Product> l = new ArrayList<Product>();
-				l.add(0, (Product) u.getSource());
-				l.add(1, (Product) currentFormState);
-				controller.update(l);
-			// TODO Remove all these exceptions, handle them in form builder instead? -DS
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			
 		}
 	}
 	
@@ -301,4 +309,6 @@ public class MainDisplay extends JFrame {
 			}
 		}
 	}
+	
+
 }
