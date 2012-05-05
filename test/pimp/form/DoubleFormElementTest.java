@@ -1,4 +1,4 @@
-package test.pimp.form;
+package pimp.form;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;

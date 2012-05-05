@@ -4,7 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import pimp.productdefs.Product;
-import pimp.testdefs.ShoeCompainionForm;
+import pimp.productdefs.ShoeCompainionForm;
 
 public class Shoe extends Product {
 	

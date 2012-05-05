@@ -2,6 +2,7 @@ package pimp.model;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,9 @@ public class ProductModel {
 			System.out.println(Status.FRESH + ": " + p.toString());
 			list.put(p, Status.FRESH);
 		}
-		productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
+		if (productsAddedListener != null) {
+			productsAddedListener.actionPerformed(new ActionEvent(products, 0, null));
+		}
 	}
 	
 	public void add(Product p){
@@ -70,7 +73,10 @@ public class ProductModel {
 			}
 			System.out.println("Deleted product: " + p);
 		}
-		productsRemovedListener.actionPerformed(new ActionEvent(products, 0, null));
+		
+		if (productsRemovedListener != null) {
+			productsRemovedListener.actionPerformed(new ActionEvent(products, 0, null));
+		}
 	}
 	
 	/**
@@ -83,13 +89,34 @@ public class ProductModel {
 	 */
 	public void update(Product product, Product updatedProduct) {
 		
+		// Copy the fields.
+		Field[] fields = product.getClass().getFields();
+		for (Field f : fields) {
+			try {
+				f.set(product, f.get(updatedProduct));
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		// Only change status if it is fresh from the database.
 		if (list.get(product) == Status.FRESH) {
 			list.put(product, Status.UPDATED);
 		}
 
-		System.out.println("Updated product: " + product);		
-		productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
+		// Fire update event.
+		if (productUpdatedListener != null){
+			productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
+		}
+		
+		System.out.println("Updated product: " + product);
 	}
 	
 	public void addToClassesLoaded(String s){

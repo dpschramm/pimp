@@ -24,7 +24,7 @@ import pimp.model.Status;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
-import pimp.testdefs.Shoe;
+import pimp.productdefs.Shoe;
 
 
 /**
