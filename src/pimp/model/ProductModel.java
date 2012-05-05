@@ -87,6 +87,11 @@ public class ProductModel {
 		productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
 	}
 	
+	public void commit() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void addToClassesLoaded(String s){
 		classesLoaded.add(s);
 	}
@@ -111,6 +116,8 @@ public class ProductModel {
 	public void addProductUpdatedListener(ActionListener a){
 		productUpdatedListener = a;
 	}
+
+	
 
 	
 }
