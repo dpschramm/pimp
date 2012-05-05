@@ -24,7 +24,7 @@ import pimp.model.Status;
 import pimp.persistence.DataAccessor;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Product;
-import pimp.testdefs.Shoe;
+import pimp.productdefs.Shoe;
 
 
 /**
@@ -187,7 +187,8 @@ public class Pimp {
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
 		// Load existing products.
-		gui.setClasses(getConcreteProductList()); // must be called before setProducts.
+		List<Class<?>> cpl = getConcreteProductList();
+		gui.setClasses(cpl); // must be called before setProducts.
 	}
 	
 	/**
