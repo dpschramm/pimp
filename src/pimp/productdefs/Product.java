@@ -30,10 +30,6 @@ public abstract class Product {
 		this("", 0, null);
 	}
 	
-	public Product(String name, int quantity) {
-		this(name, quantity, null);
-	}
-	
 	public Product(String name, int quantity, Class<?> companionFormClass) {
 		this.name = name;
 		this.quantity = quantity;

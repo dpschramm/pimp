@@ -98,6 +98,26 @@ public class ProductModelTest {
 		d1.name = "Fanta";
 		Drink d2 = new Drink();
 		d2.name = "Coke";
+		
+		List<Product> drinks = new ArrayList<Product>();
+		drinks.add(d1);
+		drinks.add(d2);
+		
+		assertTrue(products.size() == 0);
+		assertFalse(products.contains(jacket));
+		
+		pm.add(drinks);
+		assertTrue(products.size() == 2);
+		assertTrue(products.contains(d1));
+		assertTrue(products.contains(d2));
+		
+		pm.add(jacket);
+		assertTrue(products.size() == 3);
+		assertTrue(products.contains(jacket));
+		
+		List<Product> drinks2 = pm.get(Drink.class.toString());
+		assertTrue(drinks2.size() == 2);
+		assertTrue(drinks2.containsAll(drinks));
 	}
 
 	@Test

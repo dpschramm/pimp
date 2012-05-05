@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pimp.Pimp;
 import pimp.productdefs.Product;
 
 /**
@@ -108,9 +109,9 @@ public class ProductModel {
 		
 		// Only change status if it is fresh from the database.
 		if (list.get(product) == Status.FRESH) {
-			list.put(product, Status.UPDATED);
+			//list.get(product).setStatus(Status.UPDATED);
 		}
-
+		
 		// Fire update event.
 		if (productUpdatedListener != null){
 			productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
@@ -120,7 +121,29 @@ public class ProductModel {
 	}
 	
 	public void commit() {
-		// TODO Auto-generated method stub
+		
+		for (Map.Entry<Product, Status> entry : list.entrySet()) {
+		    Product p = entry.getKey();
+		    Status s = entry.getValue();
+		    if (s == Status.DELETED)
+		    {
+		    	//DB.delete(p);
+		    	list.remove(p);
+		    }
+		    else if (s == Status.UPDATED)
+		    {
+		    	//DB.update(p);
+		    	s = Status.FRESH;
+		    }
+		    else if (s == Status.NEW)
+		    {
+		    	System.out.println("Trying to save product " + p.toString());
+		    }
+//		    else if (s == Status.FRESH)
+//		    {
+//		    	Do nothing
+//		    }
+		}
 		
 	}
 	
