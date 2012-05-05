@@ -178,7 +178,7 @@ public class MainDisplay extends JFrame {
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
-		leftPanel.add(btnSave);
+		//leftPanel.add(btnSave);
 		leftPanel.add(btnDelete);
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
