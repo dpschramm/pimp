@@ -150,6 +150,20 @@ public class Pimp {
 		}
 	}
 	
+	public void createProductCopy(Product productToCopy){
+		Class<? extends Product> c = productToCopy.getClass();
+		try {
+			Product newProduct = c.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public void getProductsByClass(String className) {
 		if (!cache.isLoaded(className)){
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);

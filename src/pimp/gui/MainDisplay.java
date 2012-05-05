@@ -109,7 +109,7 @@ public class MainDisplay extends JFrame {
 		});
 		
 		// Create Copy Button
-		JButton btnCopy = new JButton("Copy");
+		JButton btnCopy = new JButton("Save");
 		btnCopy.addActionListener(new ActionListener() {
 			@Override()
 			public void actionPerformed(ActionEvent e) {
@@ -117,6 +117,15 @@ public class MainDisplay extends JFrame {
 				"Not yet implemented.");
 				// Get selected product from tree	
 				// Create new copy of product, with different name	
+			}
+		});
+		
+		// Create Open Database Button
+		JButton btnOpenProducts = new JButton("Open");
+		btnOpenProducts.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.open();
 			}
 		});
 		
@@ -130,12 +139,12 @@ public class MainDisplay extends JFrame {
 			}
 		});
 		
-		// Create Open Database Button
-		JButton btnOpenProducts = new JButton("Open");
+		// Create Copy Database Button
+		JButton btnCopyProduct = new JButton("Copy");
 		btnOpenProducts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.open();
+				//controller.createProductCopy(currentProduct);
 			}
 		});
 		
