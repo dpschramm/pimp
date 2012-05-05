@@ -41,7 +41,7 @@ public class MainDisplay extends JFrame {
 	
 	// Views
 	private JFrame frame;
-	public ProductTree tree; // TODO make this private, encapsulate.
+	private ProductTree tree; // TODO make this private, encapsulate.
 	private JScrollPane treeScrollPanel;
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
@@ -49,6 +49,8 @@ public class MainDisplay extends JFrame {
 	private Form dynamicForm; /* Keeping this reference to the dynamic form
 								means we can remove it before replacing it with a new one. */
 	private CompanionForm cForm;
+	
+	private Product selectedProduct;
 	
 	/** 
 	 * Constructor
@@ -128,19 +130,13 @@ public class MainDisplay extends JFrame {
 				// Create new copy of product, with different name
 				// Send this in an event to the controller's listener.
 				try {
-					Product p = (Product) tree.getLastSelected();
-					Product c = (Product) dynamicForm.getProduct();
+					Product p = selectedProduct;
+					Product c = getCurrentProductState();
 					ArrayList<Product> l = new ArrayList<Product>();
 					l.add(0, p);
 					l.add(1, c);
 					controller.updateCacheItem(l);
 				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InstantiationException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -162,16 +158,8 @@ public class MainDisplay extends JFrame {
 		btnCopyProduct.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Product c = (Product) dynamicForm.getProduct();
-					controller.createNewProduct(c);
-				} catch (InstantiationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				Product c = getCurrentProductState();
+				controller.createNewProduct(c);
 				
 			}
 		});
@@ -204,6 +192,31 @@ public class MainDisplay extends JFrame {
 	}
 		
 	/*
+	 * This checks whether we are currently used a form or a companion form, 
+	 * and returns the object representing the current form state. 
+	 * 
+	 **/
+	public Product getCurrentProductState(){
+		Product c;	
+		try {
+			if(cForm != null){
+				c = (Product) cForm.getObject();
+			}
+			else{
+				c = (Product) dynamicForm.getProduct();
+			}
+		return c;
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/*
 	 * This is called by the product tree on valueChange so that when a new tree item is 
 	 * selected, any edits made to the previously selected product will be saved. 
 	 * The current object state is retrieved by passing the form/companion form through
@@ -222,19 +235,8 @@ public class MainDisplay extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Update form
+			selectedProduct = (Product) e.getSource();
 			updateProductForm((Product) e.getSource());
-		}
-	}
-	 /** 
-	  * 
-	  * @author Joel
-	  *
-	  */
-	class productUpdatedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent u) {
-			
-			
 		}
 	}
 	
@@ -318,6 +320,18 @@ public class MainDisplay extends JFrame {
 				tree.removeProduct(p);
 			}
 		}
+	}
+
+	class productUpdatedListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent u) {
+			tree.updateNode((Product) u.getSource());
+		}
+	}
+
+
+	public void empty() {
+		tree.empty();
 	}
 	
 

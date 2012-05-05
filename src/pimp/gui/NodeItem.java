@@ -30,6 +30,10 @@ public class NodeItem extends DefaultMutableTreeNode{
     	return o;
     }
     
+    public void setName(Product p){
+    	nodeName = p.toString();
+    }
+    
     @Override
     public String toString() {
         return this.nodeName;
