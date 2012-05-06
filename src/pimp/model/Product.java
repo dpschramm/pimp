@@ -1,6 +1,6 @@
 package pimp.model;
 
-import pimp.form.CompanionForm;
+import pimp.form.ProductForm;
 import pimp.form.FormField;
 
 /** The abstract product class provides the basis for all custom products to
@@ -42,13 +42,4 @@ public abstract class Product {
 	public String toString() {
 	    return this.name;
 	}
-	
-	public Class getCompanionFormClass() {
-		return this.companionFormClass;
-	}
-	
-	public void setCompanionFormClass(Class c){
-		companionFormClass = c;
-	}
-
 }

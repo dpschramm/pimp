@@ -1,20 +1,18 @@
-package pimp.productdefs;
+package pimp.shoe;
 
 import java.awt.GridLayout;
 
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import pimp.form.CompanionForm;
+import pimp.form.ProductForm;
+import pimp.model.Product;
 
-public class ShoeCompainionForm implements CompanionForm{
+public class ShoeCompainionForm extends ProductForm{
 	
 	public String name;
 	
-	JPanel form;
 	JComboBox shoeSizeSelector;
 	JComboBox shoeSizingSystemSelector;
 	JTextField nameInput;
@@ -42,39 +40,36 @@ public class ShoeCompainionForm implements CompanionForm{
 	/*
 	 * Constructor needs to take a shoe object
 	 * */
-	public ShoeCompainionForm(Shoe shoe) {
+	public ShoeCompainionForm() {
 
 		shoeSizeSelector = new JComboBox(shoeSizes);
-		shoeSizeSelector.setSelectedItem(shoe.shoeSize);
 		shoeSizingSystemSelector = new JComboBox(shoeSizeSystem);
-		shoeSizingSystemSelector.setSelectedItem(shoe.sizingSystem);
 		nameInput = new JTextField();
-		nameInput.setText(shoe.name);
 		quantityInput = new JTextField();
-		quantityInput.setText(Integer.toString(shoe.quantity));
 		
-		form = new JPanel();
 		GridLayout gl = new GridLayout(4, 2);
-		form.setLayout(gl);
+		setLayout(gl);
 		
-		form.add(new JLabel("Name"));
-		form.add(nameInput);
-		form.add(new JLabel("Quantity"));
-		form.add(quantityInput);
-		form.add(new JLabel("Shoe Size"));
-		form.add(shoeSizeSelector);
-		form.add(new JLabel("Shoe Sizing System"));
-		form.add(shoeSizingSystemSelector);		
+		add(new JLabel("Name"));
+		add(nameInput);
+		add(new JLabel("Quantity"));
+		add(quantityInput);
+		add(new JLabel("Shoe Size"));
+		add(shoeSizeSelector);
+		add(new JLabel("Shoe Sizing System"));
+		add(shoeSizingSystemSelector);		
 		
 	}
-
-	@Override
-	public JComponent getForm() {
-		return form;
+	
+	/*
+	 * Constructor needs to take a shoe object
+	 * */
+	public ShoeCompainionForm(Shoe shoe) {
+			this();
+			setProduct(shoe);
 	}
 
-	@Override
-	public Shoe getObject() {
+	public Shoe getProduct() {
 		Shoe formShoe = new Shoe();
 		formShoe.name = nameInput.getText();
 		formShoe.quantity = Integer.parseInt(quantityInput.getText());
@@ -83,17 +78,16 @@ public class ShoeCompainionForm implements CompanionForm{
 		return formShoe;
 	}
 
-	@Override
-	public void updateForm(Object o) {
+	public void setProduct(Product o) {
+		
 		if(!(o instanceof Shoe)){
 			throw new IllegalArgumentException("Provided Object is not a Shoe");
 		}
+		
 		Shoe s = (Shoe) o;
 		nameInput.setText(s.name);
 		quantityInput.setText("" +  s.quantity);
 		shoeSizeSelector.setSelectedItem(s.shoeSize);
 		shoeSizeSelector.setSelectedItem(s.sizingSystem);
 	}
-	
-	
 }

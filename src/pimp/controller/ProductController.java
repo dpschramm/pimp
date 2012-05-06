@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import pimp.form.ProductForm;
 import pimp.gui.DatabaseSelector;
 import pimp.gui.ProductGui;
 import pimp.gui.SelectProductDialog;
@@ -84,11 +85,9 @@ public class ProductController {
 	
 	public void createNewProduct() {
 		
-		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
-		gui.setClasses(cpl); // must be called before setProducts.
-		
 		// Create and show product dialog.
-		SelectProductDialog selectDialog = new SelectProductDialog(gui, cpl);
+		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
+				loadClasses());
 		
 		// Create product from selected class.
 		Class<? extends Product> c = selectDialog.getSelectedClass();
@@ -155,8 +154,13 @@ public class ProductController {
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
 		// Load existing products.
+		loadClasses();
+	}
+	
+	private List<Class<?>> loadClasses() {
 		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
 		gui.setClasses(cpl); // must be called before setProducts.
+		return cpl;
 	}
 	
 	public void commitCache(){
