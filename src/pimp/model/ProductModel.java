@@ -41,7 +41,7 @@ public class ProductModel {
 	 * Adds a single product to the list. This will only get called when a brand new product is created
 	 * via the NEW PRODUCT button on the gui. Thus, only one is created at a time. It marks it with the flag Status.NEW
 	 * to indicate that it doesn't exist in the database.
-	 * It makes it into a list that the productAddedListener can pass on. Normally there are
+	 * It makes it into a list that the productAddedListener (which talks to the view) can pass on. Normally there are
 	 * multiple products added at a time (say, from the database) so the listener prefers to handle lists.
 	 * @param p the product to add
 	 */
@@ -154,7 +154,7 @@ public class ProductModel {
 		
 		// Only change status if it is fresh from the database.
 		if (list.get(product) == Status.FRESH) {
-			//list.get(product).setStatus(Status.UPDATED);
+			list.put(product, Status.UPDATED);
 		}
 		
 		// Fire update event.
@@ -162,7 +162,6 @@ public class ProductModel {
 			productUpdatedListener.actionPerformed(new ActionEvent(product, 0, null));
 		}
 		
-		System.out.println("Updated product: " + product);
 	}
 	
 	/**
@@ -193,6 +192,7 @@ public class ProductModel {
 	 */
 	public void addToClassesLoaded(String s){
 		classesLoaded.add(s);
+		System.out.println(s);
 	}
 	
 	/**

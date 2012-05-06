@@ -119,9 +119,11 @@ public class ProductController {
 		if (!cache.isLoaded(className)){
 			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
+			
 			for (Product p : m.values()) {
 			    l.add(p);
 			}
+			
 			cache.load(l);
 			cache.addToClassesLoaded(className);
 		}
@@ -166,6 +168,8 @@ public class ProductController {
 		for (Map.Entry<Product, Status> entry : list.entrySet()) {
 		    Product p = entry.getKey();
 		    Status s = entry.getValue();
+
+			System.out.println(s.toString() + ": " + p.toString());
 		    if (s == Status.DELETED)
 		    {
 		    	//DB.delete(p);
@@ -187,19 +191,8 @@ public class ProductController {
 		}
 		
 	}
+
 	
-	public void saveToPersistance(Product p){
-		DataAccessor.save(p);
-	}
-//	
-//	public void updateToPersistance(Product p){
-//		DataAccessor.update(p);
-//	}
-//	
-//	public void deleteFromPersistence(Product p){
-//		DataAccessor.delete(p)
-//	}
-//	
 	/**
 	 * Brings up a dialog to select the database file
 	 * and load products from that database.

@@ -70,7 +70,6 @@ public class ProductTree extends JTree {
 				if(event.isAddedPath()){
 					if (productEditedListener != null && lastSelectedNode != null && (!lastSelectedNode.getClass().equals(Class.class)))
 					{
-						System.out.println("Firing edit");
 						ActionEvent edited = new ActionEvent((Product)lastSelectedNode.getStoredObject(), 0, "");
 						productEditedListener.actionPerformed(edited);
 					}
@@ -91,8 +90,8 @@ public class ProductTree extends JTree {
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
 						lastSelectedNode = selectedNode;
-						System.out.println(lastSelectedNode.toString());
 					}
+
 				}
 			}
 		});
@@ -110,16 +109,17 @@ public class ProductTree extends JTree {
 			 */
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
+				
 				TreePath path = (TreePath) event.getPath();
 				if (!(path == null)){
-					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
+					NodeItem selectedNode = getSelectedNode();				
 					Object o = selectedNode.getStoredObject();
 					if (o.getClass().equals(Class.class)){
 						//Need to figure out what the source is - it can't be null.
 						String s = o.toString();
-						ActionEvent i = new ActionEvent(model, 0, 
-								s.substring(s.lastIndexOf(' ')+1));
-						classSelectListener.actionPerformed(i);
+						ActionEvent i = new ActionEvent(model, 0, s);
+						//s.substring(s.lastIndexOf(' ')+1));
+						//classSelectListener.actionPerformed(i);
 					}
 				}
 			}

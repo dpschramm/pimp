@@ -29,14 +29,13 @@ public abstract class Product {
 	/** Default constructor - doesn't take parameters as these will be set 
 	 * later by the UI form. */
 	public Product() {
-		this("", 0, null, 0);
+		this("", 0, null);
 	}
 	
-	public Product(String name, int quantity, Class<?> companionFormClass, int id) {
+	public Product(String name, int quantity, Class<?> companionFormClass) {
 		this.name = name;
 		this.quantity = quantity;
 		this.companionFormClass = companionFormClass;
-		this.id = id;
 	}
 	
 	@Override
