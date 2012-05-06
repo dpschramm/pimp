@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import pimp.form.CompanionForm;
-import pimp.ConctreteCompanionFormExample;
 
 public class ShoeCompainionForm implements CompanionForm{
 	

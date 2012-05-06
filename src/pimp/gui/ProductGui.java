@@ -17,12 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import pimp.Pimp;
+import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
 import pimp.form.Form;
 import pimp.form.FormBuilder;
+import pimp.model.Product;
 import pimp.model.ProductModel;
-import pimp.productdefs.Product;
 
 /**
  * The main user interface window.
@@ -33,10 +33,10 @@ import pimp.productdefs.Product;
  * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
  */
-public class MainDisplay extends JFrame {
+public class ProductGui extends JFrame {
 	
 	// Controller
-	private Pimp controller;
+	private ProductController controller;
 	
 	// Views
 	private JFrame frame;
@@ -54,7 +54,7 @@ public class MainDisplay extends JFrame {
 	/** 
 	 * Constructor
 	 */
-	public MainDisplay(Pimp controller, ProductModel model) {
+	public ProductGui(ProductController controller, ProductModel model) {
 		
 		// Setup controller.
 		this.controller = controller;

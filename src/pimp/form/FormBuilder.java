@@ -14,7 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 public class FormBuilder {
 

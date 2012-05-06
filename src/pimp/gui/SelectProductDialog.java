@@ -7,7 +7,7 @@ import java.awt.Dimension;
 import javax.swing.JList;
 import javax.swing.JButton;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
-import pimp.productdefs.Product;
 
 public class ProductModelTest {
 

@@ -2,7 +2,7 @@ package pimp.persistence;
 
 import java.util.Collection;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 public abstract class ProductSaver {
 	

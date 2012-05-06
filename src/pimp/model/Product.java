@@ -1,4 +1,4 @@
-package pimp.productdefs;
+package pimp.model;
 
 import pimp.form.CompanionForm;
 import pimp.form.FormField;

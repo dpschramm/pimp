@@ -21,7 +21,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 /**
  * 
  * @author Joel Mason

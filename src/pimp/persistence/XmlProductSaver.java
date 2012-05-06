@@ -15,7 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 public class XmlProductSaver extends ProductSaver {
 	private Document xml;

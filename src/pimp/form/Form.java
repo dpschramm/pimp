@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 public class Form extends JPanel {
 	

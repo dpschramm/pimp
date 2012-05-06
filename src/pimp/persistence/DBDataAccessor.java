@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 public class DBDataAccessor {
 	private Connection conn;

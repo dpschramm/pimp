@@ -2,7 +2,7 @@ package pimp.gui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import pimp.productdefs.Product;
+import pimp.model.Product;
 
 /**
  * 

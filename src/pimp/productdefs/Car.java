@@ -1,6 +1,7 @@
 package pimp.productdefs;
 
 import pimp.form.FormField;
+import pimp.model.Product;
 
 /** An example of a specific product that could be instantiated.
  * 
