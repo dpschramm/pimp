@@ -1,7 +1,5 @@
 package pimp.gui;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +17,6 @@ import javax.swing.ScrollPaneConstants;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
-import pimp.form.FormField;
 import pimp.form.ProductForm;
 import pimp.form.Form;
 import pimp.form.FormBuilder;
@@ -49,10 +46,7 @@ public class ProductGui extends JFrame {
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
 	private FormBuilder fb;
-	private Form dynamicForm; /* Keeping this reference to the dynamic form
-								means we can remove it before replacing it with a new one. */
-	private ProductForm cForm;
-	
+	private ProductForm form;
 	private Product selectedProduct;
 	
 	/** 
@@ -203,13 +197,8 @@ public class ProductGui extends JFrame {
 	public Product getCurrentProductState(){
 		Product c;	
 		try {
-			if(cForm != null){
-				c = (Product) cForm.getProduct();
-			}
-			else{
-				c = (Product) dynamicForm.getProduct();
-			}
-		return c;
+			c = (Product) form.getProduct();
+			return c;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -269,11 +258,8 @@ public class ProductGui extends JFrame {
 	 */
 	public void updateProductForm(Product product) {
 		try {
-			if(dynamicForm != null){
-				frame.getContentPane().remove(dynamicForm);
-			}
-			else if(cForm != null){
-				frame.getContentPane().remove(cForm);
+			if (form != null) {
+				frame.getContentPane().remove(form);
 			}
 			//
 			Class<?> companionClass = null;
@@ -293,18 +279,16 @@ public class ProductGui extends JFrame {
 			}
 
 			if(companionClass != null){
-				cForm =  (ProductForm) companionClass.newInstance();
-				cForm.setProduct(product);
+				form = (ProductForm) companionClass.newInstance();
+				form.setProduct(product);
 				//Class c = product.getClass();
 				//Constructor<?> constr = companionClass.getConstructor(c.newInstance());
 				//cForm = (ProductForm) constr.newInstance(product);
-				frame.getContentPane().add(cForm, BorderLayout.CENTER);
-				dynamicForm = null;
+				frame.getContentPane().add(form, BorderLayout.CENTER);
 			}
 			else{
-				dynamicForm = fb.createForm(product);
-				frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
-				cForm = null;
+				form = fb.createForm(product);
+				frame.getContentPane().add(form, BorderLayout.CENTER);
 			}
 
 			//dynamicForm = form;
