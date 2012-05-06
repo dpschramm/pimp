@@ -169,7 +169,7 @@ public class ProductController {
 		    if (s == Status.DELETED)
 		    {
 		    	//DB.delete(p);
-		    	cache.delete(p);
+		    	//cache.delete(p);
 		    }
 		    else if (s == Status.UPDATED)
 		    {

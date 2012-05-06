@@ -20,6 +20,8 @@ public abstract class Product {
 	@FormField(displayName="Name")
 	public String name;
 	
+	private int id;
+	
 	@FormField(displayName="Quantity")
 	public int quantity;
 	private Class<?> companionFormClass;	//Private so this doesn't get saved to persistence layer.
@@ -27,13 +29,14 @@ public abstract class Product {
 	/** Default constructor - doesn't take parameters as these will be set 
 	 * later by the UI form. */
 	public Product() {
-		this("", 0, null);
+		this("", 0, null, 0);
 	}
 	
-	public Product(String name, int quantity, Class<?> companionFormClass) {
+	public Product(String name, int quantity, Class<?> companionFormClass, int id) {
 		this.name = name;
 		this.quantity = quantity;
 		this.companionFormClass = companionFormClass;
+		this.id = id;
 	}
 	
 	@Override
