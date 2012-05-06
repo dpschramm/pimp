@@ -23,6 +23,8 @@ import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.model.Product;
 import pimp.model.ProductModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The main user interface window.
@@ -178,6 +180,15 @@ public class ProductGui extends JFrame {
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
+		
+		JButton btnCommit = new JButton("Commit");
+		btnCommit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				controller.commitCache();
+			}
+		});
+		buttonPanel.add(btnCommit, BorderLayout.CENTER);
 	
 		return buttonPanel;
 	}
