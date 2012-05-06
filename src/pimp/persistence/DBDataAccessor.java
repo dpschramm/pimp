@@ -75,7 +75,11 @@ public class DBDataAccessor {
 			PreparedStatement preparedStatement = conn.prepareStatement(sql);
 			preparedStatement.setInt(1, 1);
 			for (int i = 0; i < fields.length; i++) {	//TODO: sort fields by name, as Class.getFields returns them in no particular order.
- 				String data = fields[i].get(product).toString();
+				Object obj = fields[i].get(product);
+				String data = "";
+				if (obj != null) {
+					data = fields[i].get(product).toString();
+				}
 				setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
 			}
 			
