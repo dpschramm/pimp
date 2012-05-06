@@ -6,7 +6,10 @@ import java.awt.Insets;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +62,10 @@ public class FormBuilder {
 		form.setLayout(new GridBagLayout());
 	
 		// Get all public fields for the class.
-		Field[] fields = c.getFields();
+		//Field[] fields = c.getFields();
+		
+		// Get the fields in order so superclass's fields come first
+		LinkedHashSet<Field> fields2 = getFieldsInOrder(c, Product.class);
 		
 		JPanel grid = new JPanel(new GridBagLayout());
 		
@@ -75,7 +81,7 @@ public class FormBuilder {
 		cLabel.anchor = GridBagConstraints.WEST;
 		
 		int row = 0;
-		for (Field f : fields) {
+		for (Field f : fields2) {
 			// Only add fields with the Form Field Annotation.
 			if (f.isAnnotationPresent(FormField.class)) {
 				// Update constraints to next row.
@@ -114,6 +120,19 @@ public class FormBuilder {
 		form.add(grid, gbc);
 		
 		return form;
+	}
+	
+	
+	private LinkedHashSet<Field> getFieldsInOrder(Class c, Class upperClass){
+		
+		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
+		if(c.equals(upperClass)){
+			fields.addAll(Arrays.asList(c.getFields()));
+		} else {
+			fields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
+			fields.addAll(Arrays.asList(c.getFields()));
+		}
+		return fields;
 	}
 	
 	/**
