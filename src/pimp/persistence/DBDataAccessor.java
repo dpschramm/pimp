@@ -79,8 +79,8 @@ public class DBDataAccessor {
 				String data = "";
 				if (obj != null) {
 					data = fields[i].get(product).toString();
+					setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
 				}
-				setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
 			}
 			
 			preparedStatement.addBatch();
