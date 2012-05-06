@@ -172,12 +172,12 @@ public class ProductController {
 			System.out.println(s.toString() + ": " + p.toString());
 		    if (s == Status.DELETED)
 		    {
-		    	//DB.delete(p);
+		    	DataAccessor.delete(p);
 		    	//cache.delete(p);
 		    }
 		    else if (s == Status.UPDATED)
 		    {
-		    	//DB.update(p);
+		    	DataAccessor.update(p);
 		    }
 		    else if (s == Status.NEW)
 		    {
