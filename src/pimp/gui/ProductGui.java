@@ -19,6 +19,8 @@ import javax.swing.ScrollPaneConstants;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
+import pimp.form.FormField;
+import pimp.form.ProductForm;
 import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.model.Product;
@@ -47,7 +49,7 @@ public class ProductGui extends JFrame {
 	private FormBuilder fb;
 	private Form dynamicForm; /* Keeping this reference to the dynamic form
 								means we can remove it before replacing it with a new one. */
-	private CompanionForm cForm;
+	private ProductForm cForm;
 	
 	private Product selectedProduct;
 	
@@ -191,7 +193,7 @@ public class ProductGui extends JFrame {
 		Product c;	
 		try {
 			if(cForm != null){
-				c = (Product) cForm.getObject();
+				c = (Product) cForm.getProduct();
 			}
 			else{
 				c = (Product) dynamicForm.getProduct();
@@ -260,14 +262,32 @@ public class ProductGui extends JFrame {
 				frame.getContentPane().remove(dynamicForm);
 			}
 			else if(cForm != null){
-				frame.getContentPane().remove((JPanel)cForm.getForm());
+				frame.getContentPane().remove(cForm);
 			}
-			Class<?> companionClass = product.getCompanionFormClass();
+			//
+			Class<?> companionClass = null;
+			
+			if (product.getClass().isAnnotationPresent(CompanionForm.class)) {
+				CompanionForm cf = product.getClass().getAnnotation(CompanionForm.class);
+				String className = null;
+				if(!cf.form().equals(CompanionForm.NULL)){
+					className = cf.form();
+					try {
+						companionClass = Class.forName(className, true, product.getClass().getClassLoader());
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
 			if(companionClass != null){
-				Class c = product.getClass();
-				Constructor<?> constr = companionClass.getConstructor(c);
-				cForm = (CompanionForm) constr.newInstance(product);
-				frame.getContentPane().add(cForm.getForm(), BorderLayout.CENTER);
+				cForm =  (ProductForm) companionClass.newInstance();
+				cForm.setProduct(product);
+				//Class c = product.getClass();
+				//Constructor<?> constr = companionClass.getConstructor(c.newInstance());
+				//cForm = (ProductForm) constr.newInstance(product);
+				frame.getContentPane().add(cForm, BorderLayout.CENTER);
 				dynamicForm = null;
 			}
 			else{
@@ -285,12 +305,6 @@ public class ProductGui extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
@@ -342,6 +356,5 @@ public class ProductGui extends JFrame {
 	public void empty() {
 		tree.empty();
 	}
-	
 
 }

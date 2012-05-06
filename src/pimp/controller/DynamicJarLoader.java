@@ -99,7 +99,7 @@ public class DynamicJarLoader {
 					Class<?> c = classLoader.loadClass(className);
 					if(hasSuperclass(c, sc)) {
 						classes.add(c);
-						System.out.println("Class loaded: " + className);
+						System.out.println("Class found: " + className);
 					}
 				}
 	    	}
