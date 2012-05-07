@@ -2,13 +2,10 @@ package pimp.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -44,11 +41,14 @@ public class ProductTree extends JTree {
 	
 	public ProductTree() {
 		super();
-	
+		
 		// Create the model.
 		root = new NodeItem(Product.class);
 		model = new DefaultTreeModel(root);
 		map = new HashMap<String, NodeItem>();
+		
+		
+
 		
 		// Set model and settings.
 		setModel(model);
@@ -79,7 +79,6 @@ public class ProductTree extends JTree {
 					Object o = selectedNode.getStoredObject();
 					
 					if (o.getClass().equals(Class.class)){
-						//Need to figure out what the source is - it can't be null.
 						String s = o.toString();
 						ActionEvent i = new ActionEvent(model, 0, s);
 						classSelectListener.actionPerformed(i);
@@ -112,29 +111,18 @@ public class ProductTree extends JTree {
 				
 				TreePath path = (TreePath) event.getPath();
 				if (!(path == null)){
-					NodeItem selectedNode = getSelectedNode();				
+					NodeItem selectedNode = (NodeItem) event.getPath().getLastPathComponent();				
 					Object o = selectedNode.getStoredObject();
 					if (o.getClass().equals(Class.class)){
-						//Need to figure out what the source is - it can't be null.
 						String s = o.toString();
 						ActionEvent i = new ActionEvent(model, 0, s);
-						//s.substring(s.lastIndexOf(' ')+1));
-						//classSelectListener.actionPerformed(i);
+						classSelectListener.actionPerformed(i);
 					}
 				}
 			}
 		});
 		
 		
-	}
-	
-	/**
-	 * TODO: Find an appropriate time to call this. This will probably be fired from the GUI to be honest.
-	 * 
-	 */
-	public void findMeATrigger(){
-		ActionEvent u = new ActionEvent(getSelectedProduct(), 0, "");
-		productUpdatedListener.actionPerformed(u);
 	}
 	
 	/**
@@ -164,7 +152,7 @@ public class ProductTree extends JTree {
 				int n = JOptionPane.showConfirmDialog(
 					    this.getParent(),
 					    "This will delete all products in this category\n" + "Are you sure you wish to do this?" ,
-					    "An Inane Question",
+					    "Delete Products",
 					    JOptionPane.YES_NO_OPTION);
 				if (n == 0)
 				{
@@ -173,14 +161,34 @@ public class ProductTree extends JTree {
 					while (children.hasMoreElements())
 					{
 						NodeItem child = (NodeItem) children.nextElement();
-						if (child.getStoredObject().equals(Product.class)){
+						if (!child.getStoredObject().getClass().equals(Class.class)){
 							products.add((Product) child.getStoredObject());
+						}	
+						//Recurse to get grandchildren
+						if (child.getChildCount() > 0){
+							products.addAll(EnumToList(child.children()));
 						}
 					}
 				}
 			}
 		}
 		return products;
+	}
+	
+	public ArrayList<Product> EnumToList(Enumeration<NodeItem> e){
+		ArrayList<Product> list = new ArrayList<Product>();
+		while (e.hasMoreElements())
+		{
+			NodeItem child = (NodeItem) e.nextElement();
+			if (!child.getStoredObject().getClass().equals(Class.class)){
+				list.add((Product) child.getStoredObject());
+			}
+			//Recursive
+			if (child.getChildCount() > 0){
+				list.addAll(EnumToList(child.children()));
+			}
+		}
+		return list;
 	}
 	
 	/**
@@ -215,7 +223,6 @@ public class ProductTree extends JTree {
 	private void insertNode(NodeItem n, NodeItem p) {
 		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
 		scrollPathToVisible(new TreePath(n.getPath()));
-		
 		ActionEvent s = new ActionEvent((Product)n.getStoredObject(), 0, "");
 		productSelectedListener.actionPerformed(s);
 	}
@@ -268,7 +275,6 @@ public class ProductTree extends JTree {
 			{
 				return child;
 			}
-			System.out.println(parent.toString());
 		}
 		return null;
 	}

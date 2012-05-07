@@ -29,7 +29,6 @@ public class DBDataAccessor {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -185,9 +184,12 @@ public class DBDataAccessor {
 			for (Field field : fields) {
 				Class<?> type = field.getType();
 				String dbColType = getDbColType(type.getSimpleName());
-				statement.executeUpdate("ALTER TABLE " + className +
-										" ADD COLUMN " + field.getName() + 
-										" " + dbColType + ";");
+				String columnName = field.getName();
+				if (!columnName.equals("id")) {	//Id column has already been created.
+					statement.executeUpdate("ALTER TABLE " + className +
+											" ADD COLUMN " + columnName + 
+											" " + dbColType + ";");
+				}
 			}
 		} catch (Exception e) {
 			System.err.println("Error on table creation of table " + className);
@@ -272,7 +274,7 @@ public class DBDataAccessor {
 			Class<?> c = Class.forName("pimp.productdefs." + tableName);
 			product = (Product) c.newInstance();
 			
-			for (int i = 2; i <= columnCount; i++) {	//Start from 2 as columns start from 1 and we want to ignore id col for now.. TODO: include id field?
+			for (int i = 1; i <= columnCount; i++) {
 				String columnName = metaData.getColumnName(i);
 				Field f = c.getField(columnName);
 				Class<?> fieldType = f.getType();
@@ -288,6 +290,8 @@ public class DBDataAccessor {
 					f.set(product, rs.getInt(i));
 				} else if (fieldTypeName.equals("String")) {
 					f.set(product, rs.getString(i));
+				} else if (fieldTypeName.equals("long")) {
+					f.set(product, rs.getLong(i));
 				}
 			}
 		} catch (Exception e) {
@@ -386,5 +390,86 @@ public class DBDataAccessor {
 	
 	private String extractTableName(String className) {
 		return className.substring(className.lastIndexOf(".") + 1);
+	}
+
+	protected void delete(Product p) {
+		long id = p.id;
+		
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate("DELETE FROM " + p.getClass().getSimpleName() +
+							   " WHERE id = " + id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void update(Product p) {
+		long id = p.id;
+		Class<?> c = p.getClass();
+		String sql = "";
+		Field[] fields = c.getFields();
+		
+		try {
+		
+			if (fields.length > 1) {	//More than just an id...
+				sql = "UPDATE " + c.getSimpleName() + " SET ";
+	
+				for (int i = 0; i < fields.length; i++) {
+					Field field = fields[i];
+					
+					Class<?> fieldType = field.getType(); 
+					String fieldTypeName = fieldType.getSimpleName();
+					
+					if (field.getName().equals("id")) {
+						continue;
+					}
+					
+					sql += field.getName();
+					sql += "=";
+					
+					if (fieldTypeName.equalsIgnoreCase("int")) {
+						sql += field.get(p);
+					} else if (fieldTypeName.equals("String")) {
+						String s = (String)field.get(p);
+						if (s != null) {
+							sql += "\'" + s.replaceAll("'", "''") + "\'";
+						} else {
+							sql += "\'\'";
+						}
+					} else if (fieldTypeName.equalsIgnoreCase("double")) {
+						sql += field.get(p);
+					} else if (fieldTypeName.equals("Date")) {
+						Date date = (Date) field.get(p);
+						if (date != null) {
+							sql += date.toString();
+						} else {
+							sql += "\'\'";
+						}
+					} else if (fieldTypeName.equals("Color")) {
+						Color color = (Color) field.get(p);
+						if (color != null) {
+							sql += (color.getRGB());
+						} else {
+							sql += "\'\'";
+						}
+					}
+					else {	//Unsupported datatype
+						sql = sql.substring(0, sql.lastIndexOf(","));
+					}
+					
+					if (i < fields.length-1) {
+						sql += ", ";
+					}
+				}
+				sql += " WHERE id = " + id + ";";
+			}
+			System.out.println(sql);
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

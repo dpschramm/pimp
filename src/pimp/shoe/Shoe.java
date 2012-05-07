@@ -10,7 +10,7 @@ import pimp.shoe.ShoeCompainionForm;
 @CompanionForm(form="pimp.shoe.ShoeCompainionForm")
 public class Shoe extends Product {
 	
-	public double shoeSize;
+	public Double shoeSize;
 	public String sizingSystem;
 	
 	public Shoe() {

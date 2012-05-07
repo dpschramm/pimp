@@ -1,5 +1,6 @@
 package pimp.gui;
 
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import pimp.model.Product;
@@ -20,6 +21,7 @@ public class NodeItem extends DefaultMutableTreeNode{
 
     private String nodeName;
     private Object o;
+    protected Icon icon;
     
     //Constructor that takes a product.
     public NodeItem(Product p){

@@ -6,7 +6,11 @@ import java.awt.Insets;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +63,10 @@ public class FormBuilder {
 		form.setLayout(new GridBagLayout());
 	
 		// Get all public fields for the class.
-		Field[] fields = c.getFields();
+		//Field[] fields = c.getFields();
+		
+		// Get the fields in order so superclass's fields come first
+		LinkedHashSet<Field> fields = getFieldsInOrder(c, Product.class);
 		
 		JPanel grid = new JPanel(new GridBagLayout());
 		
@@ -114,6 +121,32 @@ public class FormBuilder {
 		form.add(grid, gbc);
 		
 		return form;
+	}
+	
+	
+	/**
+	 * Get the fields in order so the highest parents fields a are first in the
+	 * list and so on till the current class, if a subclass overrides a parents
+	 * field then the parents field is overriden
+	 * 
+	 * @param c
+	 * @param upperClass
+	 * @return
+	 */
+	private LinkedHashSet<Field> getFieldsInOrder(Class c, Class upperClass){
+		
+		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
+		
+		if(c.equals(upperClass)){
+			// It is the top class so just add its fields 
+			fields.addAll(Arrays.asList(c.getFields()));
+		} else {
+			// Add parent fields then add current classes fields
+			fields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
+			fields.addAll(Arrays.asList(c.getFields()));
+		
+		}
+		return fields;
 	}
 	
 	/**

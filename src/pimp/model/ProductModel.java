@@ -61,7 +61,6 @@ public class ProductModel {
 	 */
 	public void load(List<Product> products){
 		for (Product p : products){
-			System.out.println(Status.FRESH + ": " + p.toString());
 			list.put(p, Status.FRESH);
 		}
 		if (productsAddedListener != null) {
@@ -138,17 +137,19 @@ public class ProductModel {
 		// Copy the fields.
 		Field[] fields = product.getClass().getFields();
 		for (Field f : fields) {
-			try {
-				f.set(product, f.get(updatedProduct));
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (!f.getName().equals("id")){
+				try {
+					f.set(product, f.get(updatedProduct));
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -177,13 +178,14 @@ public class ProductModel {
 	 * Called after changes are committed. Logically, any products in the cache are identical
 	 * to those in the persistence layer after a 'commit', so mark them as FRESH (as if they had just been loaded)
 	 */
-	public void flushCache(){
+	public void flush(){
+		Map<Product, Status> newMap = new HashMap<Product, Status>();
 		for (Product p : list.keySet()) {
-			if (list.get(p) == Status.DELETED) {
-				list.remove(p);
+			if (list.get(p) != Status.DELETED) {
+				newMap.put(p, Status.FRESH);
 			}
-			else list.put(p, Status.FRESH);
 		}
+		list = newMap;
 	}
 	
 	/**
@@ -201,7 +203,9 @@ public class ProductModel {
 	 * @return
 	 */
 	public boolean isLoaded(String s){
-		return classesLoaded.contains(s);
+		boolean result = classesLoaded.contains(s);
+		addToClassesLoaded(s);
+		return result;
 	}
 
 	

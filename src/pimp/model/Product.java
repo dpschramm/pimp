@@ -20,7 +20,7 @@ public abstract class Product {
 	@FormField(displayName="Name")
 	public String name;
 	
-	private int id;
+	public long id;
 	
 	@FormField(displayName="Quantity")
 	public int quantity;

@@ -87,8 +87,22 @@ public class DataAccessor {
 	}
 	
 	public static void saveAll(Collection<Product> products) {
-		for (Product p : products) {
-			save(p);
+		if (instance != null) {
+			for (Product p : products) {
+				save(p);
+			}
+		}
+	}
+	
+	public static void delete(Product p) {
+		if (instance != null) {
+			instance.delete(p);
+		}
+	}
+	
+	public static void update(Product p) {
+		if (instance != null) {
+			instance.update(p);
 		}
 	}
 }

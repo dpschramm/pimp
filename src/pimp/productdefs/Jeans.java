@@ -3,10 +3,13 @@ package pimp.productdefs;
 import pimp.form.FormField;
 
 public class Jeans extends Clothing {
-	@FormField
+	
+	@FormField(displayName="Size")
 	public String size;
-	@FormField
+	
+	@FormField(displayName="Leg Length")
 	public String legLength; //eg short, medium, long.
-	@FormField
+	
+	@FormField(displayName="Brand")
 	public String brand;
 }

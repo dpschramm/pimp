@@ -126,7 +126,6 @@ public class ProductController {
 			}
 			
 			cache.load(l);
-			cache.addToClassesLoaded(className);
 		}
 	}	
 
@@ -173,16 +172,14 @@ public class ProductController {
 			System.out.println(s.toString() + ": " + p.toString());
 		    if (s == Status.DELETED)
 		    {
-		    	//DB.delete(p);
-		    	//cache.delete(p);
+		    	DataAccessor.delete(p);
 		    }
 		    else if (s == Status.UPDATED)
 		    {
-		    	//DB.update(p);
+		    	DataAccessor.update(p);
 		    }
 		    else if (s == Status.NEW)
 		    {
-		    	System.out.println("Trying to save product " + p.toString());
 		    	DataAccessor.save(p);
 		    }
 //		    else if (s == Status.FRESH)
@@ -190,7 +187,7 @@ public class ProductController {
 //		    	Do nothing
 //		    }
 		}
-		
+		cache.flush();
 	}
 
 	
