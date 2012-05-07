@@ -1,4 +1,4 @@
-package pimp.controller;
+package pimp.classloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,9 +84,10 @@ public class DynamicJarLoader {
 	
 	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
+		ClassLoaderWithClose classLoader = null;
 		try {
 			// Create the ClassLoader for this Jar.
-		    URLClassLoader classLoader = new URLClassLoader( 
+			classLoader = new ClassLoaderWithClose( 
 		    		new URL[] {f.toURI().toURL()} );
 			
 			JarFile jar = new JarFile(f);
@@ -109,6 +110,8 @@ public class DynamicJarLoader {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			classLoader.close();
 		}
 		return classes;
 	}

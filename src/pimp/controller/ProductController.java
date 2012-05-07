@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import pimp.classloader.DynamicJarLoader;
 import pimp.form.ProductForm;
 import pimp.gui.DatabaseSelector;
 import pimp.gui.ProductGui;
