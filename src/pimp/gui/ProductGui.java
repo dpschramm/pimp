@@ -72,7 +72,7 @@ public class ProductGui extends JFrame {
 		tree.setPreferredSize(new Dimension(150, 18));
 		tree.addClassSelectListener(new classChangedListener());
 		tree.addProductSelectedListener(new productSelectedListener());
-		tree.addProductEditedListener(new productEditedListener());
+		//tree.addProductEditedListener(new productEditedListener());
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -181,6 +181,7 @@ public class ProductGui extends JFrame {
 		btnCommit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				saveProduct(selectedProduct);
 				controller.commitCache();
 			}
 		});
@@ -225,29 +226,24 @@ public class ProductGui extends JFrame {
 		}
 	}
 	
-	class productEditedListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				Product p = selectedProduct;
-				Product c = getCurrentProductState();
-				ArrayList<Product> l = new ArrayList<Product>();
-				l.add(0, p);
-				l.add(1, c);
-				controller.updateCacheItem(l);
-			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
+	public void saveProduct(Product p){
+		try {
+			Product c = getCurrentProductState();
+			ArrayList<Product> l = new ArrayList<Product>();
+			l.add(0, p);
+			l.add(1, c);
+			controller.updateCacheItem(l);
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
 	}
 	
 	class productSelectedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Update form
-			selectedProduct = (Product) e.getSource();
 			updateProductForm((Product) e.getSource());
 		}
 	}
@@ -260,6 +256,7 @@ public class ProductGui extends JFrame {
 	public void updateProductForm(Product product) {
 		try {
 			if (form != null) {
+				saveProduct(selectedProduct);
 				frame.getContentPane().remove(form);
 			}
 			//
@@ -308,6 +305,7 @@ public class ProductGui extends JFrame {
 			e.printStackTrace();
 		}
 		//We need both of these
+		selectedProduct = product;
 		frame.validate();
 		frame.repaint();
 	}

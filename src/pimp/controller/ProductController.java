@@ -173,7 +173,6 @@ public class ProductController {
 		    if (s == Status.DELETED)
 		    {
 		    	DataAccessor.delete(p);
-		    	//cache.delete(p);
 		    }
 		    else if (s == Status.UPDATED)
 		    {
@@ -189,7 +188,7 @@ public class ProductController {
 //		    	Do nothing
 //		    }
 		}
-		
+		cache.flush();
 	}
 
 	

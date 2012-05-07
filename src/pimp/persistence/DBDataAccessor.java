@@ -436,9 +436,25 @@ public class DBDataAccessor {
 					} else if (fieldTypeName.equalsIgnoreCase("double")) {
 						sql += field.get(p);
 					} else if (fieldTypeName.equals("Date")) {
-						sql += field.get(p).toString();
+						Date date = (Date) field.get(p);
+						if (date != null)
+						{
+							sql += date.toString();
+						}
+						else
+						{
+							sql += "\'\'";
+						}
 					} else if (fieldTypeName.equals("Color")) {
-						sql += (((Color) field.get(p)).getRGB());
+						Color color = (Color) field.get(p);
+						if (color != null)
+						{
+							sql += (color.getRGB());
+						}
+						else
+						{
+							sql += "\'\'";
+						}
 					}
 					
 					if (i < fields.length-1) {
@@ -447,7 +463,7 @@ public class DBDataAccessor {
 				}
 				sql += " WHERE id = " + id + ";";
 			}
-			
+			System.out.println(sql);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 			

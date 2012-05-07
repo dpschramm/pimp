@@ -32,6 +32,7 @@ public class ProductModelTest {
 		
 		// Create the only product for the model.
 		jacket = new Jacket();
+		jacket.id = 2;
 		jacket.size = "Huge";
 		jacket.brand = "Mac Pac";
 		jacket.isWaterproof = true;
@@ -125,6 +126,7 @@ public class ProductModelTest {
 		pm.add(jacket);
 		
 		Jacket newJacket = new Jacket();
+		newJacket.id = 27;
 		newJacket.size = "Tiny";
 		newJacket.brand = "Calvin Klein";
 		newJacket.isWaterproof = false;
@@ -137,7 +139,7 @@ public class ProductModelTest {
 		
 		assertTrue(products.size() == 1);
 		assertFalse(products.contains(newJacket));
-		
+		assertFalse(jacket.id == 27); //ID shouldn't change
 		assertTrue(jacket.name.equals(newJacket.name));
 		assertTrue(jacket.brand.equals(newJacket.brand));
 		assertTrue(jacket.quantity == newJacket.quantity);
