@@ -35,9 +35,10 @@ public class SqliteConnection extends DatabaseConnection {
 	@Override
 	protected boolean save(Product product) {
 		Class<?> c = product.getClass();
+		String fullClassName = c.getName();
 		String className = c.getSimpleName();
 		if (!tableExists(className)) {
-			createTable(className);
+			createTable(fullClassName);
 		}
 		
 		return insertIntoTable(className, product);
@@ -167,9 +168,11 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	private void createTable(String className) {
+	private void createTable(String fullClassName) {
+		String className = "";
 		try {
-			Class<?> c = Class.forName("pimp.productdefs." + className);
+			Class<?> c = Class.forName(fullClassName);
+			className = c.getSimpleName();
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
