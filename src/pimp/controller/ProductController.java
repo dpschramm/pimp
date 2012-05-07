@@ -125,7 +125,6 @@ public class ProductController {
 			}
 			
 			cache.load(l);
-			cache.addToClassesLoaded(className);
 		}
 	}	
 
@@ -180,7 +179,6 @@ public class ProductController {
 		    }
 		    else if (s == Status.NEW)
 		    {
-		    	System.out.println("Trying to save product " + p.toString());
 		    	DataAccessor.save(p);
 		    }
 //		    else if (s == Status.FRESH)

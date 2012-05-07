@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
@@ -77,6 +78,8 @@ public class ProductGui extends JFrame {
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
+		final CustomIconRenderer renderer = new CustomIconRenderer();
+		tree.setCellRenderer(renderer);
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
 		frame.getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
@@ -221,7 +224,6 @@ public class ProductGui extends JFrame {
 	class classChangedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Event fired by classChanged Listener");
 			controller.getProductsByClass(e.getActionCommand());
 		}
 	}
@@ -243,7 +245,6 @@ public class ProductGui extends JFrame {
 	class productSelectedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//Update form
 			updateProductForm((Product) e.getSource());
 		}
 	}
@@ -315,7 +316,10 @@ public class ProductGui extends JFrame {
 		tree.addProductStructure(classList);
 	}
 	
-	/* Listeners to observe view. */
+	/* Listeners to observe model. 
+	 * These correspond to changes in the cache/model, not
+	 * changes in the gui.*/
+	
 	
 	class productAddedListener implements ActionListener{
 		@Override

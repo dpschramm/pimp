@@ -61,7 +61,6 @@ public class ProductModel {
 	 */
 	public void load(List<Product> products){
 		for (Product p : products){
-			System.out.println(Status.FRESH + ": " + p.toString());
 			list.put(p, Status.FRESH);
 		}
 		if (productsAddedListener != null) {
@@ -204,7 +203,9 @@ public class ProductModel {
 	 * @return
 	 */
 	public boolean isLoaded(String s){
-		return classesLoaded.contains(s);
+		boolean result = classesLoaded.contains(s);
+		addToClassesLoaded(s);
+		return result;
 	}
 
 	

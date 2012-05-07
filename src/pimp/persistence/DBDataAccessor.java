@@ -432,29 +432,31 @@ public class DBDataAccessor {
 					if (fieldTypeName.equalsIgnoreCase("int")) {
 						sql += field.get(p);
 					} else if (fieldTypeName.equals("String")) {
-						sql += "\'" + field.get(p) + "\'";
+						String s = (String)field.get(p);
+						if (s != null) {
+							sql += "\'" + s.replaceAll("'", "''") + "\'";
+						} else {
+							sql += "null";
+						}
 					} else if (fieldTypeName.equalsIgnoreCase("double")) {
 						sql += field.get(p);
 					} else if (fieldTypeName.equals("Date")) {
 						Date date = (Date) field.get(p);
-						if (date != null)
-						{
+						if (date != null) {
 							sql += date.toString();
-						}
-						else
-						{
+						} else {
 							sql += "\'\'";
 						}
 					} else if (fieldTypeName.equals("Color")) {
 						Color color = (Color) field.get(p);
-						if (color != null)
-						{
+						if (color != null) {
 							sql += (color.getRGB());
-						}
-						else
-						{
+						} else {
 							sql += "\'\'";
 						}
+					}
+					else {	//Unsupported datatype
+						sql = sql.substring(0, sql.lastIndexOf(","));
 					}
 					
 					if (i < fields.length-1) {
