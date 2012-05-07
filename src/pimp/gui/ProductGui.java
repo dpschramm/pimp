@@ -29,9 +29,6 @@ import pimp.model.ProductModel;
 /**
  * The main user interface window.
  * 
- * Q. Should this extend JFrame? We don't override any of JFrame's 
- * functionality so we could use a wrapper instead -DS.
- * 
  * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
  */
@@ -83,7 +80,6 @@ public class ProductGui extends JFrame {
 		    			    options[2]);		    	  
 					if (n == 0)
 					{
-						System.out.println("Comitting cache");
 						controller.commitCache();
 					}
 					if (n != 2)

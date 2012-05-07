@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import pimp.classloader.DynamicJarLoader;
 import pimp.form.ProductForm;
 import pimp.gui.DatabaseSelector;
 import pimp.gui.ProductGui;
@@ -128,7 +129,6 @@ public class ProductController {
 	
 	public void initialiseDB(String databaseName) {
 		DataAccessor.initialise(databaseName);
-		// Load existing products.
 		loadClasses();
 	}
 	
@@ -143,8 +143,6 @@ public class ProductController {
 		for (Map.Entry<Product, Status> entry : list.entrySet()) {
 		    Product p = entry.getKey();
 		    Status s = entry.getValue();
-
-			System.out.println(s.toString() + ": " + p.toString());
 		    if (s == Status.DELETED)
 		    {
 		    	DataAccessor.delete(p);

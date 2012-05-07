@@ -29,7 +29,6 @@ public class DBDataAccessor {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -436,7 +435,7 @@ public class DBDataAccessor {
 						if (s != null) {
 							sql += "\'" + s.replaceAll("'", "''") + "\'";
 						} else {
-							sql += "null";
+							sql += "\'\'";
 						}
 					} else if (fieldTypeName.equalsIgnoreCase("double")) {
 						sql += field.get(p);
@@ -465,7 +464,6 @@ public class DBDataAccessor {
 				}
 				sql += " WHERE id = " + id + ";";
 			}
-			System.out.println(sql);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 			
