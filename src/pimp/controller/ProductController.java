@@ -55,34 +55,10 @@ public class ProductController {
 		
 		// Load existing products.
 		initialiseDB(defaultDatabaseName);
-		
-		// Make form.
-		//createForm();
 
 		gui.display();
 	}
-	
-	private void createForm() {
-		
-		// Fill the form.
-		Drink drink = new Drink();
-		drink.capacity = "Large";
-		drink.flavour = "Blue";
-		drink.name = "Gatorade";
-		drink.quantity = 40;
-		
-		// Update the form displayed by the GUI.
-		gui.updateProductForm(drink);
 
-		/*Shoe shoe = new Shoe();
-		shoe.name = "STYLISH SHOOOOE";
-		shoe.quantity = 4;
-		shoe.shoeSize = 12;
-		shoe.sizingSystem = "EU";
-		gui.updateProductForm(shoe);*/
-
-	}
-	
 	public void createNewProduct() {
 		
 		// Create and show product dialog.
