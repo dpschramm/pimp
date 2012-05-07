@@ -18,7 +18,6 @@ import javax.swing.ScrollPaneConstants;
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
 import pimp.form.ProductForm;
-import pimp.form.Form;
 import pimp.form.FormBuilder;
 import pimp.model.Product;
 import pimp.model.ProductModel;
@@ -27,9 +26,6 @@ import java.awt.event.MouseEvent;
 
 /**
  * The main user interface window.
- * 
- * Q. Should this extend JFrame? We don't override any of JFrame's 
- * functionality so we could use a wrapper instead -DS.
  * 
  * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
