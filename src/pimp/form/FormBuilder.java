@@ -135,42 +135,18 @@ public class FormBuilder {
 	 */
 	private LinkedHashSet<Field> getFieldsInOrder(Class c, Class upperClass){
 		
-		LinkedHashSet<Field> parentFields = new LinkedHashSet<Field>();
-		LinkedHashSet<Field> newFields = new LinkedHashSet<Field>();
-		
+		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
 		
 		if(c.equals(upperClass)){
 			// It is the top class so just add its fields 
-			parentFields.addAll(Arrays.asList(c.getFields()));
+			fields.addAll(Arrays.asList(c.getFields()));
 		} else {
-
-			// Get the Parents Fields
-			parentFields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
-			
-			// Get the current classes Fields and not the fields inherited
-			List<Field> currentClassFields =  new ArrayList<Field>();
-			for (Field f : c.getFields()) {
-				System.out.println(f.getDeclaringClass());
-				if (f.getDeclaringClass().equals(c)) {
-					currentClassFields.add(f);
-				}
-			}
-			
-			// Remove from the parents fields any fields that are overriden by this class
-			for (Field f : currentClassFields) {
-				for (Iterator<Field> it = parentFields.iterator(); it.hasNext();) {
-					if (f.getName().equals(it.next().getName())) {
-						it.remove();
-					}
-				}
-			}
-			
-			// Add the altered parents fields and the current classes fields together
-			parentFields.addAll(currentClassFields);
+			// Add parent fields then add current classes fields
+			fields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
+			fields.addAll(Arrays.asList(c.getFields()));
 		
 		}
-		
-		return parentFields;
+		return fields;
 	}
 	
 	/**
