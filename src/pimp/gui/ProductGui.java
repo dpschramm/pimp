@@ -42,7 +42,7 @@ public class ProductGui extends JFrame {
 	
 	// Views
 	private JFrame frame;
-	private ProductTree tree; // TODO make this private, encapsulate.
+	private ProductTree tree; 
 	private JScrollPane treeScrollPanel;
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 

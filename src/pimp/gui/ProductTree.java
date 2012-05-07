@@ -283,7 +283,10 @@ public class ProductTree extends JTree {
 	 * Method called from GUI in the event of a database switchout.
 	 */
 	public void empty(){
+		this.collapsePath(this.getSelectionPath());
 		this.removeAll();
+		repaint();
+		updateUI();
 	}
 	
 	/**
