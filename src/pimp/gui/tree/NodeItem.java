@@ -34,6 +34,13 @@ public class NodeItem extends DefaultMutableTreeNode{
     	this.o = p;
     }
     
+    /**
+     * This overrides DefaultMuteableTreeNode's method.
+     */
+    public boolean isLeaf() {
+    	return !isClassNode();
+    }
+    
     //Constructor that takes a class.
     public NodeItem(Class<?> c){
     	String s = c.toString();
