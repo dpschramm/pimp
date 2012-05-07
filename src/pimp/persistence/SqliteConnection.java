@@ -35,10 +35,10 @@ public class SqliteConnection extends DatabaseConnection {
 	@Override
 	protected boolean save(Product product) {
 		Class<?> c = product.getClass();
-		String fullClassName = c.getName();
-		String className = c.getSimpleName();
+		String className = c.getName();
+		className = className.replace('.', '_');
 		if (!tableExists(className)) {
-			createTable(fullClassName);
+			createTable(className);
 		}
 		
 		return insertIntoTable(className, product);
@@ -69,13 +69,15 @@ public class SqliteConnection extends DatabaseConnection {
 			sql += ");";
 
 			PreparedStatement preparedStatement = conn.prepareStatement(sql);
-			preparedStatement.setInt(1, 1);
+			//preparedStatement.setInt(1, 1);
 			for (int i = 0; i < fields.length; i++) {	//TODO: sort fields by name, as Class.getFields returns them in no particular order.
-				Object obj = fields[i].get(product);
-				String data = "";
-				if (obj != null) {
-					data = fields[i].get(product).toString();
-					setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
+				if (!fields[i].getName().equals("id")) {
+					Object obj = fields[i].get(product);
+					String data = "";
+					if (obj != null) {
+						data = fields[i].get(product).toString();
+						setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
+					}
 				}
 			}
 			
@@ -168,16 +170,15 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	private void createTable(String fullClassName) {
-		String className = "";
+	private void createTable(String tableName) {
+		String className = tableName.replace('_', '.');
 		try {
-			Class<?> c = Class.forName(fullClassName);
-			className = c.getSimpleName();
+			Class<?> c = Class.forName(className);
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
 			Statement statement = conn.createStatement();
-			statement.executeUpdate("CREATE TABLE " + className +
+			statement.executeUpdate("CREATE TABLE " + tableName +
 									" (id INTEGER PRIMARY KEY AUTOINCREMENT);");
 			
 			for (Field field : fields) {
@@ -185,13 +186,13 @@ public class SqliteConnection extends DatabaseConnection {
 				String dbColType = getDbColType(type.getSimpleName());
 				String columnName = field.getName();
 				if (!columnName.equals("id")) {	//Id column has already been created.
-					statement.executeUpdate("ALTER TABLE " + className +
+					statement.executeUpdate("ALTER TABLE " + tableName +
 											" ADD COLUMN " + columnName + 
 											" " + dbColType + ";");
 				}
 			}
 		} catch (Exception e) {
-			System.err.println("Error on table creation of table " + className);
+			System.err.println("Error on table creation of table " + tableName);
 			e.printStackTrace();
 		}
 		
@@ -214,6 +215,7 @@ public class SqliteConnection extends DatabaseConnection {
 	}
 
 	private boolean tableExists(String className) {
+		className = className.replace('.', '_');
 		boolean success = false;
 		try {
 			Statement statement = conn.createStatement();
@@ -270,8 +272,8 @@ public class SqliteConnection extends DatabaseConnection {
 		try {
 			ResultSetMetaData metaData = rs.getMetaData();
 			int columnCount = metaData.getColumnCount();
-			
-			Class<?> c = Class.forName("pimp.productdefs." + tableName);
+			String className = tableName.replace('_', '.');
+			Class<?> c = Class.forName(className);
 			product = (Product) c.newInstance();
 			
 			for (int i = 1; i <= columnCount; i++) {
@@ -312,7 +314,7 @@ public class SqliteConnection extends DatabaseConnection {
 												  " FROM sqlite_master" +
 												  " WHERE type=\'table\' AND name not like \'%sqlite%\';");
 			while(rs.next()) {
-				tableNames.add(rs.getString("name"));
+				tableNames.add(rs.getString("name").replace('_', '.'));
 			}
 			rs.close();
 			
@@ -392,7 +394,11 @@ public class SqliteConnection extends DatabaseConnection {
 	}
 	
 	private String extractTableName(String className) {
-		return className.substring(className.lastIndexOf(".") + 1);
+		String tableName = className.replace('.', '_');
+		if (tableName.contains("class ")) {
+			tableName = tableName.replace("class ", "");
+		}
+		return tableName;
 	}
 
 	@Override
@@ -401,7 +407,8 @@ public class SqliteConnection extends DatabaseConnection {
 		
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate("DELETE FROM " + p.getClass().getSimpleName() +
+			String tableName = extractTableName(p.getClass().getName());
+			stmt.executeUpdate("DELETE FROM " + tableName +
 							   " WHERE id = " + id);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -416,9 +423,9 @@ public class SqliteConnection extends DatabaseConnection {
 		Field[] fields = c.getFields();
 		
 		try {
-		
+			String tableName = extractTableName(c.getName());
 			if (fields.length > 1) {	//More than just an id...
-				sql = "UPDATE " + c.getSimpleName() + " SET ";
+				sql = "UPDATE " + tableName + " SET ";
 	
 				for (int i = 0; i < fields.length; i++) {
 					Field field = fields[i];
