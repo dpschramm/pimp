@@ -72,9 +72,28 @@ public class ShoeCompainionForm extends ProductForm{
 	public Shoe getProduct() {
 		Shoe formShoe = new Shoe();
 		formShoe.name = nameInput.getText();
-		formShoe.quantity = Integer.parseInt(quantityInput.getText());
+		try{
+			formShoe.quantity = Integer.parseInt(quantityInput.getText());
+		} catch (NumberFormatException nfe){
+			formShoe.quantity = 0;
+		}
+
 		formShoe.sizingSystem = (String) shoeSizingSystemSelector.getSelectedItem();
-		System.out.println((Double) shoeSizeSelector.getSelectedItem());
+		
+		if(formShoe.sizingSystem == null){
+			formShoe.sizingSystem = "US";
+		}
+
+		if (shoeSizeSelector.getSelectedItem() != null) {
+			try {
+				formShoe.shoeSize = Double.parseDouble(shoeSizeSelector
+						.getSelectedItem().toString());
+			} catch (NumberFormatException nfe) {
+				formShoe.shoeSize = 0.0;
+			}
+		} else {
+			formShoe.shoeSize = 0.0;
+		}
 		return formShoe;
 	}
 
@@ -88,6 +107,14 @@ public class ShoeCompainionForm extends ProductForm{
 		nameInput.setText(s.name);
 		quantityInput.setText("" +  s.quantity);
 		shoeSizingSystemSelector.setSelectedItem(s.sizingSystem);
+		if(s.sizingSystem == null){
+			s.sizingSystem = "US";
+			shoeSizingSystemSelector.setSelectedItem(s.sizingSystem);
+		}
 		shoeSizeSelector.setSelectedItem(s.shoeSize);
+		if(s.shoeSize == null){
+			s.shoeSize = 8.0;
+			shoeSizeSelector.setSelectedItem(s.shoeSize);
+		}
 	}
 }

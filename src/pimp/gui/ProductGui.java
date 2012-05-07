@@ -80,7 +80,6 @@ public class ProductGui extends JFrame {
 		    			    options[2]);		    	  
 					if (n == 0)
 					{
-						System.out.println("Comitting cache");
 						controller.commitCache();
 					}
 					if (n != 2)
