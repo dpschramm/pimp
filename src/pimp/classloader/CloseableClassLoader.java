@@ -16,6 +16,14 @@ import java.util.jar.JarFile;
 public class CloseableClassLoader extends URLClassLoader {
 	
 	JarURLConnection jarConnection;
+	
+	/**
+	 * Unlike a normal URLClassLoader, this constructor only takes a single 
+	 * URL. This must be a URL for a jar file as we create a jarConnection 
+	 * from it.
+	 * 
+	 * @param jarUrl a URL to a jar file.
+	 */
 	public CloseableClassLoader(URL jarUrl) {
 	    super(new URL[] {jarUrl});
 	    

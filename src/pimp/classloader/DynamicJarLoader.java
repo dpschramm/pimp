@@ -102,7 +102,6 @@ public class DynamicJarLoader {
 					}
 				}
 	    	}
-			jar.close(); // TODO remove this. Close the jar.
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
