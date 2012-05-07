@@ -13,32 +13,35 @@ import pimp.model.Product;
 
 public class DataAccessor {
 	
-	private static DatabaseConnection instance = null;
+	private DatabaseConnection dbc = null;
+	
+	// Singleton stuff
+	
+	private static DataAccessor instance = null;
 
-	public static void initialise(DatabaseConnection dbc) {
-		instance = dbc;
-	}
-	
-	public static boolean save(Product product) {
+	public static DataAccessor getInstance() {
 		if (instance == null) {
-			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise().");
-			return false;
-		} else {
-			return instance.save(product);
+			instance = new DataAccessor();
 		}
+		return instance;
 	}
 	
-	public static List<Product> loadProductList() {
-		if (instance == null) {
-			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise().");
-			return null;
-		} else {
-			return instance.loadProductList();
-		}
+	private DataAccessor() {} // Disable the public constuctor.
+	
+	public void connect(DatabaseConnection dbConnector) {
+		this.dbc = dbConnector;
 	}
 	
-	public static void exportDb(File newDatabaseFile) throws Exception {
-		InputStream in = new FileInputStream(instance.getDatabaseName());
+	public boolean save(Product product) {
+		return dbc.save(product);
+	}
+	
+	public List<Product> loadProductList() {
+		return dbc.loadProductList();
+	}
+	
+	public void exportDb(File newDatabaseFile) throws Exception {
+		InputStream in = new FileInputStream(dbc.getDatabaseName());
 		OutputStream out = new FileOutputStream(newDatabaseFile);
 		byte[] buffer = new byte[1024];
 		int len;
@@ -50,59 +53,32 @@ public class DataAccessor {
 		in.close();
 		out.close();
 		
-		instance.setDatabase(newDatabaseFile.getName());
+		dbc.setDatabase(newDatabaseFile.getName());
 	}
 	
-	public static Map<Integer, Product> getIdToProductMap(String className) {
-		if (instance == null) {
-			return null;
-		}
-		
-		return instance.getIdToProductMap(className);
+	public Map<Integer, Product> getIdToProductMap(String className) {
+		return dbc.getIdToProductMap(className);
 	}
 	
-	public static Map<Integer, String> getProductIdsAndNames(String className) {
-		if (instance == null) {
-			return null;
-		}
-		
-		return instance.getProductIdsAndNames(className);
+	public Map<Integer, String> getProductIdsAndNames(String className) {
+		return dbc.getProductIdsAndNames(className);
 	}
 	
-	public static Product loadProductFromId(int id, String productClass) {
-		if (instance == null) {
-			System.out.println("DataAccessor must be initialised first. Call DataAccessor.initialise()");
-			return null;
-		}
-		
-		return instance.loadProductFromId(id, productClass);
+	public Product loadProductFromId(int id, String productClass) {
+		return dbc.loadProductFromId(id, productClass);
 	}
 	
-	public static boolean isInitialised() {
-		if (instance == null) {
-			return false;
-		} else {
-			return true;
+	public void saveAll(Collection<Product> products) {
+		for (Product p : products) {
+			dbc.save(p);
 		}
 	}
 	
-	public static void saveAll(Collection<Product> products) {
-		if (instance != null) {
-			for (Product p : products) {
-				save(p);
-			}
-		}
+	public void delete(Product p) {
+		dbc.delete(p);
 	}
 	
-	public static void delete(Product p) {
-		if (instance != null) {
-			instance.delete(p);
-		}
-	}
-	
-	public static void update(Product p) {
-		if (instance != null) {
-			instance.update(p);
-		}
+	public void update(Product p) {
+		dbc.update(p);
 	}
 }

@@ -44,6 +44,8 @@ public class ProductController {
 	
 	private ProductGui gui;	// View.
 	
+	private DataAccessor da;
+	
 	/** 
 	 * ProductController is essentially the Controller
 	 * This involves applying appropriate ActionListeners to the given View
@@ -56,10 +58,19 @@ public class ProductController {
 		// Initialize Gui
 		gui = new ProductGui(this, cache);
 		
-		// Load existing products.
-		initialiseDB(defaultDatabaseName);
-
+		// Set up database.
+		da = DataAccessor.getInstance();
+		setupDatabase(defaultDatabaseName);
+		
+		// Display the gui.
 		gui.display();
+	}
+	
+	private void setupDatabase(String databaseName) {
+		// Load existing products.
+		System.out.println("Opening database: " + databaseName);
+		da.connect(new SqliteConnection(databaseName));
+		loadClasses();
 	}
 
 	public void createNewProduct() {
@@ -96,7 +107,7 @@ public class ProductController {
 	
 	public void getProductsByClass(String className) {
 		if (!cache.isLoaded(className)){
-			Map<Integer, Product> m = DataAccessor.getIdToProductMap(className);
+			Map<Integer, Product> m = da.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();
 			
 			for (Product p : m.values()) {
@@ -125,14 +136,6 @@ public class ProductController {
 	public void updateCacheItem(Product original, Product updated){
 		cache.update(original, updated);
 	}
-
-	
-	public void initialiseDB(String databaseName) {
-		DatabaseConnection dbc = new SqliteConnection(databaseName);
-		DataAccessor.initialise(dbc);
-		// Load existing products.
-		loadClasses();
-	}
 	
 	private List<Class<?>> loadClasses() {
 		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
@@ -142,27 +145,23 @@ public class ProductController {
 	
 	public void commitCache(){
 		Map<Product, Status> list = cache.getCache();
-		for (Map.Entry<Product, Status> entry : list.entrySet()) {
-		    Product p = entry.getKey();
-		    Status s = entry.getValue();
+		for (Product p : list.keySet()) {
+		    Status s = list.get(p);
 		    if (s == Status.DELETED)
 		    {
-		    	DataAccessor.delete(p);
+		    	da.delete(p);
 		    }
 		    else if (s == Status.UPDATED)
 		    {
-		    	DataAccessor.update(p);
+		    	da.update(p);
 		    }
 		    else if (s == Status.NEW)
 		    {
-		    	DataAccessor.save(p);
+		    	da.save(p);
 		    }
-//		    else if (s == Status.FRESH)
-//		    {
-//		    	Do nothing
-//		    }
 		}
-		cache.flush();
+		cache.flush(); // Update cache statuses.
+		System.out.println("Saved ");
 	}
 
 	
@@ -175,9 +174,7 @@ public class ProductController {
 		File file = dbs.getFile("Open");
 		if (file != null) {
 			gui.empty();
-			initialiseDB(file.getName());
-			JOptionPane.showMessageDialog(gui, 
-					"Database " + file.getName() + " opened");
+			setupDatabase(file.getName());
 		}
 	}
 	
@@ -194,7 +191,7 @@ public class ProductController {
 		
 		if (file != null) {	// If the user selected a file...
 			try {
-				DataAccessor.exportDb(file);
+				da.exportDb(file);
 				JOptionPane.showMessageDialog(gui, 
 						"Database successfully exported to " + 
 						file.getName() + ".");
