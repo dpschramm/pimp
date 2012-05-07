@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
@@ -64,6 +65,7 @@ public class ProductGui extends JFrame {
 		frame = new JFrame();
 		frame.setPreferredSize(new Dimension(700, 500));
 		// Exit application when close button clicked. Also commit the cache
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		frame.addWindowListener(new WindowAdapter(){
 		      public void windowClosing(WindowEvent we){
@@ -139,6 +141,13 @@ public class ProductGui extends JFrame {
 		btnOpenProducts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ProductTree newTree = new ProductTree();
+				treeScrollPanel.remove(tree);				
+				repaint();
+				tree.updateUI();
+//				tree = newTree;
+//				treeScrollPanel.add(tree);
+
 				controller.open();
 
 				// Create new copy of product, with different name
