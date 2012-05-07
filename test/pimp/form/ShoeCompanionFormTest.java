@@ -21,7 +21,7 @@ public class ShoeCompanionFormTest extends junit.framework.TestCase{
 	public void setUp() throws Exception {
 		s = new Shoe();
 		s.name = "Nike Air Ones";
-		s.quantity = 10;
+		s.quantity = 0;
 
 	}
 	
