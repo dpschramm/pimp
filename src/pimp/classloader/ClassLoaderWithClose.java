@@ -36,6 +36,7 @@ public class ClassLoaderWithClose extends URLClassLoader {
                     Field loader = sunMiscURLClassPathJarLoader.getClass().getDeclaredField("jar");
                     loader.setAccessible(true);
                     Object jarFile = loader.get(sunMiscURLClassPathJarLoader);
+                    System.out.println("Closing jar file: " + jarFile);
                     ((JarFile) jarFile).close();
                 } catch (Throwable t) {
                     // if we got this far, this is probably not a JAR loader so skip it
