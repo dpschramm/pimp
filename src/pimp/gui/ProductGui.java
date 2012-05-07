@@ -29,9 +29,6 @@ import pimp.model.ProductModel;
 /**
  * The main user interface window.
  * 
- * Q. Should this extend JFrame? We don't override any of JFrame's 
- * functionality so we could use a wrapper instead -DS.
- * 
  * @author Daniel Schramm, Joel Harrison, Ellie Rasmus, Joel Mason
  *
  */
@@ -65,6 +62,7 @@ public class ProductGui extends JFrame {
 		
 		// Setup view.
 		frame = new JFrame();
+		frame.setPreferredSize(new Dimension(700, 500));
 		// Exit application when close button clicked. Also commit the cache
 		
 		frame.addWindowListener(new WindowAdapter(){
@@ -94,7 +92,7 @@ public class ProductGui extends JFrame {
 		
 		// Create product tree.
 		tree = new ProductTree();
-		tree.setPreferredSize(new Dimension(150, 18));
+		tree.setPreferredSize(new Dimension(200, 18));
 		tree.addClassSelectListener(new classChangedListener());
 		tree.addProductSelectedListener(new productSelectedListener());
 		//tree.addProductEditedListener(new productEditedListener());
@@ -104,6 +102,7 @@ public class ProductGui extends JFrame {
 		
 		final CustomIconRenderer renderer = new CustomIconRenderer();
 		tree.setCellRenderer(renderer);
+		
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
 		frame.getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
@@ -135,16 +134,6 @@ public class ProductGui extends JFrame {
 			}
 		});
 
-		// Create Copy Button
-		JButton btnCopy = new JButton("Copy");
-		btnCopy.addActionListener(new ActionListener() {
-
-
-			@Override()
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		
 		// Create Open Database Button
 		JButton btnOpenProducts = new JButton("Open");
 		btnOpenProducts.addActionListener(new ActionListener() {
@@ -174,8 +163,9 @@ public class ProductGui extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Product c = getCurrentProductState();
-				controller.createNewProduct(c);
-				
+				if(c != null){
+					controller.createNewProduct(c);
+				}
 			}
 		});
 		
@@ -188,6 +178,15 @@ public class ProductGui extends JFrame {
 			}
 		});
 		
+		JButton btnCommit = new JButton("Save");
+		btnCommit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateProduct(selectedProduct);
+				controller.commitCache();
+			}
+		});
+		
 		// Add buttons to panels.
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
@@ -197,6 +196,7 @@ public class ProductGui extends JFrame {
 		
 		JPanel rightPanel = new JPanel(new FlowLayout());
 		rightPanel.add(btnOpenProducts);
+		rightPanel.add(btnCommit);
 		rightPanel.add(btnSaveAsProducts);
 		
 		// Add panels to button panel.
@@ -204,15 +204,8 @@ public class ProductGui extends JFrame {
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
 		
-		JButton btnCommit = new JButton("Commit");
-		btnCommit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				updateProduct(selectedProduct);
-				controller.commitCache();
-			}
-		});
-		buttonPanel.add(btnCommit, BorderLayout.CENTER);
+		
+		//buttonPanel.add(btnCommit, BorderLayout.CENTER);
 	
 		return buttonPanel;
 	}
@@ -223,16 +216,18 @@ public class ProductGui extends JFrame {
 	 * 
 	 **/
 	public Product getCurrentProductState(){
-		Product c;	
-		try {
-			c = (Product) form.getProduct();
-			return c;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Product c;
+		if(form != null){
+			try {
+				c = (Product) form.getProduct();
+				return c;
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
 		}
 		return null;
 	}

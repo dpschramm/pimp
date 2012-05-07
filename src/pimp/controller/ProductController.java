@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import pimp.classloader.DynamicJarLoader;
 import pimp.form.ProductForm;
 import pimp.gui.DatabaseSelector;
 import pimp.gui.ProductGui;
@@ -19,6 +20,8 @@ import pimp.model.Product;
 import pimp.model.ProductModel;
 import pimp.model.Status;
 import pimp.persistence.DataAccessor;
+import pimp.persistence.DatabaseConnection;
+import pimp.persistence.SqliteConnection;
 import pimp.productdefs.Drink;
 
 
@@ -58,7 +61,7 @@ public class ProductController {
 
 		gui.display();
 	}
-	
+
 	public void createNewProduct() {
 		
 		// Create and show product dialog.
@@ -127,7 +130,9 @@ public class ProductController {
 
 	
 	public void initialiseDB(String databaseName) {
-		DataAccessor.initialise(databaseName);
+		DatabaseConnection dbc = new SqliteConnection(databaseName);
+		DataAccessor.initialise(dbc);
+		// Load existing products.
 		loadClasses();
 	}
 	

@@ -13,10 +13,10 @@ import pimp.model.Product;
 
 public class DataAccessor {
 	
-	private static DBDataAccessor instance = null;
+	private static DatabaseConnection instance = null;
 
-	public static void initialise(String dbName) {
-		instance = new DBDataAccessor(dbName);
+	public static void initialise(DatabaseConnection dbc) {
+		instance = dbc;
 	}
 	
 	public static boolean save(Product product) {
@@ -50,7 +50,7 @@ public class DataAccessor {
 		in.close();
 		out.close();
 		
-		initialise(newDatabaseFile.getName());
+		instance.setDatabase(newDatabaseFile.getName());
 	}
 	
 	public static Map<Integer, Product> getIdToProductMap(String className) {
