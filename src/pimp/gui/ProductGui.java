@@ -34,6 +34,11 @@ import pimp.model.ProductModel;
  */
 public class ProductGui extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4171458789832604658L;
+
 	// Controller
 	private ProductController controller;
 	
@@ -63,8 +68,8 @@ public class ProductGui extends JFrame {
 		// Setup view.
 		frame = new JFrame();
 		frame.setPreferredSize(new Dimension(700, 500));
-		// Exit application when close button clicked. Also commit the cache
 		
+		// Exit application when close button clicked. Also commit the cache.
 		frame.addWindowListener(new WindowAdapter(){
 		      public void windowClosing(WindowEvent we){
 		    	  Object[] options = {"Yes",
