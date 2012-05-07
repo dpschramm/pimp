@@ -19,6 +19,8 @@ import pimp.model.Product;
 import pimp.model.ProductModel;
 import pimp.model.Status;
 import pimp.persistence.DataAccessor;
+import pimp.persistence.DatabaseConnection;
+import pimp.persistence.SqliteConnection;
 import pimp.productdefs.Drink;
 
 
@@ -151,7 +153,8 @@ public class ProductController {
 
 	
 	public void initialiseDB(String databaseName) {
-		DataAccessor.initialise(databaseName);
+		DatabaseConnection dbc = new SqliteConnection(databaseName);
+		DataAccessor.initialise(dbc);
 		// Load existing products.
 		loadClasses();
 	}
