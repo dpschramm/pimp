@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -19,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
+import javax.swing.tree.TreeModel;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
@@ -149,14 +149,12 @@ public class ProductGui extends JFrame {
 		btnOpenProducts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProductTree newTree = new ProductTree();
-				treeScrollPanel.remove(tree);				
-				repaint();
-				tree.updateUI();
-//				tree = newTree;
-//				treeScrollPanel.add(tree);
-
+				
+				tree.empty();
 				controller.open();
+				controller.loadClasses();
+				revalidate();
+				repaint();
 
 				// Create new copy of product, with different name
 				// Send this in an event to the controller's listener.

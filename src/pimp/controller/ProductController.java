@@ -137,7 +137,7 @@ public class ProductController {
 		cache.update(original, updated);
 	}
 	
-	private List<Class<?>> loadClasses() {
+	public List<Class<?>> loadClasses() {
 		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
 		gui.setClasses(cpl); // must be called before setProducts.
 		return cpl;
