@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class FormBuilder {
 		//Field[] fields = c.getFields();
 		
 		// Get the fields in order so superclass's fields come first
-		LinkedHashSet<Field> fields2 = getFieldsInOrder(c, Product.class);
+		LinkedHashSet<Field> fields = getFieldsInOrder(c, Product.class);
 		
 		JPanel grid = new JPanel(new GridBagLayout());
 		
@@ -81,7 +82,7 @@ public class FormBuilder {
 		cLabel.anchor = GridBagConstraints.WEST;
 		
 		int row = 0;
-		for (Field f : fields2) {
+		for (Field f : fields) {
 			// Only add fields with the Form Field Annotation.
 			if (f.isAnnotationPresent(FormField.class)) {
 				// Update constraints to next row.
@@ -123,16 +124,53 @@ public class FormBuilder {
 	}
 	
 	
+	/**
+	 * Get the fields in order so the highest parents fields a are first in the
+	 * list and so on till the current class, if a subclass overrides a parents
+	 * field then the parents field is overriden
+	 * 
+	 * @param c
+	 * @param upperClass
+	 * @return
+	 */
 	private LinkedHashSet<Field> getFieldsInOrder(Class c, Class upperClass){
 		
-		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
+		LinkedHashSet<Field> parentFields = new LinkedHashSet<Field>();
+		LinkedHashSet<Field> newFields = new LinkedHashSet<Field>();
+		
+		
 		if(c.equals(upperClass)){
-			fields.addAll(Arrays.asList(c.getFields()));
+			// It is the top class so just add its fields 
+			parentFields.addAll(Arrays.asList(c.getFields()));
 		} else {
-			fields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
-			fields.addAll(Arrays.asList(c.getFields()));
+
+			// Get the Parents Fields
+			parentFields.addAll(getFieldsInOrder(c.getSuperclass(), upperClass));
+			
+			// Get the current classes Fields and not the fields inherited
+			List<Field> currentClassFields =  new ArrayList<Field>();
+			for (Field f : c.getFields()) {
+				System.out.println(f.getDeclaringClass());
+				if (f.getDeclaringClass().equals(c)) {
+					currentClassFields.add(f);
+				}
+			}
+			
+			// Remove from the parents fields any fields that are overriden by this class
+			for (Field f : currentClassFields) {
+				for (Iterator<Field> it = parentFields.iterator(); it.hasNext();) {
+					if (f.getName().equals(it.next().getName())) {
+						it.remove();
+					}
+				}
+			}
+			
+			// Add the altered parents fields and the current classes fields together
+			parentFields.addAll(currentClassFields);
+		
 		}
-		return fields;
+		
+		return parentFields;
 	}
 	
 	/**
