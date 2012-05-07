@@ -57,7 +57,7 @@ public class ProductController {
 		initialiseDB(defaultDatabaseName);
 		
 		// Make form.
-		createForm();
+		//createForm();
 
 		gui.display();
 	}

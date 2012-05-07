@@ -80,6 +80,7 @@ public class ProductGui extends JFrame {
 		
 		final CustomIconRenderer renderer = new CustomIconRenderer();
 		tree.setCellRenderer(renderer);
+		
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
 		frame.getContentPane().add(createButtonPanel(), BorderLayout.NORTH);
