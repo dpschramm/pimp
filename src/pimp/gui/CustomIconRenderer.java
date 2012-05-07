@@ -14,8 +14,8 @@ class CustomIconRenderer extends DefaultTreeCellRenderer {
     
     
     public CustomIconRenderer() {
-    	classIcon = new ImageIcon(CustomIconRenderer.class.getResource("/images/classIcon.png"));
-    	productIcon = new ImageIcon(CustomIconRenderer.class.getResource("/images/productIcon.png"));
+    	classIcon = new ImageIcon(CustomIconRenderer.class.getResource("../../images/classIcon.png"));
+    	productIcon = new ImageIcon(CustomIconRenderer.class.getResource("../../images/productIcon.png"));
     	System.out.println("Renderer Initialised");
     }
    
