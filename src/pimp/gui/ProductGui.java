@@ -381,7 +381,7 @@ public class ProductGui extends JFrame {
 	class productUpdatedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent u) {
-			tree.updateNode((Product) u.getSource());
+			tree.updateProduct((Product) u.getSource());
 		}
 	}
 
