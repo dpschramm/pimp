@@ -83,10 +83,10 @@ public class DynamicJarLoader {
 	
 	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
-		CloseableClassLoader classLoader = null;
 		try {
 			// Create the ClassLoader for this Jar.
-			classLoader = new CloseableClassLoader(f.toURI().toURL());
+			URLClassLoader classLoader = 
+				new URLClassLoader(new URL[] {f.toURI().toURL()});
 			
 			JarFile jar = new JarFile(f);
 			// Check each entry in the Jar to see if it is a class.
@@ -102,18 +102,16 @@ public class DynamicJarLoader {
 					}
 				}
 	    	}
+			// Close to unlock jars to the system.
+			jar.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (classLoader != null) {
-				// Close to remove file lock in windows.
-				classLoader.close();
-			}
 		}
+		
 		return classes;
 	}
 }
