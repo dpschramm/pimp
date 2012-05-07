@@ -73,8 +73,8 @@ public class ShoeCompainionForm extends ProductForm{
 		Shoe formShoe = new Shoe();
 		formShoe.name = nameInput.getText();
 		formShoe.quantity = Integer.parseInt(quantityInput.getText());
-		formShoe.shoeSize = (Double) shoeSizeSelector.getSelectedItem();
 		formShoe.sizingSystem = (String) shoeSizingSystemSelector.getSelectedItem();
+		System.out.println((Double) shoeSizeSelector.getSelectedItem());
 		return formShoe;
 	}
 
@@ -87,7 +87,7 @@ public class ShoeCompainionForm extends ProductForm{
 		Shoe s = (Shoe) o;
 		nameInput.setText(s.name);
 		quantityInput.setText("" +  s.quantity);
+		shoeSizingSystemSelector.setSelectedItem(s.sizingSystem);
 		shoeSizeSelector.setSelectedItem(s.shoeSize);
-		shoeSizeSelector.setSelectedItem(s.sizingSystem);
 	}
 }
