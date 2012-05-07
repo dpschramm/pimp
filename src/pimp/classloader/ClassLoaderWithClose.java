@@ -15,6 +15,11 @@ import java.util.jar.JarFile;
  */
 public class ClassLoaderWithClose extends URLClassLoader {
 
+	public ClassLoaderWithClose(URL url) {
+	    this(new URL[] {url});
+	    System.out.println("Loading: " + url);
+	}
+	
 	public ClassLoaderWithClose(URL[] urls) {
 	    super(urls);
 	}
@@ -30,8 +35,10 @@ public class ClassLoaderWithClose extends URLClassLoader {
             Object sunMiscURLClassPath = ucp.get(this);
             Field loaders = sunMiscURLClassPath.getClass().getDeclaredField("loaders");
             loaders.setAccessible(true);
-            Object collection = loaders.get(sunMiscURLClassPath);
-            for (Object sunMiscURLClassPathJarLoader : ((Collection<?>) collection).toArray()) {
+            Collection<?> collection = (Collection<?>) loaders.get(sunMiscURLClassPath);
+            System.out.println("Length " + collection.size());
+            for (Object sunMiscURLClassPathJarLoader : collection.toArray()) {
+            	System.out.println("LOL.");
                 try {
                     Field loader = sunMiscURLClassPathJarLoader.getClass().getDeclaredField("jar");
                     loader.setAccessible(true);
