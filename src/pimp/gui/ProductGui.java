@@ -153,7 +153,8 @@ public class ProductGui extends JFrame {
 				tree.empty();
 				controller.open();
 				controller.loadClasses();
-				revalidate();
+				invalidate();
+				validate();
 				repaint();
 
 				// Create new copy of product, with different name
