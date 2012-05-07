@@ -59,7 +59,7 @@ public class ProductController {
 
 		gui.display();
 	}
-	
+
 	public void createNewProduct() {
 		
 		// Create and show product dialog.
