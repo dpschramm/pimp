@@ -152,7 +152,7 @@ public class ProductTree extends JTree {
 				int n = JOptionPane.showConfirmDialog(
 					    this.getParent(),
 					    "This will delete all products in this category\n" + "Are you sure you wish to do this?" ,
-					    "An Inane Question",
+					    "Delete Products",
 					    JOptionPane.YES_NO_OPTION);
 				if (n == 0)
 				{
@@ -182,6 +182,10 @@ public class ProductTree extends JTree {
 			NodeItem child = (NodeItem) e.nextElement();
 			if (!child.getStoredObject().getClass().equals(Class.class)){
 				list.add((Product) child.getStoredObject());
+			}
+			//Recursive
+			if (child.getChildCount() > 0){
+				list.addAll(EnumToList(child.children()));
 			}
 		}
 		return list;

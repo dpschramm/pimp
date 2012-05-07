@@ -1,30 +1,30 @@
 package pimp.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.tree.DefaultTreeCellRenderer;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
-import pimp.form.ProductForm;
-import pimp.form.Form;
 import pimp.form.FormBuilder;
+import pimp.form.ProductForm;
 import pimp.model.Product;
 import pimp.model.ProductModel;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * The main user interface window.
@@ -53,7 +53,7 @@ public class ProductGui extends JFrame {
 	/** 
 	 * Constructor
 	 */
-	public ProductGui(ProductController controller, ProductModel model) {
+	public ProductGui(final ProductController controller, ProductModel model) {
 		
 		// Setup controller.
 		this.controller = controller;
@@ -65,8 +65,33 @@ public class ProductGui extends JFrame {
 		
 		// Setup view.
 		frame = new JFrame();
-		// Exit application when close button clicked.
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		// Exit application when close button clicked. Also commit the cache
+		
+		frame.addWindowListener(new WindowAdapter(){
+		      public void windowClosing(WindowEvent we){
+		    	  Object[] options = {"Yes",
+		                    "No",
+		                    "Cancel"};
+		    	  
+		    	  int n = JOptionPane.showOptionDialog(frame,
+		    			  "Would you like to save the changes you have made?" ,
+						    "Save Changes?",
+		    			    JOptionPane.YES_NO_CANCEL_OPTION,
+		    			    JOptionPane.QUESTION_MESSAGE,
+		    			    null,
+		    			    options,
+		    			    options[2]);		    	  
+					if (n == 0)
+					{
+						System.out.println("Comitting cache");
+						controller.commitCache();
+					}
+					if (n != 2)
+					{
+						frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+			    	    System.exit(0);
+					}
+		      }});
 		
 		// Create product tree.
 		tree = new ProductTree();
@@ -185,7 +210,7 @@ public class ProductGui extends JFrame {
 		btnCommit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				saveProduct(selectedProduct);
+				updateProduct(selectedProduct);
 				controller.commitCache();
 			}
 		});
@@ -229,7 +254,7 @@ public class ProductGui extends JFrame {
 		}
 	}
 	
-	public void saveProduct(Product p){
+	public void updateProduct(Product p){
 		try {
 			Product c = getCurrentProductState();
 			ArrayList<Product> l = new ArrayList<Product>();
@@ -258,7 +283,7 @@ public class ProductGui extends JFrame {
 	public void updateProductForm(Product product) {
 		try {
 			if (form != null) {
-				saveProduct(selectedProduct);
+				updateProduct(selectedProduct);
 				frame.getContentPane().remove(form);
 			}
 			//
