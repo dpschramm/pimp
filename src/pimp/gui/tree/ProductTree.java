@@ -334,7 +334,6 @@ public class ProductTree extends JTree {
 			addToNodeMap(c.toString(), node);
 			//insert the node into the tree and scroll it
 			model.insertNodeInto(node, parent, parent.getChildCount());
-			//scrollPathToVisible(new TreePath(node.getPath()));
 		}
 	}
 	

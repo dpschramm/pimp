@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
-import javax.swing.tree.TreeModel;
 
 import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
