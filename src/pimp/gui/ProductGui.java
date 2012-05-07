@@ -24,6 +24,8 @@ import pimp.controller.ProductController;
 import pimp.form.CompanionForm;
 import pimp.form.FormBuilder;
 import pimp.form.ProductForm;
+import pimp.gui.tree.CustomIconRenderer;
+import pimp.gui.tree.ProductTree;
 import pimp.model.Product;
 import pimp.model.ProductModel;
 

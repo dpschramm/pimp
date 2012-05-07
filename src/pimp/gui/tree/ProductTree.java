@@ -1,4 +1,4 @@
-package pimp.gui;
+package pimp.gui.tree;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +26,11 @@ import pimp.model.Product;
  */
 
 public class ProductTree extends JTree {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 662247613490338231L;
 	
 	// Product tree.
 	private NodeItem root;
