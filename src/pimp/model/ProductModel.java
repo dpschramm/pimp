@@ -101,7 +101,6 @@ public class ProductModel {
 			else {
 				list.put(p, Status.DELETED);
 			}
-			System.out.println("Deleted product: " + p);
 		}
 		
 		if (productsDeletedListener != null) {
@@ -194,7 +193,6 @@ public class ProductModel {
 	 */
 	public void addToClassesLoaded(String s){
 		classesLoaded.add(s);
-		System.out.println(s);
 	}
 	
 	/**

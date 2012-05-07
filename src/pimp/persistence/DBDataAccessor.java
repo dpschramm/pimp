@@ -465,7 +465,6 @@ public class DBDataAccessor {
 				}
 				sql += " WHERE id = " + id + ";";
 			}
-			System.out.println(sql);
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 			
