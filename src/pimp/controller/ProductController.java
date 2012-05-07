@@ -122,10 +122,8 @@ public class ProductController {
 	 * Can someone please figure out how to get pairs working
 	 * @param p
 	 */
-	public void updateCacheItem(ArrayList<Product> p){
-		Product product = p.get(0);
-		Product changes = p.get(1);
-		cache.update(product, changes);
+	public void updateCacheItem(Product original, Product updated){
+		cache.update(original, updated);
 	}
 
 	

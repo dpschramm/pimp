@@ -66,7 +66,7 @@ public class ProductGui extends JFrame {
 		model.addProductUpdatedListener(new productUpdatedListener());
 		
 		// Setup view.
-		frame = new JFrame();
+		frame = new JFrame("Product Inventory Management Program (PIMP)");
 		frame.setPreferredSize(new Dimension(700, 500));
 		
 		// Exit application when close button clicked. Also commit the cache.
@@ -252,13 +252,12 @@ public class ProductGui extends JFrame {
 		}
 	}
 	
-	public void updateProduct(Product p){
+	public void updateProduct(Product original){
 		try {
-			Product c = getCurrentProductState();
-			ArrayList<Product> l = new ArrayList<Product>();
-			l.add(0, p);
-			l.add(1, c);
-			controller.updateCacheItem(l);
+			Product updated = getCurrentProductState();
+			if (updated != null) { // Check for blank form.
+			controller.updateCacheItem(original, updated);
+			}
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
