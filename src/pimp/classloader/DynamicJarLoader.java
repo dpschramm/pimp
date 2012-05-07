@@ -83,10 +83,10 @@ public class DynamicJarLoader {
 	
 	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
-		ClassLoaderWithClose classLoader = null;
+		CloseableClassLoader classLoader = null;
 		try {
 			// Create the ClassLoader for this Jar.
-			classLoader = new ClassLoaderWithClose(f.toURI().toURL());
+			classLoader = new CloseableClassLoader(f.toURI().toURL());
 			
 			JarFile jar = new JarFile(f);
 			// Check each entry in the Jar to see if it is a class.
@@ -102,6 +102,7 @@ public class DynamicJarLoader {
 					}
 				}
 	    	}
+			jar.close(); // TODO remove this. Close the jar.
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

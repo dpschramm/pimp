@@ -16,7 +16,7 @@ import java.util.jar.JarFile;
 public class ClassLoaderWithClose extends URLClassLoader {
 
 	public ClassLoaderWithClose(URL url) {
-	    this(new URL[] {url});
+	    this (new URL[] {url});
 	    System.out.println("Loading: " + url);
 	}
 	
