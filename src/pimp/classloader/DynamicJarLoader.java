@@ -1,4 +1,4 @@
-package pimp.controller;
+package pimp.classloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +62,6 @@ public class DynamicJarLoader {
 	    for(File file: jarFiles){
 		    // Check to make sure it is a .class file.
 		    if (file.getName().endsWith(".jar")) {
-			    System.out.println("Checking jar file: " + file.getName());
 		      	// Load all the classes in the jarFile.
 		        classList.addAll(loadClassesFromJar(file, superClass));
 		    }
@@ -84,10 +83,10 @@ public class DynamicJarLoader {
 	
 	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
+		ClassLoaderWithClose classLoader = null;
 		try {
 			// Create the ClassLoader for this Jar.
-		    URLClassLoader classLoader = new URLClassLoader( 
-		    		new URL[] {f.toURI().toURL()} );
+			classLoader = new ClassLoaderWithClose(f.toURI().toURL());
 			
 			JarFile jar = new JarFile(f);
 			// Check each entry in the Jar to see if it is a class.
@@ -109,6 +108,11 @@ public class DynamicJarLoader {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (classLoader != null) {
+				// Close to remove file lock in windows.
+				classLoader.close();
+			}
 		}
 		return classes;
 	}
