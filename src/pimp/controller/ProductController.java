@@ -106,6 +106,7 @@ public class ProductController {
 	}
 	
 	public void getProductsByClass(String className) {
+		System.out.println("Getting products for class: " + className);
 		if (!cache.isLoaded(className)){
 			Map<Integer, Product> m = da.getIdToProductMap(className);
 			ArrayList<Product> l = new ArrayList<Product>();

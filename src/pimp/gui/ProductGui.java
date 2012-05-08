@@ -18,12 +18,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
-import javax.swing.tree.TreeModel;
 
 import pimp.annotations.CompanionForm;
 import pimp.controller.ProductController;
 import pimp.form.FormBuilder;
 import pimp.form.ProductForm;
+import pimp.gui.tree.CustomIconRenderer;
+import pimp.gui.tree.ProductTree;
 import pimp.model.Product;
 import pimp.model.ProductModel;
 
@@ -380,7 +381,7 @@ public class ProductGui extends JFrame {
 	class productUpdatedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent u) {
-			tree.updateNode((Product) u.getSource());
+			tree.updateProduct((Product) u.getSource());
 		}
 	}
 
