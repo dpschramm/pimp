@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelements;
 
 import java.awt.Component;
 import java.lang.reflect.Type;

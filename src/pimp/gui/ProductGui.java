@@ -20,8 +20,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 import javax.swing.tree.TreeModel;
 
+import pimp.annotations.CompanionForm;
 import pimp.controller.ProductController;
-import pimp.form.CompanionForm;
 import pimp.form.FormBuilder;
 import pimp.form.ProductForm;
 import pimp.model.Product;
