@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-import pimp.gui.ColorButton;
 
 public class ColorFormElement implements FormElement {
 		

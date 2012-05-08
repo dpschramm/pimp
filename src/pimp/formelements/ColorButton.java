@@ -1,4 +1,4 @@
-package pimp.gui;
+package pimp.formelements;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
