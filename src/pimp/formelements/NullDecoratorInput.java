@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelements;
 
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;

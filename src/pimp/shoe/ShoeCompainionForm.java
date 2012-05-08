@@ -43,7 +43,9 @@ public class ShoeCompainionForm extends ProductForm{
 	public ShoeCompainionForm() {
 
 		shoeSizeSelector = new JComboBox(shoeSizes);
+		shoeSizeSelector.setSelectedIndex(0);
 		shoeSizingSystemSelector = new JComboBox(shoeSizeSystem);
+		shoeSizingSystemSelector.setSelectedIndex(0);
 		nameInput = new JTextField();
 		quantityInput = new JTextField();
 		
@@ -76,6 +78,8 @@ public class ShoeCompainionForm extends ProductForm{
 			formShoe.quantity = Integer.parseInt(quantityInput.getText());
 		} catch (NumberFormatException nfe){
 			formShoe.quantity = 0;
+		} catch (NullPointerException npe){
+			formShoe.quantity = 0;
 		}
 
 		formShoe.sizingSystem = (String) shoeSizingSystemSelector.getSelectedItem();
@@ -89,10 +93,12 @@ public class ShoeCompainionForm extends ProductForm{
 				formShoe.shoeSize = Double.parseDouble(shoeSizeSelector
 						.getSelectedItem().toString());
 			} catch (NumberFormatException nfe) {
-				formShoe.shoeSize = 0.0;
+				formShoe.shoeSize = 8.0;
+			} catch (NullPointerException npe){
+				formShoe.shoeSize = 8.0;
 			}
 		} else {
-			formShoe.shoeSize = 0.0;
+			formShoe.shoeSize = 8.0;
 		}
 		return formShoe;
 	}

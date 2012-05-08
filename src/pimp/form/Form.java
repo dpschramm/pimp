@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import pimp.formelements.FormElement;
+import pimp.formelements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
 public class Form extends ProductForm{

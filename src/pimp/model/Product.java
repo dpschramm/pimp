@@ -1,7 +1,7 @@
 package pimp.model;
 
+import pimp.annotations.FormField;
 import pimp.form.ProductForm;
-import pimp.form.FormField;
 
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.

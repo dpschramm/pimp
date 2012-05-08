@@ -1,15 +1,16 @@
-package pimp.form;
+package pimp.shoe;
 
 import java.awt.Color;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.form.ColorFormElement;
-import pimp.form.StringFormElement;
+import pimp.formelements.ColorFormElement;
+import pimp.formelements.StringFormElement;
 import pimp.shoe.Shoe;
 import pimp.shoe.ShoeCompainionForm;
 
@@ -21,7 +22,7 @@ public class ShoeCompanionFormTest extends junit.framework.TestCase{
 	public void setUp() throws Exception {
 		s = new Shoe();
 		s.name = "Nike Air Ones";
-		s.quantity = 10;
+		s.quantity = 0;
 
 	}
 	
@@ -35,6 +36,10 @@ public class ShoeCompanionFormTest extends junit.framework.TestCase{
 		
 		ShoeCompainionForm scf = new ShoeCompainionForm();
 		scf.setProduct(s);
+		JFrame jf = new JFrame();
+		jf.add(scf);
+		jf.setVisible(true);
+		
 		System.out.println(scf.getProduct());
 		scf.setProduct(scf.getProduct());
 		

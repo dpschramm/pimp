@@ -1,12 +1,12 @@
-package pimp.form;
+package pimp.formelement;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.form.DoubleFormElement;
-import pimp.form.StringFormElement;
+import pimp.formelements.DoubleFormElement;
+import pimp.formelements.StringFormElement;
 
 public class DoubleFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

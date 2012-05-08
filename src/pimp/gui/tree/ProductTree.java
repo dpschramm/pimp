@@ -1,4 +1,4 @@
-package pimp.gui;
+package pimp.gui.tree;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,8 +13,12 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -27,13 +31,17 @@ import pimp.model.Product;
 
 public class ProductTree extends JTree {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 662247613490338231L;
+	
 	// Product tree.
 	private NodeItem root;
 	private DefaultTreeModel model;
 	private NodeItem lastSelectedNode;
 
     private ActionListener classSelectListener;
-    private ActionListener productUpdatedListener;
     private ActionListener productSelectedListener;
     private ActionListener productEditedListener;
     
@@ -47,15 +55,12 @@ public class ProductTree extends JTree {
 		model = new DefaultTreeModel(root);
 		map = new HashMap<String, NodeItem>();
 		
-		
-
-		
 		// Set model and settings.
 		setModel(model);
 		getSelectionModel().setSelectionMode
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(false);
-		
+		setToggleClickCount(1); // One click expand.
 		
 		addTreeSelectionListener(new TreeSelectionListener() {
 			 /**
@@ -68,23 +73,20 @@ public class ProductTree extends JTree {
 			@Override
 			public void valueChanged(TreeSelectionEvent event) {
 				if(event.isAddedPath()){
-					if (productEditedListener != null && lastSelectedNode != null && (!lastSelectedNode.getClass().equals(Class.class)))
-					{
+					if (productEditedListener != null && lastSelectedNode != null && (!lastSelectedNode.isClassNode())) {
 						ActionEvent edited = new ActionEvent((Product)lastSelectedNode.getStoredObject(), 0, "");
 						productEditedListener.actionPerformed(edited);
 					}
 					
 					TreePath path = event.getNewLeadSelectionPath();
 					NodeItem selectedNode = (NodeItem) path.getLastPathComponent();
-					Object o = selectedNode.getStoredObject();
 					
-					if (o.getClass().equals(Class.class)){
-						String s = o.toString();
+					if (selectedNode.isClassNode()) {
+						String s = selectedNode.getStoredObject().toString();
 						ActionEvent i = new ActionEvent(model, 0, s);
 						classSelectListener.actionPerformed(i);
 					}
-					else
-					{	
+					else {	
 						//The user has selected a product. So we'll update the form.
 						ActionEvent s = new ActionEvent((Product)selectedNode.getStoredObject(), 0, "");
 						productSelectedListener.actionPerformed(s);
@@ -140,7 +142,6 @@ public class ProductTree extends JTree {
 		
 		NodeItem selectedNode = getSelectedNode(); 
 		Object o = selectedNode.getStoredObject();
-		Class<?> c = o.getClass();
 		
 		if(!(selectedNode == root)){
 			//if it's a single node, return the class contained in it.
@@ -195,7 +196,7 @@ public class ProductTree extends JTree {
 	 * This is used as a helped method for getSelectedProducts
 	 * @return selectedNode the selected node (leaf or parent)
 	 */
-	public NodeItem getSelectedNode(){
+	private NodeItem getSelectedNode(){
 		TreePath selectionPath = getSelectionPath();
 		NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
@@ -207,23 +208,16 @@ public class ProductTree extends JTree {
 	 * where it should be inserted.
 	 * @param product
 	 */
-	public void addProduct(Product p){	
-		NodeItem node = new NodeItem(p);
-		NodeItem parent = getNodeFromMap(p.getClass().toString());
-		insertNode(node, parent);
-	}
-	
-	/**
-	 * Insert node as a child of a specific node.
-	 * Also fires an event as insertNode is called when a product is added
-	 * but the valueChanged listener is not triggered, so manually trigger it here.
-	 * @param n node
-	 * @param p parent
-	 */
-	private void insertNode(NodeItem n, NodeItem p) {
-		model.insertNodeInto(n, (MutableTreeNode) p, p.getChildCount());
-		scrollPathToVisible(new TreePath(n.getPath()));
-		ActionEvent s = new ActionEvent((Product)n.getStoredObject(), 0, "");
+	public void addProduct(Product product){	
+		NodeItem node = new NodeItem(product);
+		NodeItem parent = getNodeFromMap(product.getClass().toString());
+		
+		model.insertNodeInto(node, (MutableTreeNode) parent, parent.getChildCount());
+		scrollPathToVisible(new TreePath(node.getPath()));
+		
+		// Also fires an event as insertNode is called when a product is added
+		// but the valueChanged listener is not triggered, so manually trigger it here.
+		ActionEvent s = new ActionEvent(product, 0, "");
 		productSelectedListener.actionPerformed(s);
 	}
 	
@@ -247,7 +241,7 @@ public class ProductTree extends JTree {
 	 * Also uses the helper method findNode.
 	 * @param p
 	 */
-	public void updateNode(Product p){
+	public void updateProduct(Product p){
 		NodeItem n = findNode(p);
 		if (n != null)
 		{
@@ -264,7 +258,6 @@ public class ProductTree extends JTree {
 	 * @return the node containing Product p
 	 */
 	public NodeItem findNode(Product p){
-		NodeItem n;
 		Class<?> c = p.getClass();
 		NodeItem parent = getNodeFromMap(c.toString());
 		Enumeration<NodeItem> children = parent.children();
@@ -299,6 +292,8 @@ public class ProductTree extends JTree {
 		for (Class<?> c : classList) {
 			addProductStructure(c);
 		}
+		// Automatically expand the product node.
+		expandPath(new TreePath(root));
 	}
 	
 	/**
@@ -329,7 +324,6 @@ public class ProductTree extends JTree {
 			addToNodeMap(c.toString(), node);
 			//insert the node into the tree and scroll it
 			model.insertNodeInto(node, parent, parent.getChildCount());
-			//scrollPathToVisible(new TreePath(node.getPath()));
 		}
 	}
 	
@@ -380,10 +374,6 @@ public class ProductTree extends JTree {
 		classSelectListener = a;
 	}
 	
-	public void addProductUpdatedListener(ActionListener a){
-		productUpdatedListener = a;
-	}
-	
 	public void addProductSelectedListener(ActionListener a){
 		productSelectedListener = a;
 	}
@@ -391,7 +381,5 @@ public class ProductTree extends JTree {
 	public void addProductEditedListener(ActionListener a){
 		productEditedListener = a;
 	}
-	
-	
 	
 }
