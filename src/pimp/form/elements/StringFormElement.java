@@ -1,23 +1,17 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class IntFormElement implements FormElement {
-	
-	public IntFormElement(){};
+public class StringFormElement implements FormElement {
 
+	public StringFormElement(){};
+	
 	@Override
-	public Integer getValue(JComponent jc) {
-		int value = 0;
-		try{
-			value = Integer.parseInt(((JTextField)jc).getText());	
-		} catch (NumberFormatException nfe){
-			// Fall through and return 0.
-		}
-		return value;
+	public String getValue(JComponent jc) {
+		return ((JTextField)jc).getText();
 	}
 
 	@Override
@@ -32,7 +26,6 @@ public class IntFormElement implements FormElement {
 	
 	@Override
 	public Type getInputType() {
-		return int.class;
+		return String.class;
 	}
-
 }

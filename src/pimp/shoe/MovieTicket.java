@@ -2,7 +2,7 @@ package pimp.shoe;
 
 import java.util.Date;
 
-import pimp.form.FormField;
+import pimp.annotations.FormField;
 import pimp.model.Product;
 
 public class MovieTicket extends Product {

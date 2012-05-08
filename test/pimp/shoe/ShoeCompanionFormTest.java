@@ -9,8 +9,8 @@ import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.formelements.ColorFormElement;
-import pimp.formelements.StringFormElement;
+import pimp.form.elements.ColorFormElement;
+import pimp.form.elements.StringFormElement;
 import pimp.shoe.Shoe;
 import pimp.shoe.ShoeCompainionForm;
 

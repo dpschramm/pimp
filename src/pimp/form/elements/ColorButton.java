@@ -1,4 +1,4 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

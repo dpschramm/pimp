@@ -23,7 +23,6 @@ import pimp.annotations.CompanionForm;
 import pimp.controller.ProductController;
 import pimp.form.FormBuilder;
 import pimp.form.ProductForm;
-import pimp.gui.tree.CustomIconRenderer;
 import pimp.gui.tree.ProductTree;
 import pimp.model.Product;
 import pimp.model.ProductModel;
@@ -110,9 +109,6 @@ public class ProductGui extends JFrame {
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		final CustomIconRenderer renderer = new CustomIconRenderer();
-		tree.setCellRenderer(renderer);
 		
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);

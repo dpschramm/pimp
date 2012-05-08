@@ -1,4 +1,4 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import javax.swing.JLabel;
 
