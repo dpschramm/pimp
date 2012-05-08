@@ -141,6 +141,7 @@ public class ProductController {
 	public List<Class<?>> loadClasses() {
 		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
 		gui.setClasses(cpl); // must be called before setProducts.
+		DataAccessor.getInstance().setClassList(cpl);
 		return cpl;
 	}
 	

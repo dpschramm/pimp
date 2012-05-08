@@ -15,4 +15,5 @@ public abstract class DatabaseConnection {
 	protected abstract void update(Product p);
 	protected abstract String getDatabaseName();
 	protected abstract void setDatabase(String name);
+	public abstract void setClassList(List<Class<?>> cpl);
 }

@@ -24,8 +24,10 @@ import pimp.model.Product;
 public class SqliteConnection extends DatabaseConnection {
 	private Connection conn;
 	private String databaseName;
+	private Map<String, Class<?>> classes;
 	
 	public SqliteConnection(String dbName) {
+		classes = new HashMap<String, Class<?>>();
 		setDatabase(dbName);
 	}
 
@@ -40,7 +42,7 @@ public class SqliteConnection extends DatabaseConnection {
 		String className = c.getName();
 		className = className.replace('.', '_');
 		if (!tableExists(className)) {
-			createTable(className);
+			createTable(c);
 		}
 		
 		return insertIntoTable(className, product);
@@ -176,10 +178,9 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	private void createTable(String tableName) {
-		String className = tableName.replace('_', '.');
+	private void createTable(Class<?> c) {
+		String tableName = c.getName().replace('.', '_');
 		try {
-			Class<?> c = Class.forName(className);
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
@@ -279,7 +280,7 @@ public class SqliteConnection extends DatabaseConnection {
 			ResultSetMetaData metaData = rs.getMetaData();
 			int columnCount = metaData.getColumnCount();
 			String className = tableName.replace('_', '.');
-			Class<?> c = Class.forName(className);
+			Class<?> c = classes.get(className);
 			product = (Product) c.newInstance();
 			
 			for (int i = 1; i <= columnCount; i++) {
@@ -530,5 +531,12 @@ public class SqliteConnection extends DatabaseConnection {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+name);
 		} catch (Exception e) {}
+	}
+
+	@Override
+	public void setClassList(List<Class<?>> cpl) {
+		for (Class<?> c : cpl) {
+			classes.put(c.getName(), c);
+		}
 	}
 }

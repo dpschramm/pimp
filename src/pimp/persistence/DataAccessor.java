@@ -81,4 +81,9 @@ public class DataAccessor {
 	public void update(Product p) {
 		dbc.update(p);
 	}
+
+	public void setClassList(List<Class<?>> cpl) {
+		dbc.setClassList(cpl);
+		
+	}
 }
