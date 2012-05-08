@@ -20,7 +20,6 @@ import pimp.model.Product;
 import pimp.model.ProductModel;
 import pimp.model.Status;
 import pimp.persistence.DataAccessor;
-import pimp.persistence.DatabaseConnection;
 import pimp.persistence.SqliteConnection;
 
 

@@ -6,11 +6,9 @@ import pimp.annotations.FormField;
 import pimp.model.Product;
 
 public class MovieTicket extends Product {
-
-	@FormField(displayName="Time")
+	@FormField
 	public Date time;
-	
-	@FormField(displayName="Theatre")
+	@FormField
 	public int Theatre;
 	
 	@Override
