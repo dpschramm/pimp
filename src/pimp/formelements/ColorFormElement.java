@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelements;
 
 import java.awt.Color;
 import java.lang.reflect.Type;
@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-import pimp.gui.ColorButton;
 
 public class ColorFormElement implements FormElement {
 		

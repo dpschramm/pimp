@@ -1,6 +1,6 @@
 package pimp.productdefs;
 
-import pimp.form.FormField;
+import pimp.annotations.FormField;
 
 public class Jeans extends Clothing {
 	

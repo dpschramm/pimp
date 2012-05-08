@@ -18,6 +18,15 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import pimp.annotations.FormField;
+import pimp.formelements.ColorFormElement;
+import pimp.formelements.DateFormElement;
+import pimp.formelements.DoubleFormElement;
+import pimp.formelements.FormElement;
+import pimp.formelements.IntFormElement;
+import pimp.formelements.NullDecoratorFormElement;
+import pimp.formelements.StringFormElement;
+import pimp.formelements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
 public class FormBuilder {

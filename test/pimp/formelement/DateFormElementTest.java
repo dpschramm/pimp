@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelement;
 
 import java.util.Date;
 
@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import org.junit.Before;
 
-import pimp.form.DateFormElement;
+import pimp.formelements.DateFormElement;
 
 public class DateFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

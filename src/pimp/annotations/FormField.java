@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

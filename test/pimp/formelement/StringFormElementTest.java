@@ -1,11 +1,11 @@
-package pimp.form;
+package pimp.formelement;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.form.StringFormElement;
+import pimp.formelements.StringFormElement;
 
 public class StringFormElementTest extends junit.framework.TestCase implements FormElementTestInterface {
 	

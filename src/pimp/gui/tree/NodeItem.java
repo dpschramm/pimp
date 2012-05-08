@@ -1,4 +1,4 @@
-package pimp.gui;
+package pimp.gui.tree;
 
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,7 +19,12 @@ import pimp.model.Product;
 
 public class NodeItem extends DefaultMutableTreeNode{
 
-    private String nodeName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3321906652922076427L;
+	
+	private String nodeName;
     private Object o;
     protected Icon icon;
     
@@ -29,9 +34,17 @@ public class NodeItem extends DefaultMutableTreeNode{
     	this.o = p;
     }
     
+    /**
+     * This overrides DefaultMuteableTreeNode's method.
+     */
+    public boolean isLeaf() {
+    	return !isClassNode();
+    }
+    
     //Constructor that takes a class.
     public NodeItem(Class<?> c){
-    	this.nodeName = extractName(c);
+    	String s = c.toString();
+    	this.nodeName = s.substring(s.lastIndexOf('.')+1);
     	this.o = c;
     }
     
@@ -48,9 +61,7 @@ public class NodeItem extends DefaultMutableTreeNode{
         return this.nodeName;
     }
     
-	//Makes the class name prettier.
-	public String extractName(Class<?> c){
-		String s = c.toString();
-		return s.substring(s.lastIndexOf('.')+1);
-	}
+    public boolean isClassNode(){
+    	return o.getClass() == Class.class;
+    }
 }

@@ -15,7 +15,7 @@ import org.junit.Before;
 
 import pimp.form.Form;
 import pimp.form.FormBuilder;
-import pimp.form.StringFormElement;
+import pimp.formelements.StringFormElement;
 import pimp.productdefs.Drink;
 import pimp.productdefs.Jacket;
 

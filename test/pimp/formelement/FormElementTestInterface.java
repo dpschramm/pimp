@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelement;
 
 public interface FormElementTestInterface{
 	

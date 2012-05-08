@@ -1,4 +1,4 @@
-package pimp.form;
+package pimp.formelement;
 
 import java.awt.Color;
 
@@ -8,8 +8,8 @@ import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.form.ColorFormElement;
-import pimp.form.StringFormElement;
+import pimp.formelements.ColorFormElement;
+import pimp.formelements.StringFormElement;
 
 public class ColorFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	
