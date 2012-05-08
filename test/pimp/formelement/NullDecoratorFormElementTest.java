@@ -7,9 +7,9 @@ import javax.swing.JComponent;
 
 import org.junit.Before;
 
-import pimp.formelements.ColorFormElement;
-import pimp.formelements.DateFormElement;
-import pimp.formelements.NullDecoratorFormElement;
+import pimp.form.elements.ColorFormElement;
+import pimp.form.elements.DateFormElement;
+import pimp.form.elements.NullDecoratorFormElement;
 
 public class NullDecoratorFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

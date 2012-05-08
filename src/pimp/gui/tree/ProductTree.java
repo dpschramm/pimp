@@ -13,12 +13,8 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeWillExpandListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -61,6 +57,9 @@ public class ProductTree extends JTree {
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(false);
 		setToggleClickCount(1); // One click expand.
+		
+		CustomIconRenderer renderer = new CustomIconRenderer();
+		setCellRenderer(renderer);
 		
 		addTreeSelectionListener(new TreeSelectionListener() {
 			 /**

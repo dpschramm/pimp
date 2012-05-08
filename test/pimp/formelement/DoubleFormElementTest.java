@@ -5,8 +5,8 @@ import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.formelements.DoubleFormElement;
-import pimp.formelements.StringFormElement;
+import pimp.form.elements.DoubleFormElement;
+import pimp.form.elements.StringFormElement;
 
 public class DoubleFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	
