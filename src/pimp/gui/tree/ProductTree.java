@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -287,7 +288,7 @@ public class ProductTree extends JTree {
 	 * Takes a classList and adds each class to the productTree
 	 * @param classList
 	 */
-	public void addProductStructure(List<Class<?>> classList){
+	public void addProductStructure(Set<Class<?>> classList){
 		for (Class<?> c : classList) {
 			addProductStructure(c);
 		}

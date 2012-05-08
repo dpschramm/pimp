@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -342,7 +343,7 @@ public class ProductGui extends JFrame {
 		frame.repaint();
 	}
 	
-	public void setClasses(List<Class<?>> classList) {
+	public void setClasses(Set<Class<?>> classList) {
 		// Need to get rid of any companion form classes in the directory.
 		tree.addProductStructure(classList);
 	}

@@ -7,14 +7,12 @@ import java.awt.Dimension;
 import javax.swing.JList;
 import javax.swing.JButton;
 
-import pimp.model.Product;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 /**
  * This class provides a dialog window that allows users to select a product
  * class.
@@ -22,7 +20,7 @@ import java.util.Map;
  * @author Daniel Schramm
  *
  */
-public class SelectProductDialog {
+public class SelectClassDialog {
 	
 	// Instance variables.
 	private JDialog dialog;
@@ -35,8 +33,8 @@ public class SelectProductDialog {
 	 * @param frame the parent frame.
 	 * @param classArray an array of product classes.
 	 */
-	public SelectProductDialog(JFrame frame, 
-			List<Class<?>> classList) {
+	public SelectClassDialog(JFrame frame, 
+			Set<Class<?>> classList) {
 		// Create dialog.
 		dialog = new JDialog(frame, "Create new product", true);
 		
@@ -115,7 +113,7 @@ public class SelectProductDialog {
 	 * 
 	 * @return the selected class.
 	 */
-	public Class<? extends Product> getSelectedClass() {
+	public Class<?> getSelectedClass() {
 		
 		Object selection = list.getSelectedValue();
 		
@@ -125,6 +123,6 @@ public class SelectProductDialog {
 		
 		Class<?> c = classMap.get(selection);
 		
-		return (Class<? extends Product>) c;
+		return c;
 	}
 }
