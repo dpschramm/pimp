@@ -105,7 +105,7 @@ public class DynamicJarLoader {
 	    	}
 			// Close to unlock jars to the system.
 			System.out.println("Closing jar file: " + jar.getName());
-			jar.close();
+			//jar.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

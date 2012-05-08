@@ -195,6 +195,10 @@ public class ProductModel {
 		classesLoaded.add(s);
 	}
 	
+	public void clearClassLoadedList(){
+		classesLoaded.clear();
+	}
+	
 	/**
 	 * A quick lookup to see if the class has been loaded from the persistence layer yet.
 	 * @param s the class name

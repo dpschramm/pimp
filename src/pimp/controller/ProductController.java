@@ -174,6 +174,7 @@ public class ProductController {
 		File file = dbs.getFile("Open");
 		if (file != null) {
 			gui.empty();
+			cache.clearClassLoadedList();
 			setupDatabase(file.getName());
 		}
 	}
