@@ -2,6 +2,13 @@ package pimp.form.elements;
 
 import javax.swing.JLabel;
 
+/**
+ * @author Joel Harrison
+ * 
+ *         Special JLabel that is used by the unsupportedTypeFormElement, is a
+ *         JLabel that also hold a object.
+ * 
+ */
 public class UnsupportedTypeLabel extends JLabel {
 	
 	private static final long serialVersionUID = 1L;

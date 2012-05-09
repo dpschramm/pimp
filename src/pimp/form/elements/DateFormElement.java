@@ -7,13 +7,13 @@ import javax.swing.JComponent;
 
 import com.toedter.calendar.JDateChooser;
 
+/**
+ * Form element for a Date
+ * 
+ * @author Joel Harrison, Joel Mason
+ *
+ */
 public class DateFormElement implements FormElement<Date> {
-	
-	/**
-	 * 
-	 * TO-D0: Implement this properly when there is a Date JComponent
-	 * 
-	 */
 	
 	public DateFormElement(){};
 	

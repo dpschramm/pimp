@@ -25,7 +25,7 @@ import pimp.form.elements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
 /**
- * @author Joel
+ * @author Joel Harrison, Daniel Schramm
  * 
  *         Form Builder is used to dynamically create Forms. Given a class it
  *         will create a product form for it. It contains a number of form

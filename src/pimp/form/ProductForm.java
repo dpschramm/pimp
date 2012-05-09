@@ -5,7 +5,7 @@ import javax.swing.JComponent;
 import pimp.model.Product;
 
 /**
- * @author Joel
+ * @author Joel Harrison
  * 
  *         The superclass for the product forms, for both the dynamically
  *         created and companion form.

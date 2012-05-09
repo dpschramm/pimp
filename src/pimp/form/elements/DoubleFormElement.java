@@ -5,6 +5,12 @@ import java.lang.reflect.Type;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
+/**
+ * Form element for a double
+ * 
+ * @author Joel Harrison
+ *
+ */
 public class DoubleFormElement implements FormElement<Double> {
 	
 	public DoubleFormElement(){};

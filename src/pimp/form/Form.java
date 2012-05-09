@@ -14,7 +14,7 @@ import pimp.form.elements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
 /**
- * @author Joel
+ * @author Joel Harrison
  * 
  *         Form is a subclass of Product From and is what the FormBuilder
  *         creates when wanting a dynamic Form

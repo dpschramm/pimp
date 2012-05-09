@@ -6,6 +6,12 @@ import java.lang.reflect.Type;
 import javax.swing.JComponent;
 
 
+/**
+ * Form element for a Color
+ * 
+ * @author Joel Harrison, Joel Mason
+ *
+ */
 public class ColorFormElement implements FormElement<Color> {
 		
 	public ColorFormElement(){};

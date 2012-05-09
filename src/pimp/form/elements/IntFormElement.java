@@ -5,6 +5,10 @@ import java.lang.reflect.Type;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
+/**
+ * @author Joel Harrison
+ *
+ */
 public class IntFormElement implements FormElement<Integer> {
 	
 	public IntFormElement(){};
