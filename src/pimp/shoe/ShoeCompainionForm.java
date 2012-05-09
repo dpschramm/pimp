@@ -9,42 +9,34 @@ import javax.swing.JTextField;
 import pimp.form.ProductForm;
 import pimp.model.Product;
 
-public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
-	
+/**
+ * @author Joel Harrison
+ * 
+ *         Demonstration of how a companion form would be created.
+ * 
+ * @param <T>
+ */
+public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe> {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public String name;
-	
+
 	JComboBox shoeSizeSelector;
 	JComboBox shoeSizingSystemSelector;
 	JTextField nameInput;
 	JTextField quantityInput;
-	
-	String[] shoeSizeSystem = {
-	         "US",
-	         "EU",
-	         "NZ",
-	         "UK"
-	};
-	
-	Double[] shoeSizes = {
-	         8.0,
-	         8.5,
-	         9.0,
-	         9.5,
-	         10.0,
-	         10.5,
-	         11.0,
-	         11.5,
-	         12.0
-	};
-	
+
+	String[] shoeSizeSystem = { "US", "EU", "NZ", "UK" };
+
+	Double[] shoeSizes = { 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0 };
+
 	/*
 	 * Constructor needs to take a shoe object
-	 * */
+	 */
 	public ShoeCompainionForm() {
 
 		shoeSizeSelector = new JComboBox(shoeSizes);
@@ -53,10 +45,10 @@ public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
 		shoeSizingSystemSelector.setSelectedIndex(0);
 		nameInput = new JTextField();
 		quantityInput = new JTextField();
-		
+
 		GridLayout gl = new GridLayout(4, 2);
 		setLayout(gl);
-		
+
 		add(new JLabel("Name"));
 		add(nameInput);
 		add(new JLabel("Quantity"));
@@ -64,32 +56,33 @@ public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
 		add(new JLabel("Shoe Size"));
 		add(shoeSizeSelector);
 		add(new JLabel("Shoe Sizing System"));
-		add(shoeSizingSystemSelector);		
-		
+		add(shoeSizingSystemSelector);
+
 	}
-	
+
 	/*
 	 * Constructor needs to take a shoe object
-	 * */
+	 */
 	public ShoeCompainionForm(T shoe) {
-			this();
-			setProduct(shoe);
+		this();
+		setProduct(shoe);
 	}
 
 	public Shoe getProduct() {
 		Shoe formShoe = new Shoe();
 		formShoe.name = nameInput.getText();
-		try{
+		try {
 			formShoe.quantity = Integer.parseInt(quantityInput.getText());
-		} catch (NumberFormatException nfe){
+		} catch (NumberFormatException nfe) {
 			formShoe.quantity = 0;
-		} catch (NullPointerException npe){
+		} catch (NullPointerException npe) {
 			formShoe.quantity = 0;
 		}
 
-		formShoe.sizingSystem = (String) shoeSizingSystemSelector.getSelectedItem();
-		
-		if(formShoe.sizingSystem == null){
+		formShoe.sizingSystem = (String) shoeSizingSystemSelector
+				.getSelectedItem();
+
+		if (formShoe.sizingSystem == null) {
 			formShoe.sizingSystem = "US";
 		}
 
@@ -99,7 +92,7 @@ public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
 						.getSelectedItem().toString());
 			} catch (NumberFormatException nfe) {
 				formShoe.shoeSize = 8.0;
-			} catch (NullPointerException npe){
+			} catch (NullPointerException npe) {
 				formShoe.shoeSize = 8.0;
 			}
 		} else {
@@ -109,21 +102,21 @@ public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
 	}
 
 	public void setProduct(Shoe o) {
-		
-		if(!(o instanceof Shoe)){
+
+		if (!(o instanceof Shoe)) {
 			throw new IllegalArgumentException("Provided Object is not a Shoe");
 		}
-		
+
 		Shoe s = (Shoe) o;
 		nameInput.setText(s.name);
-		quantityInput.setText("" +  s.quantity);
+		quantityInput.setText("" + s.quantity);
 		shoeSizingSystemSelector.setSelectedItem(s.sizingSystem);
-		if(s.sizingSystem == null){
+		if (s.sizingSystem == null) {
 			s.sizingSystem = "US";
 			shoeSizingSystemSelector.setSelectedItem(s.sizingSystem);
 		}
 		shoeSizeSelector.setSelectedItem(s.shoeSize);
-		if(s.shoeSize == null){
+		if (s.shoeSize == null) {
 			s.shoeSize = 8.0;
 			shoeSizeSelector.setSelectedItem(s.shoeSize);
 		}
