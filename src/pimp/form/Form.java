@@ -8,32 +8,31 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import pimp.formelements.FormElement;
 import pimp.formelements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
-public class Form extends ProductForm{
+public class Form<T extends Product> extends ProductForm<T>{
 	
 	private static final long serialVersionUID = 1L;
 	private Class<?> c;
 	private Map<String, JComponent> fieldToComponentMapping;
-	private Map<Type, FormElement> typeToFormElementMapping;
-	FormElement unsupportedFormElement;
+	private Map<Type, FormElement<? extends Object>> typeToFormElementMapping;
+	FormElement<? extends Object> unsupportedFormElement;
 	
-	public Form(Class<?> c, List<FormElement> formElements) {
+	public Form(Class<? extends T> c, List<FormElement<? extends Object>> formElementsForForm) {
 		super();
 		this.c = c;
-		typeToFormElementMapping = new HashMap<Type, FormElement>();
+		typeToFormElementMapping = new HashMap<Type, FormElement<? extends Object>>();
 		fieldToComponentMapping = new HashMap<String, JComponent>();
 		unsupportedFormElement = new UnsupportedTypeFormElement();
-		for(FormElement fe : formElements){
+		for(FormElement<? extends Object> fe : formElementsForForm){
 			addFormElement(fe);
 		}
 	}
 	
-	private void addFormElement(FormElement fe) {
+	private void addFormElement(FormElement<? extends Object> fe) {
 		typeToFormElementMapping.put(fe.getInputType(), fe);
 	}
 	
@@ -43,7 +42,7 @@ public class Form extends ProductForm{
 	
 	public void addFieldToComponentPair(Field f, JComponent jc){
 		
-		FormElement fe = typeToFormElementMapping.get(f.getType());
+		FormElement<? extends Object> fe = typeToFormElementMapping.get(f.getType());
 		if(fe == null){
 			fe = unsupportedFormElement;
 		}
@@ -57,11 +56,12 @@ public class Form extends ProductForm{
 		return Collections.unmodifiableMap(fieldToComponentMapping);
 	}
 	
-	public Map<Type, FormElement> getFormElements(){
+	public Map<Type, FormElement<? extends Object>> getFormElements(){
 		return Collections.unmodifiableMap(typeToFormElementMapping);
 	}
 	
-	public void setProduct(Product product) throws IllegalArgumentException, IllegalAccessException {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void setProduct(T product) throws IllegalArgumentException, IllegalAccessException {
 		
 		if (!this.getFormClass().equals(product.getClass())) {
 			throw new IllegalArgumentException("Incompatiable object");
@@ -91,9 +91,10 @@ public class Form extends ProductForm{
 		
 	}
 	
-	public Product getProduct() throws InstantiationException, IllegalAccessException {
+	public T getProduct() throws InstantiationException, IllegalAccessException {
 
-		Object p = this.getFormClass().newInstance();
+		@SuppressWarnings("unchecked")
+		T p = (T) this.getFormClass().newInstance();
 
 		Map<String, JComponent> fieldNameToComponent = this.getFieldToComponentMapping();
 
@@ -103,7 +104,7 @@ public class Form extends ProductForm{
 			Field field;
 			try {
 				field = this.getFormClass().getField(entry.getKey());
-				FormElement fe = typeToFormElementMapping.get(field.getType());
+				FormElement<?> fe = typeToFormElementMapping.get(field.getType());
 				if(fe == null){
 					fe = unsupportedFormElement;
 				}
@@ -118,14 +119,14 @@ public class Form extends ProductForm{
 			
 		}
 
-		return (Product) p;
+		return p;
 	}
 	
-	public void setUnsupportedFormElement(FormElement fe) {
+	public void setUnsupportedFormElement(FormElement<? extends Object> fe) {
 		this.unsupportedFormElement = fe;
 	}
 	
-	public FormElement getUnsupportedFormElement() {
+	public FormElement<? extends Object> getUnsupportedFormElement() {
 		return unsupportedFormElement;
 	}
 	

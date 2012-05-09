@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 
 import pimp.model.Product;
 
-public abstract class ProductForm extends JComponent{
+public abstract class ProductForm<T extends Product> extends JComponent{
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public abstract class ProductForm extends JComponent{
 	 * @throws InstantiationException
 	 *             If the class or its nullary constructor is not accessible.
 	 */
-	public abstract Product getProduct() throws InstantiationException, IllegalAccessException;
+	public abstract T getProduct() throws InstantiationException, IllegalAccessException;
 	
 	/**
 	 * Will fill the given Form based on the Product given
@@ -41,6 +41,6 @@ public abstract class ProductForm extends JComponent{
 	 *             IllegalAccessException.
 	 * 
 	 */
-	public abstract void setProduct(Product p) throws IllegalArgumentException, IllegalAccessException;
+	public abstract void setProduct(T p) throws IllegalArgumentException, IllegalAccessException;
 
 }

@@ -4,15 +4,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -31,14 +26,15 @@ import pimp.model.Product;
 
 public class FormBuilder {
 
-	private List<FormElement> formElements;
-	private FormElement unsuportedTypeElement;
+	private ArrayList<FormElement<? extends Object>> formElements;
+	private FormElement<? extends Object> unsuportedTypeElement;
 	
 	/**
 	 * For a Form Builder, Form Builder is used to create and decode Forms
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public FormBuilder() {
-		formElements = new ArrayList<FormElement>();
+		formElements = new ArrayList<FormElement<? extends Object>>();
 		
 		unsuportedTypeElement = new UnsupportedTypeFormElement();
 		// Default Form Builder has double, int, string, color, date
@@ -49,7 +45,7 @@ public class FormBuilder {
 		addFormElement(new NullDecoratorFormElement(new ColorFormElement()));
 	}
 
-	public void addFormElement(FormElement fe) {
+	public void addFormElement(FormElement<? extends Object> fe) {
 		if(fe == null){
 			throw new NullPointerException();
 		}
@@ -61,11 +57,11 @@ public class FormBuilder {
 	 * 
 	 * @return a Form that represents the class
 	 */
-	public Form createForm(Class<? extends Product> c) {
+	public Form<? extends Product> createForm(Class<? extends Product> c) {
 		// Create form.
-		List<FormElement> formElementsForForm = new ArrayList<FormElement>();
+		List<FormElement<? extends Object>> formElementsForForm = new ArrayList<FormElement<? extends Object>>();
 		formElementsForForm.addAll(formElements);
-		Form form = new Form(c, formElementsForForm);
+		Form<? extends Product> form = new Form<Product>(c, formElementsForForm);
 
 		form.setUnsupportedFormElement(unsuportedTypeElement);	
 			
@@ -103,6 +99,7 @@ public class FormBuilder {
 				grid.add(createFieldFormNameComponent(f), cLabel);
 				
 				// Create input.
+				@SuppressWarnings("rawtypes")
 				FormElement fe = form.getFormElements().get(f.getType());
 				if (fe == null) {	// Default to String Input.
 					fe = form.getUnsupportedFormElement();
@@ -142,7 +139,7 @@ public class FormBuilder {
 	 * @param upperClass
 	 * @return
 	 */
-	private LinkedHashSet<Field> getFieldsInOrder(Class c, Class upperClass){
+	private LinkedHashSet<Field> getFieldsInOrder(Class<?> c, Class<?> upperClass){
 		
 		LinkedHashSet<Field> fields = new LinkedHashSet<Field>();
 		
@@ -159,14 +156,16 @@ public class FormBuilder {
 	}
 	
 	/**
-	 * Convience Method which creates a form and fills it with the specified Product
+	 * Convenience Method which creates a form and fills it with the specified Product
 	 * 
 	 * @return a Form that represents the class
 	 * @throws IllegalAccessException 
 	 * @throws IllegalArgumentException 
 	 */
-	public Form createForm(Product product) throws IllegalArgumentException, IllegalAccessException {
+	@SuppressWarnings("unchecked")
+	public Form<? extends Product> createForm(Product product) throws IllegalArgumentException, IllegalAccessException {
 
+		@SuppressWarnings("rawtypes")
 		Form form = createForm(product.getClass());
 		form.setProduct(product);
 		

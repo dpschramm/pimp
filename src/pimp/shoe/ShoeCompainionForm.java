@@ -9,8 +9,13 @@ import javax.swing.JTextField;
 import pimp.form.ProductForm;
 import pimp.model.Product;
 
-public class ShoeCompainionForm extends ProductForm{
+public class ShoeCompainionForm<T extends Shoe> extends ProductForm<Shoe>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public String name;
 	
 	JComboBox shoeSizeSelector;
@@ -66,7 +71,7 @@ public class ShoeCompainionForm extends ProductForm{
 	/*
 	 * Constructor needs to take a shoe object
 	 * */
-	public ShoeCompainionForm(Shoe shoe) {
+	public ShoeCompainionForm(T shoe) {
 			this();
 			setProduct(shoe);
 	}
@@ -103,7 +108,7 @@ public class ShoeCompainionForm extends ProductForm{
 		return formShoe;
 	}
 
-	public void setProduct(Product o) {
+	public void setProduct(Shoe o) {
 		
 		if(!(o instanceof Shoe)){
 			throw new IllegalArgumentException("Provided Object is not a Shoe");

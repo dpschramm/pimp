@@ -15,9 +15,16 @@ http://stackoverflow.com/questions/6412817/form-layout-to-call-jcolorchooser
 
 public class ColorButton extends JButton implements ActionListener {
 
-    private JColorChooser chooseColor;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    private String text;
+	@SuppressWarnings("unused")
+	private JColorChooser chooseColor;
+
+    @SuppressWarnings("unused")
+	private String text;
 
     public ColorButton(String label) {
         super(label);

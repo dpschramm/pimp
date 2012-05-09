@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class StringFormElement implements FormElement {
+public class StringFormElement implements FormElement<String> {
 
 	public StringFormElement(){};
 	
@@ -15,7 +15,7 @@ public class StringFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, String o) {
 		((JTextField)jc).setText(o.toString());
 	}
 

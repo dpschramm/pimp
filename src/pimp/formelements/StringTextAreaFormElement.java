@@ -5,9 +5,8 @@ import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-public class StringTextAreaFormElement implements FormElement {
+public class StringTextAreaFormElement implements FormElement<String> {
 
 	public StringTextAreaFormElement(){};
 	
@@ -17,7 +16,7 @@ public class StringTextAreaFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, String o) {
 		((JTextArea)jc).setText(o.toString());
 	}
 

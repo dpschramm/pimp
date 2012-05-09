@@ -2,13 +2,11 @@ package pimp.formelements;
 
 import java.awt.Color;
 import java.lang.reflect.Type;
-import java.util.Date;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
 
-public class ColorFormElement implements FormElement {
+public class ColorFormElement implements FormElement<Color> {
 		
 	public ColorFormElement(){};
 	
@@ -18,7 +16,7 @@ public class ColorFormElement implements FormElement {
 	}
 	
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, Color o) {
 		((ColorButton)jc).setBackground((Color)o);
 	}
 	

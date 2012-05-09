@@ -1,23 +1,20 @@
 package pimp.formelements;
 
-import java.awt.Component;
 import java.lang.reflect.Type;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
-public class NullDecoratorFormElement implements FormElement {
+public class NullDecoratorFormElement<T> implements FormElement<T> {
 
-	FormElement insideElement;
+	FormElement<T> insideElement;
 	
-	public NullDecoratorFormElement(FormElement fe){
+	public NullDecoratorFormElement(FormElement<T> fe){
 		
 		this.insideElement = fe;
 	};
 	
 	@Override
-	public Object getValue(JComponent jc) {
+	public T getValue(JComponent jc) {
 		
 		if(!(jc instanceof NullDecoratorInput)){
 			throw new IllegalArgumentException();
@@ -31,7 +28,7 @@ public class NullDecoratorFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, T o) {
 		if(!(jc instanceof NullDecoratorInput)){
 			throw new IllegalArgumentException();
 		}

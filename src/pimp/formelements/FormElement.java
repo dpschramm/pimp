@@ -4,11 +4,11 @@ import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 
-public interface FormElement {
+public interface FormElement<T> {
 	
-	public Object getValue(JComponent jc);
+	public T getValue(JComponent jc);
 	
-	public void setValue(JComponent jc, Object o);
+	public void setValue(JComponent jc, T o);
 	
 	public JComponent createComponent();
 	

@@ -1,14 +1,10 @@
 package pimp.formelements;
 
 import java.lang.reflect.Type;
-import java.util.Date;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
-import com.toedter.calendar.JDateChooser;
-
-public class UnsupportedTypeFormElement implements FormElement {
+public class UnsupportedTypeFormElement implements FormElement<Object> {
 	
 	public UnsupportedTypeFormElement(){};
 	

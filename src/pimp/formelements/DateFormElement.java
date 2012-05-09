@@ -4,11 +4,10 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
-public class DateFormElement implements FormElement {
+public class DateFormElement implements FormElement<Date> {
 	
 	/**
 	 * 
@@ -24,7 +23,7 @@ public class DateFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, Date o) {
 		((JDateChooser)jc).setDate((Date) o);
 	}
 
