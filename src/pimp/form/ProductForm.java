@@ -4,6 +4,14 @@ import javax.swing.JComponent;
 
 import pimp.model.Product;
 
+/**
+ * @author Joel
+ * 
+ *         The superclass for the product forms, for both the dynamically
+ *         created and companion form.
+ * 
+ * @param <T>
+ */
 public abstract class ProductForm<T extends Product> extends JComponent{
 	
 	/**
@@ -12,7 +20,7 @@ public abstract class ProductForm<T extends Product> extends JComponent{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Will create and return an object that corresponds to the values in the
+	 * Will create and return a Product that corresponds to the values in the
 	 * form
 	 * 
 	 * @return an object that will represent the current state of the form
