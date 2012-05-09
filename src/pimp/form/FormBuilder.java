@@ -14,14 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import pimp.annotations.FormField;
-import pimp.formelements.ColorFormElement;
-import pimp.formelements.DateFormElement;
-import pimp.formelements.DoubleFormElement;
-import pimp.formelements.FormElement;
-import pimp.formelements.IntFormElement;
-import pimp.formelements.NullDecoratorFormElement;
-import pimp.formelements.StringFormElement;
-import pimp.formelements.UnsupportedTypeFormElement;
+import pimp.form.elements.ColorFormElement;
+import pimp.form.elements.DateFormElement;
+import pimp.form.elements.DoubleFormElement;
+import pimp.form.elements.FormElement;
+import pimp.form.elements.IntFormElement;
+import pimp.form.elements.NullDecoratorFormElement;
+import pimp.form.elements.StringFormElement;
+import pimp.form.elements.UnsupportedTypeFormElement;
 import pimp.model.Product;
 
 public class FormBuilder {

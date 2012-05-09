@@ -5,7 +5,7 @@ import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.formelements.StringFormElement;
+import pimp.form.elements.StringFormElement;
 
 public class StringFormElementTest extends junit.framework.TestCase implements FormElementTestInterface {
 	

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,7 +24,6 @@ import pimp.annotations.CompanionForm;
 import pimp.controller.ProductController;
 import pimp.form.FormBuilder;
 import pimp.form.ProductForm;
-import pimp.gui.tree.CustomIconRenderer;
 import pimp.gui.tree.ProductTree;
 import pimp.model.Product;
 import pimp.model.ProductModel;
@@ -110,9 +110,6 @@ public class ProductGui extends JFrame {
 		treeScrollPanel = new JScrollPane(tree);
 		treeScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		treeScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		final CustomIconRenderer renderer = new CustomIconRenderer();
-		tree.setCellRenderer(renderer);
 		
 		// Add panels.
 		frame.getContentPane().add(treeScrollPanel, BorderLayout.WEST);
@@ -346,7 +343,7 @@ public class ProductGui extends JFrame {
 		frame.repaint();
 	}
 	
-	public void setClasses(List<Class<?>> classList) {
+	public void setClasses(Set<Class<?>> classList) {
 		// Need to get rid of any companion form classes in the directory.
 		tree.addProductStructure(classList);
 	}

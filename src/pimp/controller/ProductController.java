@@ -8,21 +8,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import pimp.classloader.DynamicJarLoader;
-import pimp.form.ProductForm;
+import pimp.classloader.JarLoader;
 import pimp.gui.DatabaseSelector;
 import pimp.gui.ProductGui;
-import pimp.gui.SelectProductDialog;
+import pimp.gui.SelectClassDialog;
 import pimp.model.Product;
 import pimp.model.ProductModel;
 import pimp.model.Status;
 import pimp.persistence.DataAccessor;
-import pimp.persistence.DatabaseConnection;
 import pimp.persistence.SqliteConnection;
-import pimp.productdefs.Drink;
 
 
 /**
@@ -76,14 +74,14 @@ public class ProductController {
 	public void createNewProduct() {
 		
 		// Create and show product dialog.
-		SelectProductDialog selectDialog = new SelectProductDialog(gui, 
+		SelectClassDialog selectDialog = new SelectClassDialog(gui, 
 				loadClasses());
 		
 		// Create product from selected class.
-		Class<? extends Product> c = selectDialog.getSelectedClass();
+		Class<?> c = selectDialog.getSelectedClass();
 		if (c != null) {
 			try {
-				Product p = c.newInstance();
+				Product p = (Product) c.newInstance();
 				p.name = "New " + c.getSimpleName();
 				cache.add(p);
 			} catch (InstantiationException e) {
@@ -138,10 +136,11 @@ public class ProductController {
 		cache.update(original, updated);
 	}
 	
-	public List<Class<?>> loadClasses() {
-		List<Class<?>> cpl = DynamicJarLoader.load(productDir, Product.class);
-		gui.setClasses(cpl); // must be called before setProducts.
-		return cpl;
+	public Set<Class<?>> loadClasses() {
+		JarLoader.load(productDir);
+		Set<Class<?>> set = JarLoader.getClasses(Product.class);
+		gui.setClasses(set); // must be called before setProducts.
+		return set;
 	}
 	
 	public void commitCache(){

@@ -1,7 +1,6 @@
 package pimp.model;
 
 import pimp.annotations.FormField;
-import pimp.form.ProductForm;
 
 /** The abstract product class provides the basis for all custom products to
  * be tracked in the inventory program.
@@ -24,18 +23,16 @@ public abstract class Product {
 	
 	@FormField(displayName="Quantity")
 	public int quantity;
-	private Class<?> companionFormClass;	//Private so this doesn't get saved to persistence layer.
 	
 	/** Default constructor - doesn't take parameters as these will be set 
 	 * later by the UI form. */
 	public Product() {
-		this("", 0, null);
+		this("", 0);
 	}
 	
-	public Product(String name, int quantity, Class<?> companionFormClass) {
+	public Product(String name, int quantity) {
 		this.name = name;
 		this.quantity = quantity;
-		this.companionFormClass = companionFormClass;
 	}
 	
 	@Override
