@@ -34,29 +34,18 @@ public class SqliteConnection extends DatabaseConnection {
 		return databaseName;
 	}
 	
-	/**
-	 * Saves a product to DB.
-	 * @return Whether or not the save was successful.
-	 */
 	@Override
 	protected boolean save(Product product) {
 		Class<?> c = product.getClass();
 		String className = c.getName();
 		className = className.replace('.', '_');
-		if (!tableExists(className)) {	
-			//If we haven't seen an object of this class before, then we need to create a new table
+		if (!tableExists(className)) {
 			createTable(c);
 		}
 		
 		return insertIntoTable(className, product);
 	}
 	
-	/**
-	 * Inserts a product into the appropriate DB table.
-	 * @param className
-	 * @param product
-	 * @return Whether or not the insert was successful.
-	 */
 	private boolean insertIntoTable(String className, Product product) {
 		try {
 			int originalCount = getRecordCount(className);
@@ -64,7 +53,6 @@ public class SqliteConnection extends DatabaseConnection {
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
-			/*Construct DB insert PreparedStatement...*/
 			String sql = "INSERT INTO " + className + "(";
 			for (int i = 0; i < fields.length; i++) {
 				sql += fields[i].getName();
@@ -83,7 +71,8 @@ public class SqliteConnection extends DatabaseConnection {
 			sql += ");";
 
 			PreparedStatement preparedStatement = conn.prepareStatement(sql);
-			for (int i = 0; i < fields.length; i++) {	//Populate the values of the PreparedStatement
+			//preparedStatement.setInt(1, 1);
+			for (int i = 0; i < fields.length; i++) {	//TODO: sort fields by name, as Class.getFields returns them in no particular order.
 				if (!fields[i].getName().equals("id")) {
 					Object obj = fields[i].get(product);
 					if (obj != null) {
@@ -92,11 +81,10 @@ public class SqliteConnection extends DatabaseConnection {
 				}
 			}
 			
-			//Execute the insert statement:
 			preparedStatement.addBatch();
 			preparedStatement.executeBatch();
 			
-			if (getRecordCount(className) == originalCount+1) {	//Number of records increased as a result of this method being called.
+			if (getRecordCount(className) == originalCount+1) {
 				return true;
 			} else {
 				return false;
@@ -108,15 +96,14 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	/**
-	 * Sorts a Field array, since Class.getFields returns them in no particular order,
-	 * and removes duplicate fields that occur when a subclass re-declares a public method.
+	/*
+	 * Nasty method to account for when a field is declared more than once in a class hierarchy
+	 * and the fact that Class.getFields returns fields in no particular order.
 	 */
 	private Field[] sortFields(Field[] fields) {
 		Comparator<Field> comp = new FieldComparator();
 		List<Field> fieldList = new ArrayList<Field>();
 		
-		/* Remove duplicates */
 		for (Field field : fields) {
 			boolean add = true;
 			for (Field listField : fieldList) {
@@ -129,7 +116,6 @@ public class SqliteConnection extends DatabaseConnection {
 			}
 		}
 		
-		/* Sort the array, now that duplicates have been removed */
 		Field[] newFields = new Field[fieldList.size()];
 		int i = 0;
 		for (Field field : fieldList) {
@@ -142,13 +128,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return newFields;
 	}
 
-	/**
-	 * 
-	 * @param preparedStatement The PreparedStatement we want to set the values for
-	 * @param field The field that contains the value we want to set
-	 * @param index The position of the '?' in the preparedStatement that we want to replace
-	 * @param product Used for retrieving the instance value of field.
-	 */
 	private void setPreparedStatementValues(PreparedStatement preparedStatement, 
 											Field field, 
 											int index,
@@ -158,7 +137,6 @@ public class SqliteConnection extends DatabaseConnection {
 			Class<?> type = field.getType();
 			String typeName = type.getSimpleName();
 			
-			/* Get the appropriate data representation to store */
 			if (typeName.equals("String")) {
 				preparedStatement.setString(index, field.get(product).toString());
 			} else if (typeName.equals("Color")) {
@@ -178,9 +156,6 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	/**
-	 * Gets the number of records in the database table corresponding to a class name.
-	 */
 	private int getRecordCount(String className) {
 		try {
 			Statement statement = conn.createStatement();
@@ -199,22 +174,16 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	/**
-	 * Creates a new database table based on the public fields available in a class.
-	 * @param c
-	 */
 	private void createTable(Class<?> c) {
 		String tableName = c.getName().replace('.', '_');
 		try {
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
-			/* Create the new table */
 			Statement statement = conn.createStatement();
 			statement.executeUpdate("CREATE TABLE " + tableName +
 									" (id INTEGER PRIMARY KEY AUTOINCREMENT);");
 			
-			/* Alter the new table, adding the columns required to store objects of class c */
 			for (Field field : fields) {
 				Class<?> type = field.getType();
 				String dbColType = getDbColType(type.getSimpleName());
@@ -232,11 +201,6 @@ public class SqliteConnection extends DatabaseConnection {
 		
 	}
 
-	/**
-	 * Returns the database column type that corresponds to a particular java datatype.
-	 * @param javaTypeName
-	 * @return
-	 */
 	private String getDbColType(String javaTypeName) {
 		if (javaTypeName.equals("String")) {
 			return "TEXT";
@@ -253,11 +217,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return null;
 	}
 
-	/**
-	 * Checks whether a table has previously been created.
-	 * @param className
-	 * @return
-	 */
 	private boolean tableExists(String className) {
 		className = className.replace('.', '_');
 		boolean success = false;
@@ -279,9 +238,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return success;
 	}
 
-	/**
-	 * Loads a list of all products from all tables in the database.
-	 */
 	@Override
 	protected List<Product> loadProductList() {
 		List<Product> products = new ArrayList<Product>();
@@ -295,11 +251,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return products;
 	}
 
-	/**
-	 * Gets all the products from the given table.
-	 * @param tableName
-	 * @return
-	 */
 	private List<Product> getProductsFromTable(String tableName) {
 		List<Product> products = new ArrayList<Product>();
 		
@@ -319,13 +270,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return products;
 	}
 
-	/**
-	 * Constructs a new product from data in a ResultSet. Reflection is used to get 
-	 * the appropriate field corresponding to each table column.
-	 * @param rs
-	 * @param tableName
-	 * @return the newly created product.
-	 */
 	private Product createProductFromResultSet(ResultSet rs, String tableName) {
 		Product product = null;
 		try {
@@ -376,34 +320,31 @@ public class SqliteConnection extends DatabaseConnection {
 	 * @return A date representation of dateString.
 	 */
 	private Date parseDate(String dateString) {
-		Date date = new Date();
-		String[] parts = dateString.split(" ");
-		String[] yyyymmdd = parts[0].split("/");
-		String[] hhmmss = parts[1].split(":");
-		
-		date.setYear(new Integer(yyyymmdd[0]) - 1900);
-		date.setMonth(new Integer(yyyymmdd[1]) - 1);
-		date.setDate(new Integer(yyyymmdd[2]));
-		
-		date.setHours(new Integer(hhmmss[0]));
-		date.setMinutes(new Integer(hhmmss[1]));
-		date.setSeconds(new Integer(hhmmss[2]));
-		
-		return date;
+		if(dateString.length() > 1){
+			Date date = new Date();
+
+			String[] parts = dateString.split(" ");
+			String[] yyyymmdd = parts[0].split("/");
+			String[] hhmmss = parts[1].split(":");
+			
+			date.setYear(new Integer(yyyymmdd[0]) - 1900);
+			date.setMonth(new Integer(yyyymmdd[1]) - 1);
+			date.setDate(new Integer(yyyymmdd[2]));
+			
+			date.setHours(new Integer(hhmmss[0]));
+			date.setMinutes(new Integer(hhmmss[1]));
+			date.setSeconds(new Integer(hhmmss[2]));
+			
+			return date;
+		}
+		else return null;
 	}
 	
-	/**
-	 * @param date
-	 * @return A string representation of a date in yyyy/MM/dd HH:mm:ss format.
-	 */
 	private String getDateString(Date date) {
 		DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		return df.format(date);
 	}
 
-	/**
-	 * @return The names of all the tables that exist in the database.
-	 */
 	private List<String> getTableNames() {
 		List<String> tableNames = new ArrayList<String>();
 		try {
@@ -424,9 +365,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return tableNames;
 	}
 	
-	/**
-	 * Provides a mapping from id to name of all products of a class that are stored in the db.
-	 */
 	@Override
 	protected Map<Integer, String> getProductIdsAndNames(String className) {
 		String tableName = extractTableName(className);
@@ -451,9 +389,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return map;
 	}
 	
-	/**
-	 * Provides a mapping from id to product for all instances of a class that are stored in the db.
-	 */
 	@Override
 	protected Map<Integer, Product> getIdToProductMap(String className) {
 		Map<Integer, Product> map = new HashMap<Integer, Product>();
@@ -477,11 +412,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return map;
 	}
 	
-	/**
-	 * Loads a particular instance of a product from the database.
-	 * @param id The id of the desired product
-	 * @param className The name of the product that we are interested in's class.
-	 */
 	@Override
 	protected Product loadProductFromId(int id, String className) {
 		String tableName = extractTableName(className);
@@ -502,11 +432,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return newProduct;
 	}
 	
-	/**
-	 * Extracts the database table name corresponding to a class.
-	 * @param className
-	 * @return
-	 */
 	private String extractTableName(String className) {
 		String tableName = className.replace('.', '_');
 		if (tableName.contains("class ")) {
@@ -515,9 +440,6 @@ public class SqliteConnection extends DatabaseConnection {
 		return tableName;
 	}
 
-	/**
-	 * Deletes product p from the database
-	 */
 	@Override
 	protected void delete(Product p) {
 		long id = p.id;
@@ -532,10 +454,6 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 	
-	/**
-	 * Updates the data stored against product p in the database.
-	 * DB values are overwritten by the values in p's public fields.
-	 */
 	@Override
 	protected void update(Product p) {
 		long id = p.id;
@@ -545,8 +463,7 @@ public class SqliteConnection extends DatabaseConnection {
 		
 		try {
 			String tableName = extractTableName(c.getName());
-			/* Construct SQLite update statement: */
-			if (fields.length > 1) {	//There are more fields than just an id
+			if (fields.length > 1) {	//More than just an id...
 				sql = "UPDATE " + tableName + " SET ";
 	
 				for (int i = 0; i < fields.length; i++) {
@@ -607,9 +524,6 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	/**
-	 * Sets the database that future transactions will be made to.
-	 */
 	@Override
 	protected void setDatabase(String name) {
 		this.databaseName = name;
