@@ -1,11 +1,15 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class IntFormElement implements FormElement {
+/**
+ * @author Joel Harrison
+ *
+ */
+public class IntFormElement implements FormElement<Integer> {
 	
 	public IntFormElement(){};
 
@@ -21,7 +25,7 @@ public class IntFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, Integer o) {
 		((JTextField)jc).setText(o.toString());
 	}
 

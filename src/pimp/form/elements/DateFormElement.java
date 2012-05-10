@@ -1,20 +1,19 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import java.lang.reflect.Type;
 import java.util.Date;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
-public class DateFormElement implements FormElement {
-	
-	/**
-	 * 
-	 * TO-D0: Implement this properly when there is a Date JComponent
-	 * 
-	 */
+/**
+ * Form element for a Date
+ * 
+ * @author Joel Harrison, Joel Mason
+ *
+ */
+public class DateFormElement implements FormElement<Date> {
 	
 	public DateFormElement(){};
 	
@@ -24,7 +23,7 @@ public class DateFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, Date o) {
 		((JDateChooser)jc).setDate((Date) o);
 	}
 

@@ -8,15 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pimp.classloader.JarLoader;
 import pimp.model.Product;
 
 public class SqliteConnection extends DatabaseConnection {
@@ -38,7 +40,7 @@ public class SqliteConnection extends DatabaseConnection {
 		String className = c.getName();
 		className = className.replace('.', '_');
 		if (!tableExists(className)) {
-			createTable(className);
+			createTable(c);
 		}
 		
 		return insertIntoTable(className, product);
@@ -73,9 +75,7 @@ public class SqliteConnection extends DatabaseConnection {
 			for (int i = 0; i < fields.length; i++) {	//TODO: sort fields by name, as Class.getFields returns them in no particular order.
 				if (!fields[i].getName().equals("id")) {
 					Object obj = fields[i].get(product);
-					String data = "";
 					if (obj != null) {
-						data = fields[i].get(product).toString();
 						setPreparedStatementValues(preparedStatement, fields[i], i+1, product);	//preparedStatement args start from 1
 					}
 				}
@@ -137,7 +137,7 @@ public class SqliteConnection extends DatabaseConnection {
 			Class<?> type = field.getType();
 			String typeName = type.getSimpleName();
 			
-			if (typeName.equals("String") || typeName.equals("Date")) {
+			if (typeName.equals("String")) {
 				preparedStatement.setString(index, field.get(product).toString());
 			} else if (typeName.equals("Color")) {
 				preparedStatement.setInt(index, ((Color)field.get(product)).getRGB());
@@ -145,6 +145,10 @@ public class SqliteConnection extends DatabaseConnection {
 				preparedStatement.setInt(index, (Integer) field.get(product));
 			} else if (typeName.equals("double")) {
 				preparedStatement.setDouble(index, (Double) field.get(product));
+			} else if (typeName.equals("Date")) {
+				Date date = (Date)field.get(product);
+				
+				preparedStatement.setString(index, getDateString(date));
 			}
 		} catch (Exception e) {
 			System.err.println("Error preparing statement.");
@@ -170,10 +174,9 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 	}
 
-	private void createTable(String tableName) {
-		String className = tableName.replace('_', '.');
+	private void createTable(Class<?> c) {
+		String tableName = c.getName().replace('.', '_');
 		try {
-			Class<?> c = Class.forName(className);
 			Field[] fields = c.getFields();
 			fields = sortFields(fields);
 			
@@ -273,7 +276,7 @@ public class SqliteConnection extends DatabaseConnection {
 			ResultSetMetaData metaData = rs.getMetaData();
 			int columnCount = metaData.getColumnCount();
 			String className = tableName.replace('_', '.');
-			Class<?> c = Class.forName(className);
+			Class<?> c = JarLoader.getClass(className);
 			product = (Product) c.newInstance();
 			
 			for (int i = 1; i <= columnCount; i++) {
@@ -284,7 +287,12 @@ public class SqliteConnection extends DatabaseConnection {
 				
 				if (fieldTypeName.equals("Date")) {
 					System.out.println(rs.getString(i));
-					f.set(product, new Date(rs.getString(i)));
+					String dateString = rs.getString(i);
+					if (dateString != null) {
+						Date date = parseDate(dateString);
+						f.set(product, date);
+					}
+					
 				} else if (fieldTypeName.equals("Color")) {
 					f.set(product, new Color(rs.getInt(i)));
 				} else if (fieldTypeName.equalsIgnoreCase("double")){
@@ -304,6 +312,33 @@ public class SqliteConnection extends DatabaseConnection {
 		}
 		
 		return product;
+	}
+
+	/**
+	 * Custom date parser since DateFormat isn't working for our date format.
+	 * @param dateString
+	 * @return A date representation of dateString.
+	 */
+	private Date parseDate(String dateString) {
+		Date date = new Date();
+		String[] parts = dateString.split(" ");
+		String[] yyyymmdd = parts[0].split("/");
+		String[] hhmmss = parts[1].split(":");
+		
+		date.setYear(new Integer(yyyymmdd[0]) - 1900);
+		date.setMonth(new Integer(yyyymmdd[1]) - 1);
+		date.setDate(new Integer(yyyymmdd[2]));
+		
+		date.setHours(new Integer(hhmmss[0]));
+		date.setMinutes(new Integer(hhmmss[1]));
+		date.setSeconds(new Integer(hhmmss[2]));
+		
+		return date;
+	}
+	
+	private String getDateString(Date date) {
+		DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		return df.format(date);
 	}
 
 	private List<String> getTableNames() {
@@ -454,7 +489,7 @@ public class SqliteConnection extends DatabaseConnection {
 					} else if (fieldTypeName.equals("Date")) {
 						Date date = (Date) field.get(p);
 						if (date != null) {
-							sql += date.toString();
+							sql += "\'" + getDateString(date) + "\'";
 						} else {
 							sql += "\'\'";
 						}

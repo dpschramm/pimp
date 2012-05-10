@@ -8,8 +8,8 @@ import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.formelements.ColorFormElement;
-import pimp.formelements.StringFormElement;
+import pimp.form.elements.ColorFormElement;
+import pimp.form.elements.StringFormElement;
 
 public class ColorFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import org.junit.Before;
 
-import pimp.formelements.DateFormElement;
+import pimp.form.elements.DateFormElement;
 
 public class DateFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

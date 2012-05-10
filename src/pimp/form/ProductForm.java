@@ -4,7 +4,15 @@ import javax.swing.JComponent;
 
 import pimp.model.Product;
 
-public abstract class ProductForm extends JComponent{
+/**
+ * @author Joel Harrison
+ * 
+ *         The superclass for the product forms, for both the dynamically
+ *         created and companion form.
+ * 
+ * @param <T>
+ */
+public abstract class ProductForm<T extends Product> extends JComponent{
 	
 	/**
 	 * 
@@ -12,7 +20,7 @@ public abstract class ProductForm extends JComponent{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Will create and return an object that corresponds to the values in the
+	 * Will create and return a Product that corresponds to the values in the
 	 * form
 	 * 
 	 * @return an object that will represent the current state of the form
@@ -23,7 +31,7 @@ public abstract class ProductForm extends JComponent{
 	 * @throws InstantiationException
 	 *             If the class or its nullary constructor is not accessible.
 	 */
-	public abstract Product getProduct() throws InstantiationException, IllegalAccessException;
+	public abstract T getProduct() throws InstantiationException, IllegalAccessException;
 	
 	/**
 	 * Will fill the given Form based on the Product given
@@ -41,6 +49,6 @@ public abstract class ProductForm extends JComponent{
 	 *             IllegalAccessException.
 	 * 
 	 */
-	public abstract void setProduct(Product p) throws IllegalArgumentException, IllegalAccessException;
+	public abstract void setProduct(T p) throws IllegalArgumentException, IllegalAccessException;
 
 }

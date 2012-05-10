@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -13,12 +14,8 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeWillExpandListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -61,6 +58,9 @@ public class ProductTree extends JTree {
 			(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(false);
 		setToggleClickCount(1); // One click expand.
+		
+		CustomIconRenderer renderer = new CustomIconRenderer();
+		setCellRenderer(renderer);
 		
 		addTreeSelectionListener(new TreeSelectionListener() {
 			 /**
@@ -288,7 +288,7 @@ public class ProductTree extends JTree {
 	 * Takes a classList and adds each class to the productTree
 	 * @param classList
 	 */
-	public void addProductStructure(List<Class<?>> classList){
+	public void addProductStructure(Set<Class<?>> classList){
 		for (Class<?> c : classList) {
 			addProductStructure(c);
 		}

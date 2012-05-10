@@ -1,11 +1,17 @@
-package pimp.formelements;
+package pimp.form.elements;
 
 import java.lang.reflect.Type;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-public class DoubleFormElement implements FormElement {
+/**
+ * Form element for a double
+ * 
+ * @author Joel Harrison
+ *
+ */
+public class DoubleFormElement implements FormElement<Double> {
 	
 	public DoubleFormElement(){};
 	
@@ -21,7 +27,7 @@ public class DoubleFormElement implements FormElement {
 	}
 
 	@Override
-	public void setValue(JComponent jc, Object o) {
+	public void setValue(JComponent jc, Double o) {
 		((JTextField)jc).setText(o.toString());
 	}
 
