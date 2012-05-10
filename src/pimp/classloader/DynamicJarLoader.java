@@ -53,7 +53,6 @@ public class DynamicJarLoader {
 			File jarFolder = new File(decodedUrl);
 			jarFiles = Arrays.asList(jarFolder.listFiles());
 		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -65,11 +64,13 @@ public class DynamicJarLoader {
 		      	// Load all the classes in the jarFile.
 		        classList.addAll(loadClassesFromJar(file, superClass));
 		    }
-	    }
-	    
+	    } 
 	    return classList;
 	}
 	
+	/**
+	 * Checks whether class has specified superclass
+	 */
 	private static boolean hasSuperclass(Class<?> c, Class<?> superClass) {
 		if (superClass == Object.class) return true;
 		
@@ -81,6 +82,12 @@ public class DynamicJarLoader {
 		return false;
 	}
 	
+	/**
+	 * Gets list of classes stored in jar file that extend specified superclass 
+	 * @param f, filename of jar
+	 * @param sc, superclass for classes to extend from
+	 * @return List of classes from jar extending superclass sc
+	 */
 	private static List<Class<?>> loadClassesFromJar(File f, Class<?> sc) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		try {
@@ -105,15 +112,11 @@ public class DynamicJarLoader {
 	    	}
 			// Close to unlock jars to the system.
 			System.out.println("Closing jar file: " + jar.getName());
-			//jar.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return classes;
 	}
 }
