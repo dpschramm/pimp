@@ -55,14 +55,15 @@ public class ProductGui extends JFrame {
 	private Product selectedProduct;
 	
 	/** 
-	 * Constructor
+	 * Constructor. Takes a reference to the controller and the model.
 	 */
 	public ProductGui(final ProductController controller, ProductModel model) {
 		
 		// Setup controller.
 		this.controller = controller;
 		
-		// Setup observation of model.
+		// Setup observation of model. This is so that the view will accurately reflect the
+		// contents of the model.
 		model.addProductsAddedListener(new productAddedListener());
 		model.addProductsDeletedListener(new productDeletedListener());
 		model.addProductUpdatedListener(new productUpdatedListener());
@@ -82,6 +83,7 @@ public class ProductGui extends JFrame {
 		                    "No",
 		                    "Cancel"};
 		    	  
+		    	  //Confirmation dialog for saving the changes.
 		    	  int n = JOptionPane.showOptionDialog(frame,
 		    			  "Would you like to save the changes you have made?" ,
 						    "Save Changes?",
@@ -92,6 +94,7 @@ public class ProductGui extends JFrame {
 		    			    options[2]);		    	  
 					if (n == 0)
 					{
+						//User specified to save
 						controller.commitCache();
 					}
 					if (n != 2)
@@ -147,17 +150,15 @@ public class ProductGui extends JFrame {
 		btnOpenProducts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				/** A new database has been opened. We need to reset the tree,
+				 *  reload the classes and redraw the GUI.
+				 */
 				tree.empty();
 				controller.open();
 				controller.loadClasses();
 				invalidate();
 				validate();
 				repaint();
-
-				// Create new copy of product, with different name
-				// Send this in an event to the controller's listener.
-				
 			}
 		});
 		
@@ -166,7 +167,11 @@ public class ProductGui extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO getSelectedProduct returns a list -DS
+				/**
+				 *  This will give the controller a list of products set to be deleted.
+				 *  Must return a list as the user may have clicked on a parent node - 
+				 *  attempting to delete all products in that category.
+				 **/
 				controller.removeFromCache(tree.getSelectedProduct());
 			}
 		});
@@ -176,6 +181,10 @@ public class ProductGui extends JFrame {
 		btnCopyProduct.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/**
+				 * Calls the controller to create a deep copy of the product, 
+				 * based on the current state of the form.
+				 */
 				Product c = getCurrentProductState();
 				if(c != null){
 					controller.createNewProduct(c);
@@ -188,6 +197,10 @@ public class ProductGui extends JFrame {
 		btnSaveAsProducts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/**
+				 * A call to the controller to save the database as a new name/location.
+				 * Effectively an "export" button.
+				 */
 				controller.saveAs();
 			}
 		});
@@ -196,18 +209,25 @@ public class ProductGui extends JFrame {
 		btnCommit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				/**
+				 * Firstly, this should save the current state of the product in case 
+				 * the user has been editing it.
+				 * Secondly it calls the controller to commit changes to the cache
+				 * to the persistence layer.
+				 */
 				updateProduct(selectedProduct);
 				controller.commitCache();
 			}
 		});
 		
 		// Add buttons to panels.
+		//Product related buttons
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnNew);
 		leftPanel.add(btnCopyProduct);
-		//leftPanel.add(btnSave);
 		leftPanel.add(btnDelete);
 		
+		//DB related buttons
 		JPanel rightPanel = new JPanel(new FlowLayout());
 		rightPanel.add(btnOpenProducts);
 		rightPanel.add(btnCommit);
@@ -217,10 +237,7 @@ public class ProductGui extends JFrame {
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(leftPanel, BorderLayout.WEST);
 		buttonPanel.add(rightPanel, BorderLayout.EAST);
-		
-		
-		//buttonPanel.add(btnCommit, BorderLayout.CENTER);
-	
+
 		return buttonPanel;
 	}
 		
@@ -257,12 +274,27 @@ public class ProductGui extends JFrame {
 	class classChangedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		/**
+		 * The user has clicked on a new class in the tree.
+		 * This needs to tell the controller, which will query the model
+		 * to see if that class has been loaded yet.
+		 * If it hasn't, we expect the products to be loaded and
+		 * the event flow will come trickling back down.
+		 */
 			controller.getProductsByClass(e.getActionCommand());
 		}
 	}
 	
+	/**
+	 * This method tells the controller that a product has been modified.
+	 * It gives the controller the original product and another product, 
+	 * effectively representing a list of changes needing to be made to
+	 * the original. This is processed further up the chain, and changes are made.
+	 * @param original product
+	 */
 	public void updateProduct(Product original){
 		try {
+			//Get the changes from the current state of the form
 			Product updated = getCurrentProductState();
 			if (updated != null) { // Check for blank form.
 			controller.updateCacheItem(original, updated);
@@ -274,6 +306,12 @@ public class ProductGui extends JFrame {
 
 	}
 	
+	/**
+	 * The user has selected a product in the view.
+	 * This needs to be reflected by changing the form to display
+	 * the details of the product.
+	 *
+	 */
 	class productSelectedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -283,18 +321,25 @@ public class ProductGui extends JFrame {
 	
 	
 	/**
-	 * 
-	 * @param form
+	 * Method to update the form based on the currently selected product.
+	 * @param product, the product to display details for
 	 */
 	public void updateProductForm(Product product) {
 		try {
+			//If there's a current form being displayed
 			if (form != null) {
+				//Save the state of the product being displayed 
 				updateProduct(selectedProduct);
+				//And remove the form to make ready for the new one.
 				frame.getContentPane().remove(form);
 			}
-			//
+			
 			Class<?> companionClass = null;
 			
+			/**
+			 * If the product's class has an annotation stating that there's an attached 
+			 * companionForm, then try to get that form and assign it to CompanionClass.
+			 */
 			if (product.getClass().isAnnotationPresent(CompanionForm.class)) {
 				CompanionForm cf = product.getClass().getAnnotation(CompanionForm.class);
 				String className = null;
@@ -308,36 +353,36 @@ public class ProductGui extends JFrame {
 					}
 				}
 			}
-
-			if(companionClass != null){
+			
+			/**
+			 * If that worked (and it's not null) set that as the form, and feed the 
+			 * product into that form type. That will use reflection and display the details etc.
+			 */
+			if(companionClass != null)
+			{
 				form = (ProductForm) companionClass.newInstance();
 				form.setProduct(product);
-				//Class c = product.getClass();
-				//Constructor<?> constr = companionClass.getConstructor(c.newInstance());
-				//cForm = (ProductForm) constr.newInstance(product);
 				frame.getContentPane().add(form, BorderLayout.CENTER);
 			}
-			else{
+			/**
+			 * Otherwise it failed - there was an annotation but no form was actually found.
+			 * Make a form with out own formbuilder.
+			 */
+			else
+			{
 				form = fb.createForm(product);
 				frame.getContentPane().add(form, BorderLayout.CENTER);
 			}
-
-			//dynamicForm = form;
-			//frame.getContentPane().add(dynamicForm, BorderLayout.CENTER);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//We need both of these
+		//Update the gui and the variable tracking the selected product.
 		selectedProduct = product;
 		frame.validate();
 		frame.repaint();
@@ -352,11 +397,14 @@ public class ProductGui extends JFrame {
 	 * These correspond to changes in the cache/model, not
 	 * changes in the gui.*/
 	
-	
+	/**
+	 * Products have been added to the model.
+	 * Pass this information down to the tree.
+	 *
+	 */
 	class productAddedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//Code to update the tree here.
 			List<Product> products = (List<Product>) e.getSource();
 			for (Product p : products){
 				tree.addProduct(p);
@@ -364,6 +412,10 @@ public class ProductGui extends JFrame {
 		}
 	}
 	
+	/**
+	 * Products have been deleted from the model.
+	 *
+	 */
 	class productDeletedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -374,7 +426,9 @@ public class ProductGui extends JFrame {
 			}
 		}
 	}
-
+	/**
+	 * Products have been updated in the model.
+	 */
 	class productUpdatedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent u) {
@@ -382,7 +436,9 @@ public class ProductGui extends JFrame {
 		}
 	}
 
-
+	/**
+	 * Helper method for database switchouts.
+	 */
 	public void empty() {
 		tree.empty();
 	}

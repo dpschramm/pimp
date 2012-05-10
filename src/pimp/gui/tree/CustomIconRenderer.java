@@ -7,6 +7,16 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
+/**
+ * CustomIconRenderer is used to give the tree nodes a better affordance for the user.
+ * Using the default renderer, classes would appear as leaves (and thus, didn't look liek they
+ * were expandable) when really they needed to be expanded in order to load their children.
+ * 
+ * This class takes the storedObject of the node and interprets it, setting
+ * a custom graphic dependent on its content (and state)
+ * @author Joel
+ *
+ */
 
 public class CustomIconRenderer implements TreeCellRenderer {
     
