@@ -2,14 +2,11 @@ package pimp.formelement;
 
 import java.awt.Color;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 
 import org.junit.Before;
 
 import pimp.form.elements.ColorFormElement;
-import pimp.form.elements.StringFormElement;
 
 public class ColorFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	

@@ -8,9 +8,7 @@ import java.awt.Color;
 import java.lang.reflect.Field;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
-import org.junit.After;
 import org.junit.Before;
 
 import pimp.form.Form;
@@ -55,7 +53,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(jacket);
+			Form<?> f = fb.createForm(jacket);
 			JFrame testFrame = new JFrame();
 			testFrame.add(f);
 			testFrame.setVisible(true);
@@ -76,7 +74,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(drink);
+			fb.createForm(drink);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		} catch (IllegalAccessException e) {
@@ -92,7 +90,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(drink);
+			Form<?> f = fb.createForm(drink);
 			Drink drinkFromForm = (Drink) f.getProduct();
 			System.out.println(drinkFromForm);
 			System.out.println(drink);
@@ -118,7 +116,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(jacket);
+			Form<?> f = fb.createForm(jacket);
 			Jacket jacketFromForm = (Jacket) f.getProduct();
 			System.out.println(jacketFromForm);
 			System.out.println(jacket);
@@ -141,7 +139,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(Drink.class);
+			fb.createForm(Drink.class);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		}
@@ -151,17 +149,18 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(Jacket.class);
+			fb.createForm(Jacket.class);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void testFillFormDoesNotThrowExceptionWithDefaultTypesClass(){
 		
 		FormBuilder fb = new FormBuilder();
-		try {
-			Form f = fb.createForm(Drink.class);
+		try {	
+			Form<Drink> f = (Form<Drink>) fb.createForm(Drink.class);
 			f.setProduct(drink);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
@@ -170,11 +169,12 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testFillFormDoesNotThrowExceptionWithUnknownTypesClass(){
 		
 		FormBuilder fb = new FormBuilder();
 		try {
-			Form f = fb.createForm(Jacket.class);
+			Form<Jacket> f = (Form<Jacket>) fb.createForm(Jacket.class);
 			f.setProduct(jacket);
 		} catch (IllegalArgumentException e) {
 			fail("Create form threw an exception");
@@ -183,6 +183,7 @@ public class FormBuilderTest extends junit.framework.TestCase{
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testFillFormThrowsExceptionTryingToFillWithDifferentClass(){
 		
 		FormBuilder fb = new FormBuilder();

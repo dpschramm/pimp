@@ -1,16 +1,9 @@
 package pimp.shoe;
 
-import java.awt.Color;
-
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 
 import org.junit.Before;
 
-import pimp.form.elements.ColorFormElement;
-import pimp.form.elements.StringFormElement;
 import pimp.shoe.Shoe;
 import pimp.shoe.ShoeCompainionForm;
 
@@ -28,13 +21,13 @@ public class ShoeCompanionFormTest extends junit.framework.TestCase{
 	
 	public void testSetValue() {
 		
-		ShoeCompainionForm scf = new ShoeCompainionForm();
+		ShoeCompainionForm<Shoe> scf = new ShoeCompainionForm<Shoe>();
 		scf.setProduct(s);
 	}
 
 	public void testGetValue() {
 		
-		ShoeCompainionForm scf = new ShoeCompainionForm();
+		ShoeCompainionForm<Shoe> scf = new ShoeCompainionForm<Shoe>();
 		scf.setProduct(s);
 		JFrame jf = new JFrame();
 		jf.add(scf);
@@ -47,7 +40,7 @@ public class ShoeCompanionFormTest extends junit.framework.TestCase{
 	
 	public void testGetValueAfterSetting() {
 		
-		ShoeCompainionForm scf = new ShoeCompainionForm();
+		ShoeCompainionForm<Shoe> scf = new ShoeCompainionForm<Shoe>();
 		s.shoeSize = 10.0;
 		s.sizingSystem = "NZ";
 		scf.setProduct(s);

@@ -1,32 +1,30 @@
 package pimp.formelement;
 
 import java.awt.Color;
-import java.util.Date;
 
 import javax.swing.JComponent;
 
 import org.junit.Before;
 
 import pimp.form.elements.ColorFormElement;
-import pimp.form.elements.DateFormElement;
 import pimp.form.elements.NullDecoratorFormElement;
 
 public class NullDecoratorFormElementTest extends junit.framework.TestCase implements FormElementTestInterface{
 	
-	NullDecoratorFormElement ndfe;
+	NullDecoratorFormElement<?> ndfe;
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		ndfe = new NullDecoratorFormElement(new ColorFormElement());
+		ndfe = new NullDecoratorFormElement<Color>(new ColorFormElement());
 	}
 	
 	@Override
 	public void testSetValue() {
 		
-		NullDecoratorFormElement nullableFE = new NullDecoratorFormElement(new ColorFormElement());
+		NullDecoratorFormElement<Color> nullableFE = new NullDecoratorFormElement<Color>(new ColorFormElement());
 		JComponent jc = nullableFE.createComponent();
 		try {
 			nullableFE.setValue(jc, Color.BLACK);
@@ -38,7 +36,7 @@ public class NullDecoratorFormElementTest extends junit.framework.TestCase imple
 	@Override
 	public void testGetValueAfterSetToValue() {
 		
-		NullDecoratorFormElement nullableFE = new NullDecoratorFormElement(new ColorFormElement());
+		NullDecoratorFormElement<Color> nullableFE = new NullDecoratorFormElement<Color>(new ColorFormElement());
 		JComponent jc = nullableFE.createComponent();
 		try {
 			nullableFE.setValue(jc, Color.BLACK);
@@ -51,7 +49,7 @@ public class NullDecoratorFormElementTest extends junit.framework.TestCase imple
 	@Override
 	public void testGetValueAfterNothingSet() {
 		
-		NullDecoratorFormElement nullableFE = new NullDecoratorFormElement(new ColorFormElement());
+		NullDecoratorFormElement<Color> nullableFE = new NullDecoratorFormElement<Color>(new ColorFormElement());
 		JComponent jc = nullableFE.createComponent();
 		assertEquals(new Color(238, 238, 238), nullableFE.getValue(jc));
 	}
@@ -59,7 +57,7 @@ public class NullDecoratorFormElementTest extends junit.framework.TestCase imple
 	@Override
 	public void testSetValueNull() {
 		
-		NullDecoratorFormElement nullableFE = new NullDecoratorFormElement(new ColorFormElement());
+		NullDecoratorFormElement<Color> nullableFE = new NullDecoratorFormElement<Color>(new ColorFormElement());
 		JComponent jc = nullableFE.createComponent();
 		try {
 			nullableFE.setValue(jc, null);
@@ -82,7 +80,7 @@ public class NullDecoratorFormElementTest extends junit.framework.TestCase imple
 	
 	public void testGetValueAfterSetValueNull() {
 		
-		NullDecoratorFormElement nullableFE = new NullDecoratorFormElement(new ColorFormElement());
+		NullDecoratorFormElement<Color> nullableFE = new NullDecoratorFormElement<Color>(new ColorFormElement());
 		JComponent jc = nullableFE.createComponent();
 		try {
 			nullableFE.setValue(jc, null);
