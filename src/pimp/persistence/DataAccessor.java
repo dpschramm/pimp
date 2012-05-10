@@ -1,3 +1,9 @@
+/**
+ * Provides a single point of access to a database implementation
+ * Makes use of the singleton pattern.
+ * connect() must be called before any transactions are attempted.
+ */
+
 package pimp.persistence;
 
 import java.io.File;
@@ -28,6 +34,11 @@ public class DataAccessor {
 	
 	private DataAccessor() {} // Disable the public constuctor.
 	
+	/**
+	 * Sets the connection object for this instance of DataAccessor.
+	 * Must be called with a valid DatabaseConnection before any transactions can be made.
+	 * @param dbConnector
+	 */
 	public void connect(DatabaseConnection dbConnector) {
 		this.dbc = dbConnector;
 	}
@@ -36,10 +47,21 @@ public class DataAccessor {
 		return dbc.save(product);
 	}
 	
+	/**
+	 * Retrieves all products from all tables in the database
+	 * @return
+	 */
 	public List<Product> loadProductList() {
 		return dbc.loadProductList();
 	}
 	
+	/**
+	 * Copies a database file to a new location.
+	 * Original file is copied byte-for-byte to the new location
+	 * and future transactions will be made to the new location.
+	 * @param newDatabaseFile: the new database file
+	 * @throws Exception: if the new file cannot be opened.
+	 */
 	public void exportDb(File newDatabaseFile) throws Exception {
 		InputStream in = new FileInputStream(dbc.getDatabaseName());
 		OutputStream out = new FileOutputStream(newDatabaseFile);
@@ -56,10 +78,18 @@ public class DataAccessor {
 		dbc.setDatabase(newDatabaseFile.getName());
 	}
 	
+	/**
+	 * @param className: the name of the class that we want all the instances of
+	 * @return A mapping from product id to product.
+	 */
 	public Map<Integer, Product> getIdToProductMap(String className) {
 		return dbc.getIdToProductMap(className);
 	}
 	
+	/**
+	 * @param className: the name of the class that we want all the instances of.
+	 * @return A mapping from product id to product name
+	 */
 	public Map<Integer, String> getProductIdsAndNames(String className) {
 		return dbc.getProductIdsAndNames(className);
 	}

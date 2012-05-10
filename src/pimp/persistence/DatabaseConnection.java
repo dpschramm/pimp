@@ -1,3 +1,7 @@
+/**
+ * An abstract class declaring the methods that a DatabaseConnection implementation needs to override.
+ * See SQLiteConnection.java documentation for details on what each method does.
+ */
 package pimp.persistence;
 
 import java.util.List;
