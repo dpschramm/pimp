@@ -5,6 +5,12 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * This is a standard JFileChooser, extended such that
+ * we can choose to filter out non .db files.
+ * Used in 'SAVE AS' and 'OPEN' functions.
+ */
+
 public class DatabaseSelector extends JFileChooser {
 	
 	public DatabaseSelector() {
