@@ -51,6 +51,7 @@ public class ProductGui extends JFrame {
 	
 	// A reference to the form builder, we use this to create forms and retrieve objects from forms. 
 	private FormBuilder fb;
+	@SuppressWarnings("rawtypes")
 	private ProductForm form;
 	private Product selectedProduct;
 	
@@ -78,7 +79,8 @@ public class ProductGui extends JFrame {
 		
 		// Exit application when close button clicked. Also commit the cache.
 		frame.addWindowListener(new WindowAdapter(){
-		      public void windowClosing(WindowEvent we){
+		      @SuppressWarnings("static-access")
+			public void windowClosing(WindowEvent we){
 		    	  Object[] options = {"Yes",
 		                    "No",
 		                    "Cancel"};
@@ -324,6 +326,7 @@ public class ProductGui extends JFrame {
 	 * Method to update the form based on the currently selected product.
 	 * @param product, the product to display details for
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateProductForm(Product product) {
 		try {
 			//If there's a current form being displayed
@@ -405,6 +408,7 @@ public class ProductGui extends JFrame {
 	class productAddedListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("unchecked")
 			List<Product> products = (List<Product>) e.getSource();
 			for (Product p : products){
 				tree.addProduct(p);
@@ -417,6 +421,7 @@ public class ProductGui extends JFrame {
 	 *
 	 */
 	class productDeletedListener implements ActionListener{
+		@SuppressWarnings("unchecked")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Remove from tree;

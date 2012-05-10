@@ -7,7 +7,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import pimp.form.ProductForm;
-import pimp.model.Product;
 
 /**
  * @author Joel Harrison
