@@ -141,6 +141,9 @@ public class ProductTree extends JTree {
 		ArrayList<Product> products = new ArrayList<Product>();
 		
 		NodeItem selectedNode = getSelectedNode(); 
+		if(selectedNode == null){
+			return products;
+		}
 		Object o = selectedNode.getStoredObject();
 		
 		if(!(selectedNode == root)){
@@ -198,9 +201,13 @@ public class ProductTree extends JTree {
 	 */
 	private NodeItem getSelectedNode(){
 		TreePath selectionPath = getSelectionPath();
-		NodeItem selectedNode = (NodeItem)
+		try{
+			NodeItem selectedNode = (NodeItem)
 				selectionPath.getLastPathComponent();
-		return selectedNode;
+			return selectedNode;
+		}catch(NullPointerException e){
+			return null;
+		}
 	}
 	
 	/**

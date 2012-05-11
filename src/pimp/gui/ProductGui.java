@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -174,7 +175,10 @@ public class ProductGui extends JFrame {
 				 *  Must return a list as the user may have clicked on a parent node - 
 				 *  attempting to delete all products in that category.
 				 **/
-				controller.removeFromCache(tree.getSelectedProduct());
+				ArrayList<Product> selected = tree.getSelectedProduct();
+				if(selected.size() > 0){
+					controller.removeFromCache(tree.getSelectedProduct());
+				}
 			}
 		});
 		
